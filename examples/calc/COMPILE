@@ -1,0 +1,21 @@
+#!/bin/csh
+
+# Set these variables accordingly
+set CREATE_LIBRARY = "/usr/vads5/vads.5.41/bin/a.mklib"
+set COMPILE        = "/usr/vads5/vads.5.41/bin/ada"
+set LINK           = "/usr/vads5/vads.5.41/bin/a.ld"
+
+$CREATE_LIBRARY -f
+
+ayacc calc.y 
+aflex calc_lex.l 
+
+$COMPILE calc_tokens.a
+$COMPILE calc_shift_reduce.a
+$COMPILE calc_goto.a
+$COMPILE calc_lex_dfa.a
+$COMPILE calc_lex_io.a
+$COMPILE calc_lex.a
+$COMPILE calc.a
+$COMPILE driver.a
+$LINK    driver -o calc

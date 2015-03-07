@@ -1,0 +1,51 @@
+-- Copyright (c) 1990 Regents of the University of California.
+-- All rights reserved.
+--
+--    The primary authors of ayacc were David Taback and Deepak Tolani.
+--    Enhancements were made by Ronald J. Schmalz.
+--
+--    Send requests for ayacc information to ayacc-info@ics.uci.edu
+--    Send bug reports for ayacc to ayacc-bugs@ics.uci.edu
+--
+-- Redistribution and use in source and binary forms are permitted
+-- provided that the above copyright notice and this paragraph are
+-- duplicated in all such forms and that any documentation,
+-- advertising materials, and other materials related to such
+-- distribution and use acknowledge that the software was developed
+-- by the University of California, Irvine.  The name of the
+-- University may not be used to endorse or promote products derived
+-- from this software without specific prior written permission.
+-- THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+-- IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+-- WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+--|
+--| Notes: This routine contains the machine specific details of how
+--|        Ayacc obtains the command line arguments from the host Operating
+--|        System.  This version assumes Verdix running on Unix machines.
+--|
+--|        The only requirement on this subunit is that it place the string
+--|        of characters typed by the user on the command line into the
+--|        parameter "Command_Args".
+--|
+
+with A_Strings;  use A_Strings;
+with U_Env;      use U_Env;
+separate (Command_Line_Interface)
+procedure Read_Command_Line (Command_Args : out Command_Line_Type) is
+
+  Unix_Command_Line : A_String := Empty;
+
+begin
+
+  for i in Argv.all'First + 1 .. Argv.all'Last
+  loop
+    Unix_Command_Line := Unix_Command_Line & Argv (i) & " ";
+  end loop;
+
+  Unix_Command_Line := Pad_Right (Unix_Command_Line,
+                                  To_Length => Maximum_Command_Length);
+
+  Command_Args := Unix_Command_Line.S;
+
+end Read_Command_Line;

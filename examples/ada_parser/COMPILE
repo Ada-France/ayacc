@@ -1,0 +1,21 @@
+#!/bin/csh
+
+# Set these variables accordingly
+set CREATE_LIBRARY = "/usr/vads5/vads.5.41/bin/a.mklib"
+set COMPILE        = "/usr/vads5/vads.5.41/bin/ada"
+set LINK           = "/usr/vads5/vads.5.41/bin/a.ld"
+
+$CREATE_LIBRARY -f
+
+ayacc ada.y
+aflex  ada_lex.l
+
+$COMPILE ada_tokens.a
+$COMPILE ada_shift_reduce.a
+$COMPILE ada_goto.a
+$COMPILE ada_lex_dfa.a
+$COMPILE ada_lex_io.a
+$COMPILE ada_lex.a
+$COMPILE ada.a
+$COMPILE driver.a
+$LINK    parse -o parse

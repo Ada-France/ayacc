@@ -1,0 +1,298 @@
+.TH AYACC local "3 June 1988"
+.SH NAME
+ayacc \- An Ada LALR(1) parser generator
+.SH SYNOPSIS
+ayacc
+.B {command line interface parameter associations}
+.SH DESCRIPTION
+.PP
+.I Ayacc 
+provides Ada programmers with a convenient tool for the 
+automatic construction of parsers from a high level description 
+of a context free grammar.
+The input to
+.I Ayacc
+consists of a 
+BNF-like specification of a grammar accompanied by a set of 
+Ada program statements to be executed as each production is 
+recognized.
+.I Ayacc 
+outputs a set of Ada program units that act as 
+a parser for the specified grammar;
+these program units 
+may be interfaced to additional user-supplied routines to produce a 
+functional program.
+.PP
+.I Ayacc
+will produce a procedure called
+.IR yyparse
+and three packages:
+.IR Tokens,
+.IR Goto_Table,
+and
+.IR Shift_Reduce_Table.
+All of these packages must be visible to
+.IR yyparse.
+Package
+.IR Tokens
+contains the enumeration type that is returned by the lexical analyzer.
+Packages
+.IR Goto_table
+and
+.IR Shift_Reduce_Table
+contain the parsing tables used by
+.IR yyparse.
+.PP
+The user must supply
+.IR yyparse
+with 
+a lexical analyzer and an error reporting
+routine.
+The declarations of these routines should look like the following:
+.IP ""
+\fBfunction\fR YYLEX \fBreturn\fR TOKENS.TOKEN;
+.sp
+\fBprocedure\fR YYERROR(MESSAGE: \fBin\fR STRING);
+
+.PP 
+The format of the
+.I ayacc
+input file must be as follows,
+.sp 
+             declarations section
+             %%
+             rules section
+             %%
+             user declarations section
+.sp 
+.PP
+The
+.I declarations section 
+is used to specify the generated
+.I tokens 
+package.
+A token declaration consists of the keyword 
+.I %token
+followed by a list of token names that may optionally be separated 
+by commas.  Token names must follow Ada enumeration type naming
+conventions.  
+.I Ayacc
+provides a means to associate an Ada data type with a grammar symbol.
+This type must be called
+.I YYSType
+and must be declared in the tokens declarations section and be
+surrounded by '{' '}'s . e.g.
+.nf
+.sp
+	     {
+		  subtype YYSType is Integer;
+	     }
+.sp
+.fi
+Since types declared in this section may require visibility to additional
+packages, context clauses for the 
+.I tokens
+package may be defined by using the keywords
+.I %with
+and
+.I %use.
+These keywords must be located before the 
+.I YYStype 
+declaration.
+
+.PP
+The 
+.I rules section 
+defines the grammar to be parsed.
+Each rules consists of a nonterminal symbol followed by
+a colon and a list of grammar symbols terminated by a semicolon.
+For example, a rule corresponding to a street address might be
+written as,
+.sp
+		   Address: Street City ',' State Zip;
+.sp
+A vertical bar may be used to combine rules with identical left hand sides.
+Nonterminal names may be made up of alphanumeric characters as well as
+periods and underscores.  
+Ada reserved words are allowed.
+Unlike,
+.I yacc
+all tokens and nonterminal names are case insensitive.
+The start symbol of the grammar may be specified using the keyword
+.I %start
+followed by the symbol.
+If the start symbol is not specified, 
+.I ayacc
+will use the left hand side of the first grammar rule.
+
+.PP
+.I Ayacc
+allows each grammar rule to have associated actions which are
+executed whenever the rule is recognized by the parser.  An action
+consists of Ada statements enclosed in braces and placed after the
+body of a rule.
+.I Ayacc 
+uses a pseudo-variable notation to denote the values
+associate values with nonterminal and token symbols.  The left hand side
+of a rule may be set to a value by an assignment to the variable,
+.B $$.
+For example, if
+.I YYSType
+is an integer, the action:
+.sp
+		   A : B C D {$$ := 1;}
+.sp
+sets the value of A to 1.  Values of symbols on the right hand side of
+the rule, may be accessed through the variables 
+.B $1..$n 
+,where 
+.B n
+refers to the nth element of the right hand side.  For example.
+.sp
+		  A : B '+' C {$$ := $1 + $3;}
+.sp
+sets A to the sum of the values of B and C.
+
+.PP
+The 
+.I user declarations section
+is optional. By default,
+.I ayacc
+generates a parameterless procedure,
+.I YYParse.
+If the user desires,
+the procedure may be incorporated within a package provided in this
+section.  The user must use the key marker,
+.B ##,
+to indicate where the body of
+.I YYParse
+is to be inserted.  The user is responsible for providing with
+clauses for the 
+.I tokens, parse table,
+and
+.I Text_IO
+packages.
+
+
+
+.SH COMMAND LINE INTERFACE
+Arguments are passed to
+.I ayacc
+via a command line interface.
+This command line interface models the syntax and semantics of Ada procedure
+calls, supporting both
+.I named
+and
+.I positional
+notation as well as
+.I default initialization.
+.sp
+When the
+.I ayacc
+command is entered without arguments, the following
+specification is displayed.
+.sp 2
+\-\- Ayacc: An Ada Parser Generator.
+.sp
+type Switch is (On, Off);
+.sp
+.ta \w'procedure Ayacc ('u
+procedure Ayacc (File      : in String;
+.br
+	C_Lex     : in Switch := Off;
+.br
+	Debug     : in Switch := Off;
+.br
+	Summary   : in Switch := On;
+.br
+	Verbose   : in Switch := Off;
+.br
+	Extension : in String := ".a");
+.br
+
+.ta \w'Extension        'u
+\-\- File	Specifies the Ayacc Input Source File.
+.br
+\-\- C_Lex	Specifies the Generation of a 'C' Lex 
+.br
+\-\-	Interface.
+.br
+\-\- Debug	Specifies the Production of Debugging Output
+.br
+\-\-	By the Generated Parser.
+.br
+\-\- Summary	Specifies the Printing of Statistics About the
+.br
+\-\-	Generated Parser.
+.br
+\-\- Verbose	Specifies the Production of a Human Readable
+.br
+\-\-	Report of States in the Generated Parser.
+.br
+\-\- Extension	Specifies the File Extension to be Used for 
+.br
+\-\-	Generated Ada Files.
+.sp 2
+.fi
+The following examples are legal invocations of
+.I ayacc
+.sp
+      ayacc ("file.y");
+      ayacc ("file.y, Verbose => On, Extension => ".ada");
+.sp
+For friendlier usage, some Ada rules have been relaxed,
+.sp
+     1) Final semicolon on the procedure call is optional.
+.br
+     2) Outermost parentheses are optional.
+.br
+     3) Parentheses around aggregate parameters are optional
+.br
+        when the aggregate consists of only one component.
+.br
+     4) Quotes around string literals are optional.
+.sp
+making the following examples legal invocations as well.
+.sp
+      ayacc file.y
+      ayacc file.y Verbose => On Extenstion => .ada
+.sp
+.B Note:
+Unix will interpret the => and parantheses prior to passing
+arguments to
+.I alex.
+As a result, they must be
+.I escaped
+on the command line to prevent interpretation.  i.e. \fB=>\fP must be typed
+in as \fB=\e\>\fP.
+
+.SH FILES
+.ta \w'file.shift_reduce.ada    'u
+file.y	the input file to
+.I Ayacc
+.br
+file.ada	the generated parser
+.br
+file.goto.ada	package
+.IR Goto_Table
+.br
+file.shift_reduce.ada	package
+.IR Shift_Reduce_Table
+.br
+file.tokens.ada	package
+.IR Tokens
+.br
+file.verbose	the verbose output
+.br
+file.c_lex.ada	package
+.IR c_lex for interfacing with lex
+.br
+file.h	the C include file for interfacing with lex
+.SH BUGS
+send questions and comment to ayacc-info@ics.uci.edu
+.br
+send bug reports to ayacc-bugs@ics.uci.edu
+.SH "SEE ALSO"
+Ayacc User's Manual
+.br
+yacc(1), lex(1), alex(local)

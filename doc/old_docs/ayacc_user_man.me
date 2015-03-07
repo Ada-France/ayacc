@@ -1,0 +1,2780 @@
+.ds rd "November 3, 1986
+.ds rg "\v'-.4m'\\s-8\\(rg\\s+8\v'.4m'
+.nr xu 0
+.nr Cs 0
+.if n \{  
+.    po +0.75i  \}
+.\"
+.po 1.25i
+.if t \{
+.    nr pp 12
+.    nr sp 12
+.    nr fp 10
+.    nr tp 12 \}
+.\"
+.\"  Example Macro
+.\"
+.nr EN 1 \" Current Example Number Register
+.de EX   \" No Paramters
+.lp
+\\fBExample\ \\n(EN\ \-\ \\fP
+.nr EN+1
+..
+.\"
+.\"  Error Message Macro
+.\"
+.de EM \" Error_Message
+.np
+'na
+'b "\\$1"
+..
+.\"
+.nr AN 1 \" Register for current Appendix Number.
+.\"
+.\"  Define Appendix Header with optional Title.
+.\"
+.de AP  \" Optional_Title
+.bp
+.ie '\\$1''  .uh "Appendix \\n(AN"
+.el          .uh "Appendix \\n(AN \-\- \\$1"
+.nr AN+1
+..
+.\"
+.\"  Output Text in Constant Space Mode and 10 pt.
+.\"
+.de CS  \" Start Constant Space Mode
+.br
+'nr Cs 1
+'nr CF \\n(.u 
+'nf 
+'cs R 24 
+'cs I 24 
+'cs B 24 
+'if !'\\n(.z''  \{\ 
+\\!'  cs R 24 
+\\!'  cs I 24 
+\\!'  cs B 24   \}
+\\s10
+..
+.\"
+.de CE  \" End Constant Space Mode
+.br
+'if !\\n(CF==0 .fi 
+'rr CF 
+'cs R 
+'cs I 
+'cs B 
+'if !'\\n(.z'' \{\
+\\!'  cs R 
+\\!'  cs I 
+\\!'  cs B     \} 
+\\s0
+'nr Cs 0
+..
+.nr FN 1 1 \"  Register for Figure Number.  Available as \n(FN.
+.ds FN "\fBFigure \n(FN\fP
+.\"
+.\"  Begin Figure with no lines.
+.\"
+.de Fg
+.nr FO \\n(.ou
+.nr FI \\n(.iu
+.nr FL \\n(.lu
+.nr LN 0  \" Set flag for figure without lines.
+.(b \\$1 \\$1
+..
+.\"
+.\"  Begin Figure
+.\"
+.de FG
+.nr FO \\n(.ou
+.nr FI \\n(.iu
+.nr FL \\n(.lu
+.nr LN 1  \" Set flag for figure with lines.
+.ie '\\$1'' .(b L \\$2
+.el         .(b \\$1 \\$2
+.hl
+..
+.\"
+.\"  End Figure
+.\"
+.de FE
+.in \\n(FIu
+.ll \\n(FLu
+.po \\n(FOu
+.if \\n(LN   .hl  \" If LN (line) is true then print line.
+.ce
+\fBFigure \\n(FN.\fP  \\$1
+.)b
+.if \\n(FN=1 \{\
+.(x f
+\fBChapter \\*(CN \- \\*(CT\fP
+.)x _        \}
+.(x f
+\ \ \ \ \\n(FN \- \\$1
+.)x
+.nr FN+1
+.ds FN "\fBFigure \\n(FN\fP
+.rr FO
+.rr FI
+.rr FL
+.rr LN
+..
+.\"
+.\"  Table Initialization and Reset Macros
+.\"
+.nr TN 1 1  \" Table Number Register
+.ds TN "\fBTable \n(TN\fP
+.de ts      \" Initialize Table Parameters.
+.sp
+.nr PO \\n(.ou
+.nr PL \\n(.lu
+.nr PI \\n(.iu
+.in 0.0i
+.ll 7.25i
+.po 0.5i
+.sz 10
+..
+.de te      \" Reset Old Parameters.
+.sp
+.in \\n(PIu
+.ll \\n(PLu
+.po \\n(POu
+.rr PI
+.rr PL
+.rr PO
+.sz 10
+.ce
+\s12\fBTable \\n(TN.\fP  \\$1\s0
+.if \\n(TN=1 \{\
+.(x t  \" Enter Chapter Entry into List of Tables before first entry.
+\fBChapter \\*(CN \- \\*(CT\fP
+.)x _        \}
+.(x t
+\ \ \ \ \\n(TN \- \\$1
+.)x
+.sp
+.nr TN+1
+.ds TN "\fBTable \\n(TN\fP
+..
+.am ++
+.nr SS 1
+.ie '\\$1'C' \
+\{\
+.	ds DP "Chapter
+.\}
+.el \
+\{\
+.	ds DP "Preliminary
+.	rm SN
+.	rm ST
+.	rm CN
+.	rm CT
+.	rm CP
+.\}
+..
+.\"
+.\" ME Header printing macro
+.\"
+.de $h
+'if \\n(Cs=1 \
+\{\
+'	cs R
+'	cs I
+'	cs B
+.\}
+.rm |z
+.if !\\n(?c \
+\{\
+.	if e .ds |z "\\*(|0
+.	if o .ds |z "\\*(|1
+.\}
+.if !\(ts\\*(|z\(ts\(ts \
+\{\
+.if e  .tl ''\\*(CT''
+.if o  .tl ''\\*(CT''
+.\}
+.rm |z
+'if \\n(Cs=1 \
+\{\
+'	cs R 24
+'	cs I 24
+'	cs B 24
+.\}
+..
+.\"
+.\" ME Footer printing macro
+.\"
+.de $f
+'if \\n(Cs=1 \
+\{\
+'	cs R
+'	cs I
+'	cs B
+.\}
+.rm |z
+.if \\n(?c \
+\{\
+.	if e .ds |z "\\*(|0
+.	if o .ds |z "\\*(|1
+.\}
+.if \(ts\\*(|z\(ts\(ts \
+\{\
+.	if e .ds |z "\\*(|2
+.	if o .ds |z "\\*(|3
+.\}
+.if !\(ts\\*(|z\(ts\(ts \
+'	tl \\*(|z
+.rm |z
+.if \\n(Cs=1 \
+\{\
+'	cs R 24
+'	cs I 24
+'	cs B 24
+.\}
+..
+.\"
+.\" ME Section Header hooks macro
+.\"
+.de $0    \" Title Number Depth
+.ad
+.(x c
+\ \ \ \ \\$2  \\$1
+.)x
+.ie '\\*(DP'Chapter' \
+\{\
+.	nr SN \\$2   \" Section Number
+.	ds ST "\\$1  \" Section Title
+.\}
+.el \
+\{\
+.	rm SN
+.	rm ST
+.\}
+..
+.de $C    \" Keyword Number Title
+.(x c
+\fB\\$1 \\$2 \- \\$3\fP
+.)x _
+.\" RESET THE SECTION NUMBERS FOR EACH NEW CHAPTER
+.nr $0 1
+.nr $1 0
+.nr $2 0
+.nr $3 0
+.nr $4 0
+.nr $5 0
+.nr $6 0
+.\" RESET THE APPENDIX NUMBER FOR EACH NEW CHAPTER
+.nr AN 1
+.\" RESET THE EXAMPLE NUMBER FOR EACH NEW CHAPTER
+.nr EN 1
+.\" RESET THE FIGURE NUMBER FOR EACH NEW CHAPTER
+.nr FN 1
+.ds FN "\fBFigure \\n(FN\fP
+.\" RESET THE TABLE NUMBER FOR EACH NEW CHAPTER
+.nr TN 1
+.ds TN "\fBTable \\n(TN\fP
+.ie '\\*(DP'Chapter' \
+\{\
+.\" Chapter Number
+.	ds CN "\\$2
+.\" Chapter Title
+.	ds CT "\\$3
+.\" Chapter Page Number Register
+.	nr CP 1 1
+.\}
+.el \
+\{\
+.	rm CN
+.	rm CT
+.	rm CP
+.\}
+..
+.de CH
+.eh ''\- % \-''
+.oh ''\- % \-''
+.if o  .if !(\\n(SS=1) \
+\{\
+.    bp
+.    lp
+\&
+.    sp 20
+.    ce
+\fIThis page is left intentionally blank.\fP
+.\}
+.nr SS 0
+.ds CT "\\$1
+.ds TL "\fB\\$1\fP
+.+c "\\$1"
+..
+.fo ''\- % \-''
+.tp
+.sp 8
+.sz 24
+.ce 100
+\fBAyacc User's Manual\fP
+.sz 18
+.sp 2
+Version 1.0
+.sp
+.sz 14
+UCI-88-16
+.sp
+May 1988
+.sz 12
+.sp 4
+\fIDesigned by\fP
+.sp
+David Taback and Deepak Tolani
+.sp 1.5
+\fIEnhanced by\fP
+.sp
+Ronald J. Schmalz
+.sp 4
+Arcadia Environment Research Project
+Department of Information and Computer Science
+University of California, Irvine
+.ce 0
+.bp 0
+.++ C
+.de q
+\&\\fI\\$1\\fP\\$2
+..
+.CH "Ayacc"
+.sh 1 "Introduction"
+.pp
+\*(TL provides Ada programmers with a tool for the
+automatic construction of parsers.  The parsers are constructed
+from a high level description
+of a context free grammar.  The input to \*(TL consists of a
+BNF style specification of a grammar accompanied by a set of
+Ada program statements to be executed as each rule is
+recognized.  \*(TL generates a set of Ada program units that act as
+a parser for the specified grammar.  These program units
+may be interfaced to additional user supplied routines to produce a
+functional program.  \*(TL was inspired by the popular UNIX
+utility, \fBYacc\fP, and it closely mimics the features and conventions
+of its C counterpart.
+.sh 1 "Description"
+.pp
+The following chapter is intended to serve as a
+tutorial and reference guide to \*(TL.  No previous knowledge
+of \fBYacc\fP is assumed although basic principles of compiler
+theory such as context-free grammars, lexical analysis,
+and parsing are taken for granted.  For the
+sake of clarity, a consistent set of terminology is
+adopted in this chapter.  The term \fBtoken\fP denotes a structure
+recognized by a lexical analyzer and \fBnonterminal\fP
+refers to a structure recognized by a parser.  \fBGrammar symbols\fP
+collectively refers to nonterminals and tokens.
+.pp
+\*(TL generates four Ada program units that may be compiled and
+interfaced to other Ada code provided by the user.  To enable
+the compilation of \*(TL output, the user
+must provide a minimum of two routines: a lexical analyzer
+function
+and an error reporting procedure.  These routines may be
+kept inside the specification file or provided as
+external modules.
+.pp
+\*(TL generates a total of four files.  Assuming that the original
+specification file is named
+.q "base.y",
+the corresponding \*(TL output files would be:
+.q "base_tokens.ada",
+.q "base_shift_reduce.ada",
+.q "base_goto.ada",
+and
+.q "base.ada".
+In addition, \*(TL also generates a temporary file,
+.q "base.accs",
+which is automatically deleted upon completion and should not be of concern
+to the user.  A brief description of these files follows:
+
+.ip \fBbase\fP.ada
+The primary output of \*(TL.  Procedure
+.q "YYParse"
+is generated into this file along with any Ada code provided in the
+declaration section at the end of the specification file.
+
+.ip \fBbase\fP_tokens.ada
+The
+.q "tokens"
+package that provides the type and variable declarations needed by both
+.q "YYParse"
+and the user supplied lexical analyzer.  The package is named
+\fIBase_Tokens\fP.
+
+.ip "\fBbase\fP_shift_reduce.ada  \fBbase\fP_goto.ada"
+The parse tables used by
+.q "YYParse".
+They are generated as separate packages rather than nested within
+.q "YYParse"
+to prevent them from being pushed onto the stack with each invocation of
+.q "YYParse".
+Strictly speaking, the tables could be placed
+within a single package, however some Ada compilers may have problems
+compiling the large preinitialized arrays which comprise the tables.  The
+parse table packages are named \fIBase_Goto\fP and
+\fIBase_Shift_Reduce\fP respectively.
+.sh 1 "Command Line Interface"
+.pp
+When the \*(TL command is entered without arguments, the following
+specification is displayed on the user's terminal.
+.Fg L
+.br
+'nr Cs 1
+'nr AF \n(.u
+'nf
+'cs R 24
+'cs I 24
+'cs B 24
+'if !'\n(.z''  \{\
+\!'  cs R 24
+\!'  cs I 24
+\!'  cs B 24   \}
+\s10
+  \-\-\fI Ayacc: An Ada Parser Generator.\fP
+
+  \fBtype\fP Switch \fBis\fP (On, Off);
+
+  \fBprocedure\fP Ayacc (File    : \fBin\fP String;
+                   C_Lex      : \fBin\fP Switch := Off;
+                   Debug      : \fBin\fP Switch := Off;
+                   Summary    : \fBin\fP Switch := On;
+                   Verbose    : \fBin\fP Switch := Off;
+                   Extension  : \fBin\fP String := ".a");
+
+  \-\-\fI File       Specifies the Ayacc Input Source File.\fP
+  \-\-\fI C_Lex      Specifies the Generation of a 'C' Lex Interface.\fP
+  \-\-\fI Debug      Specifies the Production of Debugging Output\fP
+  \-\-\fI              By the Generated Parser.\fP
+  \-\-\fI Summary    Specifies the Printing of Statistics About the\fP
+  \-\-\fI              Generated Parser.\fP
+  \-\-\fI Verbose    Specifies the Production of a Human Readable\fP
+  \-\-\fI              Report of States in the Generated Parser.\fP
+  \-\-\fI Extension  Specifies the File Extension to be Used for 
+  \-\-\fI              Generated Ada Files.\fP
+.br
+'if !\n(AF=0 .fi
+'rr AF
+'cs R
+'cs I
+'cs B
+.if !'\n(.z'' \{\
+\!'  cs R
+\!'  cs I
+\!'  cs B     \}
+'nr Cs 0
+\s0
+.FE "Ayacc Command Line Specification"
+.sh 2 "Overview"
+.pp
+The \*(TL command line interface is modeled after the syntax and
+semantics of Ada procedure
+calls.  Both \fINamed\fP and \fIPositional\fP parameter associations and
+\fIDefault Parameters\fP are supported.\(dg  Although the command line 
+.(f
+\(dg  A complete discussion of this topic can be found in the Ada Language
+Reference Manual, \(sc 6.4 \- 6.4.2.
+.)f
+interface does follow the syntax and semantics of Ada, the
+strictness of these rules has been relaxed to improve the user
+interface.  The nature of these relaxations is discussed in the
+following section.
+.sh 2 "Command Format"
+.pp
+The command line interface has several relaxations to promote friendlier
+usage.  A summary of these relaxations are listed in \*(FN.
+.FG
+.np
+Final Semicolon on the procedure call is optional.
+.np
+Outermost Parentheses are optional.
+.np
+Parentheses around aggregate parameters are optional when the aggregate
+consists of only one component.
+.np
+Commas in the parameter list are optional.
+.np
+Quotes around string literals are optional.
+.FE "Syntactic Relaxations in the Command Line Interface"
+.sh 2 "Invoking Ayacc"
+.pp
+When a \*(TL is invoked, the command line interface analyzes the
+command line for the correct number and types of parameters.  If no errors
+are detected, the command line is echoed to the terminal in the form of
+an Ada procedure call with all parameters displayed as Named Associations.
+A typical invocation is shown in \*(FN.  Once the command line is analyzed,
+the parameters are passed on to the tool for processing.  \fBNote:\fP Some
+Operating Systems, for example \fIUnix\fP, may
+interpret the \fB=>\fP prior to passing the argument to the tool.  As a
+result, any OS special characters should be \fIescaped\fP on the command
+line to prevent interpretation.
+.FG
+\fIayacc  parser.y debug =>\(dd on\fP
+.(f
+\(dd  In Unix, \fB=>\fP should be replaced with \fB=\\\e>\fP.
+.)f
+.br
+'nr Cs 1
+'nr AF \n(.u
+'nf
+'cs R 24
+'cs I 24
+'cs B 24
+'if !'\n(.z''  \{\
+\!'  cs R 24
+\!'  cs I 24
+\!'  cs B 24   \}
+\s10
+  Ayacc (File      => "parser.y",
+         C_Lex     => Off,
+         Debug     => On,
+         Summary   => On,
+         Verbose   => Off,
+         Extension => ".a");
+.br
+'if !\n(AF=0 .fi
+'rr AF
+'cs R
+'cs I
+'cs B
+.if !'\n(.z'' \{\
+\!'  cs R
+\!'  cs I
+\!'  cs B     \}
+'nr Cs 0
+\s0
+.FE "Echoed Command Line Following Invocation"
+.sh 2 "Command Line Errors"
+.EM "Invalid Named Association."
+.EM "Invalid Parameter, \fIBad_Parameter\fP is not a legal value for type \
+\fIParameter_Type\fP."
+.EM "Invalid Parameter Association, \fIBad_Formal\fP is not a valid Formal \
+Parameter."
+.EM "Invalid Parameter Order, Positional arguments must precede Named."
+.EM "Missing Positional Argument."
+.EM "Unbalanced Parentheses."
+.sh 1 "Input to the Tool"
+.sh 2 "Command Line Options"
+.pp
+\fIInput\fP specifies the Ayacc specification file which will be translated
+into an appropriate parser.  The format of the file is described in the
+\fIAyacc Specification File\fP section.
+.pp
+\fIC_Lex\fP specifies the generation of an Ada interface 
+to a lexical analyzer written in C.  When run
+with the \fIC_Lex\fP option, \*(TL will generate a file called
+.q "base.h"
+which contains a sequence of #define's for the tokens
+(analogous to the file created by \fBYacc\fP when run with the \-d option)
+and a package "Base_C_Lex" that converts integers returned by the C lexical
+analyzer into their corresponding Ada enumeration type.  This feature
+is particularly suited to interfacing to
+lexical analyzers generated
+by the popular UNIX tool \fBLex\fP or any lexical analyzer that adheres
+to the conventions expected by \fBYacc\fP.
+.pp
+When using the \fIC_Lex\fP option, the user must supply a C function called
+.q "get_token"
+which returns an integer corresponding to a token recognized by the
+lexical analyzer.  The values returned by the lexical analyzer must
+adhere to the following conventions: \fICharacter literals have the
+same value as their Ascii representation\fP, and \fIAll other tokens
+have the value are as defined in the
+.q "base.h"
+file.  It is the user's responsibility to insure that the C lexical analyzer
+always returns an integer corresponding to a valid token or
+character literal.
+.pp
+The package
+.q "Base_C_Lex"
+contains the Ada function
+.q "YYLex"
+which converts the integer returned by
+.q "get_token"
+into the token enumeration type  expected by the parser.  The user will
+have to make minor changes to
+.q "YYLex"
+if it is necessary for the lexical analyzer to set the value of YYLVal or
+to perform actions when specific tokens are recognized.
+.pp
+\fIDebug\fP specifies that \*(TL should generate a version of
+.q "YYParse"
+that prints the shift, reduce, error, and accept actions as they are
+executed by the parser.  \*(FN lists the messages produced by \*(TL in
+\fIDebug\fP mode.
+.FG
+.EM "Accepting Grammar..."
+.EM "Can't Discard End_Of_Input, Quitting..."
+.EM "Error Recovery Clobbers \fIToken\fP."
+.EM "Error Recovery Popped Entire Stack, Aborting..."
+.EM "Examining State \fIState\fP."
+.EM "Looking for State with Error as Valid Shift."
+.EM "Reduce by Rule \fIRule\fP Goto State \fIState\fP."
+.EM "Shifted Error Token in State \fIState\fP."
+.EM "Shift \fIState\fP on Input Symbol \fIToken\fP."
+.FE "Debug Option Informative Messages"
+.pp
+The output may be used with the \fIVerbose\fP option
+output file to debug grammar specifications by identifying states
+where the parser behaves incorrectly.  The debugging output
+is also useful for observing error recovery mechanisms taken by the
+parser.
+.pp
+\fIVerbose\fP specifies that \*(TL should generate a file called
+.q "base.verbose"
+which contains a readable form of the parser.  This is very useful when
+the user wants to see the finite state machine associated with the
+parser.  A detailed example of using the \fIDebug\fP and \fIVerbose\fP
+option can be found in Appendix 2.
+.sh 2 "Ayacc Specification File"
+.pp
+\fIExtension\fP specifies the file extension to be used for generated Ada files.
+The default value is ".a".
+.pp
+An Ayacc specification  consists of three parts: the
+\fItoken declarations\fP, \fIgrammar rules\fP, and an \fIoptional user
+declarations\fP.  A double percent
+.q "%%"
+delimits
+each of these sections.  Ada style comments may appear
+anywhere in the specification file.  A sample input
+file for a calculator grammar is shown in \*(FN.
+.FG
+\-\- Declarations Section
+
+%token IDENTIFIER         \-\-  Tokens which will be returned
+%token NUMBER             \-\-  by the lexical analyzer.
+
+{
+.br
+'nr Cs 1
+'nr AF \n(.u
+'nf
+'cs R 24
+'cs I 24
+'cs B 24
+'if !'\n(.z''  \{\
+\!'  cs R 24
+\!'  cs I 24
+\!'  cs B 24   \}
+\s10
+  \-\-\fI Declarations that will be\fP
+  \-\-\fI written to the tokens package.\fP
+  \fBsubtype\fP YYSType \fBis\fP Integer;
+.br
+'if !\n(AF=0 .fi
+'rr AF
+'cs R
+'cs I
+'cs B
+.if !'\n(.z'' \{\
+\!'  cs R
+\!'  cs I
+\!'  cs B     \}
+'nr Cs 0
+\s0
+}
+
+
+%% -------------------------------------------------------------
+\-\- Rules section
+
+\-\- Rules specifying the syntax of arithmetic expressions.
+\-\- "expression", "term", and "factor" are the nonterminals
+\-\- recognized by the parser.
+
+expression : term
+           | expression '+' term
+           | expression '\-' term
+           ;
+
+term       : factor
+           | term '*' factor
+           | term '/' factor
+           ;
+
+factor     : IDENTIFIER
+           | NUMBER
+           | '(' expression ')'
+           ;
+%%  ------------------------------------------------------
+
+\-\- User declarations
+\-\- Empty in this case
+.FE "Sample Calculator Grammar"
+.sh 3 "Token Declarations Section"
+.pp
+\*(TL requires tokens of the grammar to be explicitly declared
+in the token declarations section.  A token declaration consists of a
+.q "%token"
+keyword followed  by a list of identifiers that may
+optionally be separated by commas.  All token names must follow
+Ada enumeration type naming conventions as the tokens are directly
+translated into an enumeration type.  An example of a
+tokens declaration is shown in \*(FN.
+.FG
+%token identifier , number
+%token if_statement while_loop	\-\- comma is optional
+%token ','  '''		\-\- literals are allowed
+.FE "Legal Ayacc Token Declarations"
+.pp
+\*(TL also allows the user to place declarations in the tokens package by
+enclosing a collection of Ada declarations in braces
+in the tokens declaration section.
+.sh 3 "Associating Ada Types with Grammar Symbols"
+.pp
+\*(TL also provides a way to associate an Ada data type
+to nonterminals and tokens.  The data type is
+defined by associating an Ada type declaration to the identifier
+.q "YYSType".
+Once this type is defined, actions can access the values associated with
+the grammar symbols.  This declaration must appear in the tokens
+declarations section or the Ayacc output will fail to compile.  For
+example, a declaration of the form
+.(l
+.(b
+%token a b d e
+{
+.br
+'nr Cs 1
+'nr AF \n(.u
+'nf
+'cs R 24
+'cs I 24
+'cs B 24
+'if !'\n(.z''  \{\
+\!'  cs R 24
+\!'  cs I 24
+\!'  cs B 24   \}
+\s10
+  \fBsubtype\fP YYSType \fBis\fP Integer;
+.br
+'if !\n(AF=0 .fi
+'rr AF
+'cs R
+'cs I
+'cs B
+.if !'\n(.z'' \{\
+\!'  cs R
+\!'  cs I
+\!'  cs B     \}
+'nr Cs 0
+\s0
+}
+%%
+...
+.)b
+.)l
+.lp
+allows the grammar symbols to have integer values
+that can be accessed and set by the user-defined actions.
+.pp
+Since the types declared in the Tokens Declaration section may require the
+visibility of types and operations defined in other packages, \*(TL provides
+a mechanism for specifying a \fIContext Clause\fP for the generated tokens
+package.  The keywords defined for this purpose are \fB%with\fP and
+\fB%use\fP.  Although these keywords are used with the same syntax as
+\fB%token\fP keyword, they may only be used prior to the Ada declarations
+section.  An example of their usage is shown in \*(FN.
+.FG
+%token  '='  '+'  '\-'  '/'  '*'  NUMBER  IDENTIFIER
+
+%with	  Binary_Operator_Manager	  -- These MUST precede the Ada
+%use	  Binary_Operator_Manager	  -- declarations section.
+.br
+'nr Cs 1
+'nr AF \n(.u
+'nf
+'cs R 24
+'cs I 24
+'cs B 24
+'if !'\n(.z''  \{\
+\!'  cs R 24
+\!'  cs I 24
+\!'  cs B 24   \}
+\s10
+{
+  \fBtype\fP YYSType \fBis\fP
+    \fBrecord\fP
+      Operation  : Binary_Operator_Manager.Operator_Expression_Type;
+      Precedence : Binary_Operator_Manager.Precedence_Type;
+    \fBend\fP \fBrecord\fP;
+}
+%%  \l'4.0i_'
+.br
+'if !\n(AF=0 .fi
+'rr AF
+'cs R
+'cs I
+'cs B
+.if !'\n(.z'' \{\
+\!'  cs R
+\!'  cs I
+\!'  cs B     \}
+'nr Cs 0
+\s0
+-- The Tokens package generated by \*(TL is shown below:
+.br
+'nr Cs 1
+'nr AF \n(.u
+'nf
+'cs R 24
+'cs I 24
+'cs B 24
+'if !'\n(.z''  \{\
+\!'  cs R 24
+\!'  cs I 24
+\!'  cs B 24   \}
+\s10
+\fBwith\fP  Binary_Operator_Manager;
+\fBuse\fP   Binary_Operator_Manager;
+\fBpackage\fP Test_Tokens \fBis\fP
+
+  \fBtype\fP YYSType \fBis\fP
+    \fBrecord\fP
+      Operation  : Binary_Operator_Manager.Operator_Expression_Type;
+      Precedence : Binary_Operator_Manager.Precedence_Type;
+    \fBend\fP \fBrecord\fP;
+
+    YYLVal, YYVal : YYSType; 
+    \fBtype\fP Token \fBis\fP (End_Of_Input, Error,
+                   '=', '+', '\-', '/', '*', Number, Identifier );
+
+    Syntax_Error : \fBexception\fP;
+
+\fBend\fP Test_Tokens;
+.br
+'if !\n(AF=0 .fi
+'rr AF
+'cs R
+'cs I
+'cs B
+.if !'\n(.z'' \{\
+\!'  cs R
+\!'  cs I
+\!'  cs B     \}
+'nr Cs 0
+\s0
+.FE "Specifying a Context Clause for the Tokens Package"
+.sh 3 "Rules Section"
+.pp
+The rules
+define the grammar to be parsed.  Each rule consists of a
+nonterminal symbol followed by a colon and
+a list of grammar symbols
+terminated by a semicolon.  For example, a rule corresponding
+to a street address could be represented as:
+.(b
+.(l C
+\fIAddress : Street City ',' State Zip ;\fP
+.)l
+.)b
+.pp
+\fIStreet\fP, \fICity\fP, \fIState\fP, and \fIZip\fP must be either
+nonterminal or token symbols that are defined elsewhere within the
+specification file.  Characters enclosed in single quotes, such
+as the comma in the example above, are tokens that appear
+as character literals in the input.  Unlike other tokens, character
+literals do not have to be explicitly declared in the
+declarations section.  Unlike \fBYacc\fP, \*(TL does not allow escape
+characters to be entered as literals.
+.pp
+For convenience, the vertical bar may be used to factor rules
+with identical left hand sides.  When using the vertical bar
+notation, the semicolon is used only at the end of the last rule.  For
+example,
+.(b
+.(l
+A : B C D ;
+A : E F;
+A : G ;
+.)l
+.)b
+.lp
+can be abbreviated as
+.(b
+.(l
+A : B C D
+  | E F
+  | G
+  ;
+.)l
+.)b
+.pp
+Nonterminal names consist of a sequence of alphanumeric characters
+as well as periods and underscores.  Ada reserved words may be used
+as nonterminal identifiers.  Some examples are shown in \*(FN.
+.FG C
+\&pragma
+\&..parameter_list..
+\&_system
+\&_
+\&.
+.FE "Typical Nonterminals"
+.pp
+Unlike token symbols, nonterminals are not explicitly declared;
+they are  implicitly defined by appearing on the left hand side
+of a rule.  However, one nonterminal, the start symbol, has
+such significance that a provision exists for explicitly
+declaring it.  The start symbol is the most general
+structure described by the grammar and it may be declared in
+the declarations section by preceding it with the
+.q "%start"
+keyword.  In the absence of a
+.q "%start"
+construct, \*(TL
+uses the left hand side of the first grammar rule as
+the start symbol.
+.pp
+Unlike \fBYacc\fP identifiers, all token and nonterminal names
+are case insensitive.  Thus,
+.q "ABC"
+and
+.q "aBc"
+denote the same
+grammar symbol in an Ayacc specification file.
+.sh 3 "Actions"
+.pp
+It is often necessary for the parser to take some action
+when certain syntactic structures are recognized.  For example,
+it may be necessary to generate code as an
+arithmetic expression is parsed or to update a symbol
+table as keywords appear in the input.  \*(TL allows each grammar
+rule to have associated actions
+which are executed whenever the rule is recognized by the
+parser.  An action consists of a sequence of Ada statements
+enclosed in braces and placed after the body of a rule.  Some
+examples follow:
+.(b
+.(l
+N : x y z
+  { count := count + 1; } \-\- Counts the occurrences of N
+  ;
+
+A : B  C  D
+  { Put_Line("hello"); }  \-\- Prints Hello whenever A is parsed
+  ;
+
+.)l
+.)b
+.pp
+The user may need to provide declarations of types and variables
+used in actions.  These declarations can be provided in separate
+packages used by
+.q "YYParse"
+or they may be provided within the user declarations section at
+the end of the specification file.
+.pp
+\*(TL uses a pseudo-variable notation to denote the values
+associated with nonterminal and token symbols.  The left hand side
+of a rule may be set to a specific value by an assignment to the variable
+.q "$$".
+For example, if YYSType is an integer, the action:
+.(l C
+\fIA : B C D { $$ := 1; }\fP
+.)l
+.lp
+sets the value of A to 1.  To use the values of symbols on
+the right hand side of the rule, the action may use the
+pseudo-variables $1..$n, where n refers to the nth
+element of the right hand side of the rule.  For example,
+.(l C
+\fIA : B '+' C { $$ := $1 + $3; }\fP
+.)l
+.lp
+sets A to the sum of the values of B and C.
+.pp
+Sometimes it is necessary to execute actions before a rule is fully
+parsed.  \*(TL permits actions to appear in the middle of a rule
+as well at the end.  These \fInested\fP actions are assumed to return
+a value accessible through the usual
+.q "$$"
+notation.  A nested
+action may access values returned by symbols to its left.  For example,
+.(b
+.(l
+A : B
+    { $$ := $1 + 1; }	\-\- The reference to $$ refers to the value
+			\-\- of the the action not the value of A
+    C
+    { x := $2; }	\-\- The reference to $2 is the value of the
+			\-\- previous action.  A reference to $$ here
+			\-\- would refer to the value of A.
+     ;
+.)l
+.)b
+.lp
+has the effect of setting x to the value of B plus 1.  Nested actions
+cause \*(TL to manufacture a new rule
+that matches the  empty string.  For example, the rule
+.(b
+.(l
+   A : B { $$ := 1; } C ;
+.)l
+.)b
+.lp
+is treated as if it were written
+.(b
+.(l
+   $act : { $$ := 1; }
+
+   A : B $act C;\(dg
+.)l
+.)b
+.(f
+\(dg  \fBNote:\fP The `$' in \fI$act\fP is used to prevent collision
+with other nonterminals and is not permitted in a legal nonterminal name.
+.)f
+.sh 3 "User Declarations"
+.pp
+By default, \*(TL generates a parameterless procedure,
+.q "YYParse",
+that must \fIwith\fP the tokens package and will call
+the user supplied routines,
+.q "YYLex"
+and
+.q "YYError".
+If the user desires, the procedure
+may be incorporated within a package by providing a package
+declaration in the last section of the specification file.  The package
+declaration is identical to that of an Ada package
+declaration with the key marker,
+.q "##",
+substituted  where the body of YYParse is to be inserted.  See \*(FN for
+an example.
+.pp
+The user is responsible for providing the with and use clauses
+for the Tokens, Parse Table, and Text_IO packages used by the parser.  An
+example of the user declarations section is shown in \*(FN.  The filename
+associated with this specification is \fBexample_parser.y\fP.
+.FG
+.br
+'nr Cs 1
+'nr AF \n(.u
+'nf
+'cs R 24
+'cs I 24
+'cs B 24
+'if !'\n(.z''  \{\
+\!'  cs R 24
+\!'  cs I 24
+\!'  cs B 24   \}
+\s10
+\-\-\fI Token Declarations and Rules Section would be up here.\fP
+%%
+
+\fBpackage\fP Example_Parser \fBis\fP
+  \fBprocedure\fP YYParse;
+  Syntax_Error : \fBexception\fP;
+\fBend\fP Example_Parser;
+
+\fBwith\fP Example_Parser_Tokens,
+     Example_Parser_Shift_Reduce,
+     Example_Parser_Goto,
+     Text_IO;
+\fBuse\fP  Example_Parser_Tokens,
+     Example_Parser_Shift_Reduce,
+     Example_Parser_Goto,
+     Text_IO;
+
+\fBpackage\fP \fBbody\fP Example_Parser \fBis\fP
+
+  \fBfunction\fP YYLex \fBreturn\fP Token \fBis\fP
+  \fBbegin\fP
+    ...
+  \fBend\fP YYLex;
+
+  \fBprocedure\fP YYError(S : \fBin\fP string) \fBis\fP
+  \fBbegin\fP
+    Put_Line(S);
+    \fBraise\fP Syntax_Error;
+  \fBend\fP YYError;
+
+  \-\-\fI Miscellaneous declarations and subprograms\fP
+  ...
+
+##  \-\-\fI YYParse will be inserted here.\fP
+
+\fBend\fP Example_Parser;
+.br
+'if !\n(AF=0 .fi
+'rr AF
+'cs R
+'cs I
+'cs B
+.if !'\n(.z'' \{\
+\!'  cs R
+\!'  cs I
+\!'  cs B     \}
+'nr Cs 0
+\s0
+.FE "Sample User Declarations Section"
+.sh 3 "User Supplied Routines"
+.pp
+The user must provide a lexical analyzer to read the input and to send
+the appropriate tokens along with their values to the parser
+generated by \*(TL.  The lexical analyzer must be declared as an
+Ada function
+.q "YYLex"
+that returns an enumeration type value corresponding
+to a token in the grammar.  The enumeration type is declared in the
+.q "tokens"
+package generated by \*(TL for use by the lexical analyzer.
+.pp
+For example, given the input
+
+.(b
+.(l
+%token a b
+{
+    subtype YYSType is Integer;
+}
+%%
+S : a ',' b;
+%%
+.)l
+.)b
+
+.pp
+\*(TL will generate a file,
+.q "base_tokens.ada",
+containing the following package declaration:
+.(b
+.(l
+.br
+'nr Cs 1
+'nr AF \n(.u
+'nf
+'cs R 24
+'cs I 24
+'cs B 24
+'if !'\n(.z''  \{\
+\!'  cs R 24
+\!'  cs I 24
+\!'  cs B 24   \}
+\s10
+\fBpackage\fP Base_Tokens \fBis\fP
+
+  \fBsubtype\fP YYSType \fBis\fP Integer;
+
+  YYLVal,YYVal : YYSType;
+
+  \fBtype\fP Token \fBis\fP (Error, End_of_Input, A, B, ',');
+
+  Syntax_Error : \fBexception\fP;
+
+\fBend\fP Base_Tokens;
+.br
+'if !\n(AF=0 .fi
+'rr AF
+'cs R
+'cs I
+'cs B
+.if !'\n(.z'' \{\
+\!'  cs R
+\!'  cs I
+\!'  cs B     \}
+'nr Cs 0
+\s0
+.)l
+.)b
+.(b
+.pp
+The user's corresponding lexical analyzer might look like:
+.(l
+.br
+'nr Cs 1
+'nr AF \n(.u
+'nf
+'cs R 24
+'cs I 24
+'cs B 24
+'if !'\n(.z''  \{\
+\!'  cs R 24
+\!'  cs I 24
+\!'  cs B 24   \}
+\s10
+\fBwith\fP Text_IO, Tokens;
+\fBuse\fP  Text_IO, Tokens;
+\fBfunction\fP YYLex \fBreturn\fP Token \fBis\fP
+  Char : Character;
+\fBbegin\fP
+
+  \fBif\fP End_of_File \fBthen\fP
+    \fBreturn\fP End_of_Input;
+  \fBend\fP \fBif\fP;
+
+  \fBloop\fP
+    Get(Char);
+    \fBcase\fP Char \fBis\fP
+      \fBwhen\fP 'A' | 'a' =>
+        YYLVal := 1;
+        \fBreturn\fP a;
+      \fBwhen\fP 'B' | 'b' =>
+        YYLVal := 2;
+        \fBreturn\fP b;
+      \fBwhen\fP ','       =>
+        YYLVal := 0;
+        \fBreturn\fP ',';
+      \fBwhen\fP \fBothers\fP    =>
+        \fBreturn\fP Error;
+    \fBend\fP \fBcase\fP;
+  \fBend\fP \fBloop\fP;
+\fBend\fP YYLex;
+.br
+'if !\n(AF=0 .fi
+'rr AF
+'cs R
+'cs I
+'cs B
+.if !'\n(.z'' \{\
+\!'  cs R
+\!'  cs I
+\!'  cs B     \}
+'nr Cs 0
+\s0
+.)l
+.)b
+.pp
+The tokens \fIError\fP and \fIEnd_of_Input\fP are special predefined tokens
+that should not be declared by the user.  The \fIEnd_of_Input\fP token
+should be returned by the lexical analyzer after all the lexical
+input has been read.  The \fIError\fP token is used for error recovery
+and is discussed later.  If tokens have values associated with them,
+the lexical analyzer may return these values by assigning them to the
+variable,
+.q "YYLVal".
+In the example above, token `A' will have a value of 1
+and token `B' will have a value of 2.
+.q "YYVal"
+may be used to
+access the current value associated with the last symbol recognized
+by the parser.  For example, at the end of the parse
+.q "YYVal"
+contains the value associated with the start symbol.  \fIAlthough the
+user can assign values to
+.q "YYVal",
+\fBit is not recommended since it will overwrite assignments
+made by previous actions\fP.
+.pp
+In addition to the lexical analyzer, the user must provide an
+error reporting procedure,
+.q "YYError",
+that takes a string, corresponding to an error message, as an argument.
+.q "YYError"
+is automatically called by the parser when it detects a syntax error.
+.sh 2 "Advanced Topics"
+.sh 3 "Ambiguity and Conflicts
+.pp
+A grammar is ambiguous if the parser can reach a configuration where
+it has a choice between a shift or one or more reduce actions or
+a choice among several reduce actions.  There is never a shift/shift
+conflict.  \*(TL detects and reports ambiguous grammars and provides two
+default rules for resolving ambiguity:
+
+.np
+In a shift/reduce conflict, the shift is chosen.
+.np
+In a reduce/reduce conflict, the reduce involving the earlier rule
+is chosen.
+
+.pp
+The verbose file reports ambiguities in the grammar and shows how they have
+been resolved.  For example, consider the infamous \fIdangling else\fP grammar:
+.(b
+.(l
+%token IF_TOKEN  COND THEN_TOKEN  ELSE_TOKEN  ID
+%%
+
+stat : ID
+     | if_statement
+     ;
+
+if_statement  : IF_TOKEN COND THEN_TOKEN stat
+              | IF_TOKEN COND THEN_TOKEN stat ELSE_TOKEN stat
+	          ;
+%%
+
+The grammar causes a shift/reduce conflict reported in state
+8 of the verbose file
+
+------------------
+State  8
+
+Kernel
+( 3)  IF_STATEMENT	: IF_TOKEN  COND THEN_TOKEN  STAT _
+( 4)  IF_STATEMENT	: IF_TOKEN  COND THEN_TOKEN  STAT _
+			  ELSE_TOKEN STAT
+
+Closure
+( 3)  IF_STATEMENT	: IF_TOKEN  COND THEN_TOKEN  STAT _
+( 4)  IF_STATEMENT	: IF_TOKEN  COND THEN_TOKEN  STAT _
+			  ELSE_TOKEN  STAT
+
+
+*** Conflict on input ELSE_TOKEN
+	Reduce  3	or	Shift  9
+
+ 	ELSE_TOKEN  	shift  9
+ 	default 	reduce  4
+------------------
+
+.)l
+.)b
+
+.pp
+The verbose entry states that if the parser sees an ELSE_TOKEN in state 8,
+it has a choice between shifting the token and entering state 9 or reducing
+by rule 3.  In other words, an expression of the form:
+.(b
+.(l
+        if cond1 then if cond2 then statement else statement
+.)l
+.)b
+.lp
+can be parsed as,
+.(b
+.(l
+        if cond1 then statement else statement
+.)l
+.)b
+.lp
+or as,
+.(b
+.(l
+        if cond1 then statement
+.)l
+.)b
+.pp
+The default action taken by \*(TL is to shift the ELSE_TOKEN;
+this has the effect of matching an \fIelse\fP with the nearest \fIif\fP
+token.
+.sh 3 "Precedence and Associativity
+.pp
+Rewriting a grammar to eliminate ambiguities will often result
+in an unnatural looking grammar and a less efficient parser.  For example,
+consider the original calculator grammar :
+
+.(b
+.(l
+
+    expression : term
+               | expression '+' term
+               | expression '\-' term
+               ;
+
+    term       : factor
+               | term '*' factor
+               | term '/' factor
+               ;
+
+    factor     : IDENTIFIER
+               | NUMBER
+               | '(' expression ')'
+               ;
+
+.)l
+.)b
+
+.(b
+.pp
+In the above grammar, the productions:
+
+.(l
+
+    expression : expression '+' term
+               | expression '\-' term
+
+.)l
+.)b
+.lp
+exist only to enforce the precedence of multiplicative
+operators over additive operators.  For example, the input:
+.(b
+.(l
+    a * b + c
+.)l
+.)b
+.lp
+is parsed as,
+.(b
+.(l
+    Factor * b + c
+    Term * b + c
+    Term * Factor + c
+    Term + c
+    Expression + c
+    Expression + Factor
+    Expression + Term
+    Expression
+.)l
+.)b
+.lp
+Similarly,
+.(b
+.(l
+    a + b * c
+.)l
+.)b
+.lp
+is parsed as,
+.(b
+.(l
+    a + b * c
+    Factor + b * c
+    Term + b * c
+    Expression + b * c
+    Expression + Term * c
+    Expression + Term * Factor
+    Expression + Term
+    Expression
+.)l
+.)b
+.pp
+Ideally we would prefer to represent the grammar using the more natural
+but ambiguous specification:
+.(b
+.(l
+
+    expression : expression '+' expression
+               | expression '\-' expression
+               | expression '*' expression
+               | expression '/' expression
+               | '(' expression ')'
+               | IDENTIFIER
+               | NUMBER
+               ;
+.)l
+.)b
+
+.pp
+Note that the grammar above also contains fewer
+productions and may result in a faster parser.  However, the grammar
+is ambiguous because inputs of the form
+.(b
+.(l
+a op1 b op2 c
+.)l
+.)b
+.lp
+can be parsed as,
+.(b
+.(l
+(a op1 b) op2 c
+.)l
+.)b
+.lp
+or as,
+.(b
+.(l
+a op1 (b op2 c).
+.)l
+.)b
+Moreover, the default resolution scheme used by \*(TL will result in an
+incorrect parser.
+.pp
+Fortunately, \*(TL provides a scheme to allow the user to assign precedence
+and associativity to tokens and productions when the default
+disambiguating rules are inadequate.  The notion of precedence
+and associativity is particularly useful for grammars involving
+arithmetic expressions as in the example above.  For example, the
+shift-reduce conflicts shown below:
+.(b
+.(l
+
+( 1)  EXPRESSION	: EXPRESSION _ '+' EXPRESSION
+( 3)  EXPRESSION	: EXPRESSION '*' EXPRESSION _
+
+*** Conflict on input '+'
+	Reduce  3	or	Shift  6
+
+( 1)  EXPRESSION	: EXPRESSION '+' EXPRESSION _
+( 3)  EXPRESSION	: EXPRESSION _ '*' EXPRESSION
+
+*** Conflict on input '*'
+	Reduce  1	or	Shift  8
+
+.)l
+.)b
+
+.lp
+can be resolved by giving priority to the action involving the token with
+the highest precedence.  Since '*' has higher precedence
+than '+', the first conflict will be resolved in favor of a
+reduce and the second in favor of a shift.
+.pp
+In addition, shift-reduce conflicts  also exist for
+.(b
+.(l
+( 1)  EXPRESSION	: EXPRESSION _ '+' EXPRESSION
+( 1)  EXPRESSION	: EXPRESSION '+' EXPRESSION _
+
+*** Conflict on input '+'
+	Reduce  1	or	Shift  6
+
+( 3)  EXPRESSION	: EXPRESSION _ '*' EXPRESSION
+( 3)  EXPRESSION	: EXPRESSION '*' EXPRESSION _
+
+*** Conflict on input '*'
+	Reduce  3	or	Shift  8
+.)l
+.)b
+
+.pp
+In these cases, precedence is of no help since the conflicts
+involve the same tokens.  However, conflicts involving tokens
+with the same precedence may be resolved using associativity rules.  Left
+associative operators imply a reduce.  Conversely, right
+associative operators imply a shift.  In the above example,
+both '*' and '+' are left associative, and therefore the
+conflicts should be resolved in favor of the reduce action.
+.pp
+Precedence and associativity is assigned to tokens in the
+declarations section using the keywords,
+.q "%left",
+.q "%right",
+and
+.q "%nonassoc",
+followed by a list of tokens.
+.q "%nonassoc"
+denotes nonassociative
+tokens such as the Ada relational operators.  Precedence declarations
+are listed in order of increasing precedence with tokens on the
+same line having identical precedence and associativity.  For example,
+an Ayacc specification of an
+arithmetic expression  grammar might look like:
+.(b
+.(l
+%token number   \-\- No prec/assoc
+
+%right '='
+%left  '+' '-'
+%left  '*' '/'
+%left  DUMMY    \-\- This token is not used by
+                \-\- the lexical analyzer
+
+exp : exp '=' exp
+    | exp '+' exp
+    | exp '\-' exp
+    | exp '*' exp
+    | exp '/' exp
+    | '\-' exp   %prec dummy  \-\- changes the default precedence of
+                         \-\- this rule to that of token dummy;
+    | NUMBER
+    ;
+%%
+.)l
+.)b
+
+.pp
+The precedence and associativity rules used by \*(TL to resolve
+conflicts are summarized below :
+
+.np
+A grammar rule inherits the precedence and associativity of
+the last token or literal in its body.
+.np
+If either the grammar rule or the token has no precedence
+and associativity, \*(TL uses its default scheme for
+resolving conflicts.  Reduce/reduce conflicts are always resolved
+according to the rule that appears first in the specification file.
+.np
+If there is a shift/reduce conflict and the rule and token
+have precedence associated with them, the conflict is
+resolved in favor of the rule/token with the highest
+precedence.  If the precedences are equal, left
+associativity implies a reduce, right associativity implies
+a shift, and nonassociativity implies an error.
+.np
+The precedence of a grammar rule may be explicitly set by
+the keyword
+.q "%prec"
+and a trailing token that specifies
+that the rule inherits the precedence of the token.  The
+example above uses a dummy token to give unary minus
+the highest precedence for arithmetic operators.
+.sh 3 "Error Recovery"
+.pp
+By default, the Ayacc generated parser calls
+.q "YYError"
+and aborts
+as soon as a syntax error is encountered.  Although this behavior is
+adequate for some applications, it is often useful for the parser
+to continue parsing so that further syntax errors can be detected.  To
+accomplish this, \*(TL provides a simple method
+to indicate where error recovery should be attempted.  The parser
+makes no attempt to repair incorrect input.  Instead, it attempts
+to reduce the phrase containing the syntax error to
+a user specified nonterminal.  After the reduction, parsing resumes as usual.
+.sh 3 "Error Productions"
+.pp
+Certain user-specified nonterminals form the basis of error
+recovery.  These nonterminals are specified by adding rules to the grammar
+of the form
+.nf
+
+     A : \(*a error \(*b
+
+.f
+.lp
+Where \(*a and \(*b are possibly empty strings of terminals and
+nonterminals.  The token
+.q Error
+is predefined and should not be used for any other purposes.  As with
+other rules, an action may be associated with any error
+production.
+.sh 3 "The Error Recovery Algorithm"
+.pp
+When a syntax error is detected, the parser calls procedure
+.q YYError
+with the message
+.q "Syntax Error"
+and then attempts to recover.  The error recovery process
+can be broken down into three steps.
+.np
+The parser pops the stack zero or more times, until
+it finds the top most state where a shift on
+.q error
+is legal.
+This state will be associated with some item of the form
+.sp
+.nf
+       A : \(*a _ error \(*b
+.f
+.ip
+If the stack contains no such state, the parser raises the exception
+.q "Syntax_Error"
+after popping the entire stack.
+.np
+Next, the parser executes a shift on
+.q Error
+pushing the state associated with the item
+.br
+.nf
+       A : \(*a error _ \(*b
+.f
+.ip
+onto the stack.
+.np
+The parser then attempts to resume parsing with the current lookahead
+token set to the token that caused the error.  All new tokens
+that would cause an error are quietly discarded
+until one token is shifted.  If the parser discards the
+.q "End_of_Input"
+token it will raise a
+.q "Syntax_Error"
+exception; otherwise,
+parsing resumes normally after the first token is shifted.
+.pp
+If a new syntax error is detected before three valid shifts,
+error recovery is reinitiated without reporting a syntax error.  This
+prevents an avalanche of error messages caused by incomplete
+error recovery.
+.sh 3 "An Example of Error Recovery"
+.pp
+A rule designed to recover from syntax errors in Ada statements might
+have the form:
+.(l C
+\fIstatement : error ;\fP
+.)l
+.lp
+This identifies
+.q statement
+as a location where errors are expected and will cause the parser to
+attempt to skip over statements containing syntax errors.
+.pp
+Now suppose that the parser was parsing the following statement:
+.(l C
+\fIi := 5 + + j \- f(1) + 1;\fP
+.)l
+.lp
+When the parser detects the syntax error,  it will have already
+pushed a sequence of states on top of the stack corresponding
+to the input up to the second plus sign.  These states would
+be popped one at a time until a state that had an action shift on
+.q Error
+was encountered.  Since a statement was being parsed, this
+state would be associated with the item:
+.(l C
+\fIstatement : _ error\fP
+.)l
+.lp
+The parser will now perform a shift on input
+.q Error
+and enter a state associated with the item:
+.(l C
+\fIstatement : error _\fP
+.)l
+.lp
+The remaining input would be:
+.(l C
+\fI+ j \- f(1) + 1;\fP
+.)l
+.pp
+Now the parser would attempt to resume parsing, discarding any
+tokens that would cause an error, until a shift action is
+executed.  Since the parser will reduce the
+.q Error
+token to a statement, the only token that would allow a shift to
+occur would be one that could follow a statement.  The plus sign
+would be discarded because it could not follow a statement,
+but because identifier
+.q j
+could follow a statement,
+the parser would shift the identifier
+.q j
+and resume parsing as if
+.q j
+was at the start of a new statement.  The minus sign
+would cause a new error since no statement can begin with:
+.(l C
+\fIj \-\fP
+.)l
+.lp
+Although error recovery will occur again, a new syntax error would not
+be reported because three tokens have not been successfully shifted.  After
+popping the stack and shifting the
+.q Error
+token,
+the parser would again enter the state associated with:
+.(l C
+\fIstatement : error _\fP
+.)l
+.lp
+and the remaining input would be:
+.(l C
+\fI\- f(1) + 1;\fP
+.)l
+.lp
+The parser would discard tokens again until it found one
+that could follow a statement.  Parsing would resume with the identifier
+.q f
+, since
+.q f
+could be the start of a new statement.  The parser would shift
+.q f,
+the left parenthesis, the integer, and the right parenthesis.  When it
+reads the plus sign it would think it encountered a new
+syntax error.  This time it would report
+a syntax error since three tokens have been successfully shifted.  After
+the states are popped and the
+.q Error
+token has been shifted the parser would continue discarding
+tokens up to and including the semicolon.  If the input following the
+semicolon is a legal statement, parsing would resume normally.
+.sh 3 "More Control over Error Recovery"
+.pp
+In the previous example we saw how the error recovery scheme might
+cause the parser to incorrectly resume parsing while it was still
+in the phrase that caused the error.  It is possible to exert more
+control over error recovery by placing tokens after the
+.q Error
+token.  For example, if a syntax error was detected while parsing
+a statement, the production:
+.(l C
+\fIstatement : error ';'\fP
+.)l
+.lp
+would cause the parser to discard tokens until a semicolon is read
+because
+after simulating the shift on
+the
+.q Error
+token, the parser would enter a state associated with the item:
+.(l C
+\fIstatement : error _ ';'\fP
+.)l
+.lp
+Since the only legal action is shift on semicolon, all tokens would
+be discarded until a semicolon was encountered.  This would prevent
+the false starts of the previous example.
+.pp
+Another way of obtaining more control over error recovery is
+to place tokens before the Error token.  Consider the following
+rules taken from an Ada grammar.
+.b(
+.nf
+
+	loop_statement : ..iteration_scheme..
+			   LOOP_TOKEN
+			   sequence_of_statements
+			   END_TOKEN
+			   ';'
+			;
+
+	..iteration_scheme.. :  \-\- empty
+			   | FOR_TOKEN    loop_param_spec
+			   | WHILE_TOKEN  condition
+			   | FOR_TOKEN    error
+			   | WHILE_TOKEN  error
+			   ;
+
+.f
+.b)
+.lp
+Here,
+.q "..iteration_scheme.."
+would not be reduced if an error was detected
+unless either a FOR_TOKEN or a WHILE_TOKEN was seen on the input.  Given
+the following production:
+.(l C
+\fI\&..iteration_scheme.. : error ;\fP
+.)l
+.lp
+it is possible that
+.q "error"
+could be reduced to
+.q "..iteration_scheme.."
+even though a syntax error was detected when the parser was in a state
+where it could expect a string derived from
+.q "..iteration_scheme..".
+If this happened,
+error recovery would discard tokens until a
+.q LOOP_TOKEN
+(the only token that can follow an
+.q "..iteration_scheme.."
+),
+was encountered.  This is clearly unacceptable if
+the next string was really a statement.
+.pp
+Sometimes it is useful for the parser to report errors before correctly
+shifting
+three tokens.  The procedure
+.q YYErrOK
+will force the parser to believe it has fully recovered from
+any syntax error causing it to report errors in the following
+three tokens.  For example, an interactive application might have the rules
+.(b
+.nf
+
+	lists : lists list END_OF_LINE
+			{
+			   \-\- print the value of $1
+			}
+	     | list END_OF_LINE
+			{
+			   \-\- print the value of $1
+			}
+	     | error END_OF_LINE
+			{
+			    YYErrOK;
+			    Put_Line("Reenter previous line");
+			}
+	     ;
+
+.f
+.)b
+.lp
+The call to YYErrOK will tell the parser it has correctly shifted
+three tokens causing the next syntax error to be reported.  If the
+call to YYErrOK was not in the action,
+a syntax error in the next three tokens would not be reported.
+.pp
+The user could provide an action in an error production that
+decides what tokens to discard.  Here, the old lookahead token must be
+cleared.  To accomplish this, the parser provides the procedure
+.q "YYClearIn"
+which will force the parser to read the next token.
+.sh 1 "Error Messages"
+.pp
+This section describes the error messages which may be displayed by
+\*(TL.  The error messages are divided into three categories:
+\fIInternal, Fatal, and Non Fatal.\fP
+The error message text is presented in \fBBold\fP type with
+variable items in \fIItalics\fP.
+.sh 2 "Internal Error Messages"
+.pp
+The following error message will always be displayed
+when an error is detected within the tool, and may be preceded by additional
+descriptive messages.
+.sp
+.EM "Unexpected Error, Terminating..."
+.sh 2 "Fatal Error Messages"
+.pp
+The following error messages are produced when a fatal error condition is
+detected which can be resolved by the tool user.  Where appropriate, the error
+message will be followed by the associated file specification, and the context
+and column
+location of the error.
+.sp
+.EM "Can't Open \fISource_Filename\fP."
+.EM "Too Many Parameters."
+An excessive number of parameters were specified on the command line.
+.sh 2 "Non Fatal Error Messages" 
+.pp  
+The following error messages display conditions which may be of interest to
+the tool user.  However, the displayed condition will not cause the tool to
+terminate execution.  Where appropriate, the error
+message will be followed by the associated file specification, and the context
+and column
+location of the error.
+.sp
+.EM "Attempt to Define Terminal as Start_Symbol."
+.EM "Attempt to Redefine Precedence."
+.EM "Context Clause Specifications May Not Appear After Ada \
+Declarations."
+.EM "Expecting a Colon after the Lefthand Side of the Rule."
+.EM "Expecting Identifier."
+.EM "Expecting Next Section."
+.EM "Expecting Package Name."
+.EM "Expecting a Semicolon."
+.EM "Expecting a Terminal after %prec."
+.EM "Expecting Token Declaration."
+.EM "Illegal Context Clause Specification."
+.EM "Illegal Filename."
+.EM "Illegal Symbol Following $."
+.EM "Illegal Symbol as Token."
+.EM "Illegal Token."
+.EM "Illegal Token Following %prec."
+.EM "Illegal use of $\fIInteger\fP."
+.EM "\fIInteger\fP Shift/Reduce Conflicts."
+In a shift/reduce conflict, the shift is chosen.
+.EM "\fIInteger\fP Reduce/Reduce Conflicts."
+In a reduce/reduce conflict, the reduce involving the earlier rule is chosen.
+.EM "Nonterminal \fISymbol Name\fP Does Not Appear on the Left Hand \
+Side of Any Rule."
+.EM "Nonterminal \fISymbol Name\fP Does Not Derive a Terminal String."
+.EM "%prec Cannot be Preceded by an Action."
+.EM "Syntax Error detected in \fIFile Spec\fP."
+.EM "The Start Symbol has been Defined Already."
+.EM "Terminals Cannot be on the Lefthand Side of a Rule."
+.EM "Terminal Following %prec has no Precedence."
+.EM "Unexpected End of File before First \'%%\'."
+The \fBAyacc\fP input specification should consist of three parts delimited by \fB%%\fP. 
+.EM "Unexpected Symbol."
+.EM "Use Verbose Option."
+.sh 1 "Known Deficiencies"
+.pp
+\*(TL has no known deficiencies.
+.sh 1 "Release Notes"
+.pp
+\*(TL was designed and developed by David Taback and Deepak Tolani at
+UC Irvine in support of the \fIArcadia Research Project\fP.
+.pp
+Additional enhancements were made by Ronald J. Schmalz and are summarized
+below.
+.np
+Addition of \fI%with\fP and \fI%use\fP directives which permits automatic
+insertion of a context clause information on the generated token package.
+.np
+Unique unit name generation; the units created by \*(TL are now created as
+a function of the input file specification.  This allows the user to have
+multiple \*(TL generated parsers within the same library.
+.AP "A Detailed Example"
+.pp
+Below is a full Ayacc specification for an integer desk calculator and
+a \fBLex\fP specification of the corresponding lexical analyzer.  The Ayacc
+specification file is named \fIcalculator.y\fP.  The calculator
+has 26 variables labeled `A' through `Z' and supports most of the Ada
+integer arithmetic operators.  The example illustrates most of the
+advanced features of \*(TL including precedence, associativity,
+error recovery, and interfacing to \fBLex\fP.
+
+
+.nf
+                 \-\- The Ayacc specification file  \-\-
+
+%token '(' ')' NUMBER IDENTIFIER NEW_LINE
+
+%right     '='
+%left      '+' '\-'
+%left      '*' '/'
+%right     DUMMY
+%nonassoc  EXP
+
+{
+.br
+'nr Cs 1
+'nr AF \n(.u
+'nf
+'cs R 24
+'cs I 24
+'cs B 24
+'if !'\n(.z''  \{\
+\!'  cs R 24
+\!'  cs I 24
+\!'  cs B 24   \}
+\s10
+\fBtype\fP key_type \fBis\fP (Cval, Ival, Empty);
+
+\fBtype\fP YYSType (Key : Key_Type := Empty)  \fBis\fP
+  \fBrecord\fP
+    \fBcase\fP Key \fBis\fP
+      \fBwhen\fP Cval  =>
+        Register : Character;
+      \fBwhen\fP Ival  =>
+        Value    : Integer;
+      \fBwhen\fP Empty =>
+        \fBnull\fP;
+    \fBend\fP \fBcase\fP;
+  \fBend\fP \fBrecord\fP;
+.br
+'if !\n(AF=0 .fi
+'rr AF
+'cs R
+'cs I
+'cs B
+.if !'\n(.z'' \{\
+\!'  cs R
+\!'  cs I
+\!'  cs B     \}
+'nr Cs 0
+\s0
+}
+
+%%
+
+statements : statements statement
+           |
+           ;
+
+statement  : expr NEW_LINE
+               { Put_Line(Integer'Image($1.value)); }
+           | error NEW_LINE
+               { Put_Line("Try again");
+                 YYErrOK;
+               }
+             statement
+           ;
+
+expr   : IDENTIFIER '=' expr
+           { registers($1.register) := $3.value;
+             $$ := (key => ival, value => $3.value); }
+       | expr '+' expr
+           { $$ := (key => ival, value => $1.value + $3.value); }
+       | expr '\-' expr
+           { $$ := (key => ival, value => $1.value \- $3.value); }
+       | expr '*' expr
+           { $$ := (key => ival, value => $1.value * $3.value); }
+       | expr '/' expr
+           { $$ := (key => ival, value => $1.value / $3.value); }
+       | expr EXP expr
+           { $$ := (key => ival,
+                    value => Integer(float($1.value) ** $3.value)); }
+       | '\-' expr  %prec DUMMY
+           { $$ := (key => ival, value => \- $2.value ); }
+       | '(' expr ')'
+           { $$ := (key => ival, value => $2.value); }
+       | NUMBER
+           { $$ := (key => ival, value => $1.value) ; }
+       | IDENTIFIER
+           { $$ := (key => ival, value  => registers($1.register)); }
+       ;
+
+%%
+.br
+'nr Cs 1
+'nr AF \n(.u
+'nf
+'cs R 24
+'cs I 24
+'cs B 24
+'if !'\n(.z''  \{\
+\!'  cs R 24
+\!'  cs I 24
+\!'  cs B 24   \}
+\s10
+\fBpackage\fP Calculator \fBis\fP
+  \fBprocedure\fP YYParse;
+\fBend\fP Calculator;
+
+\fBwith\fP Calculator_Tokens,
+     Calculator_Shift_Reduce,
+     Calculator_Goto,
+     Text_IO;
+\fBuse\fP  Calculator_Tokens,
+     Calculator_Shift_Reduce,
+     Calculator_Goto,
+     Text_IO;
+
+\fBpackage\fP \fBbody\fP Calculator \fBis\fP
+
+  Registers : \fBarray\fP('A'..'Z') \fBof\fP Integer;
+
+  \fBprocedure\fP YYError(Text : \fBin\fP String) \fBis\fP
+  \fBbegin\fP
+    Put_Line(Text);
+  \fBend\fP;
+##
+
+\fBend\fP Calculator;
+.br
+'if !\n(AF=0 .fi
+'rr AF
+'cs R
+'cs I
+'cs B
+.if !'\n(.z'' \{\
+\!'  cs R
+\!'  cs I
+\!'  cs B     \}
+'nr Cs 0
+\s0
+.bp
+                    /* The Lex specification file */
+
+%{
+#include "calculator.h"
+static char reg;
+static int  value;
+%}
+
+%%
+[A\-Z]       { reg = yytext[0]; return IDENTIFIER; }
+[a\-z]       { reg = yytext[0] \- 'a' + 'A'; return IDENTIFIER; }
+[0\-9]+      { value = atoi(yytext); return NUMBER; }
+"**"         { return EXP; }
+[()+/*=\-]   { return yytext[0]; }
+\en          { return NEW_LINE; }
+[\et ]+      {}
+%%
+
+yywrap()
+{
+    return 1;
+}
+
+get_token()
+{
+    return yylex();
+}
+
+get_register()
+{
+    return reg;
+}
+
+get_value()
+{
+    return value;
+}
+.bp
+.br
+'nr Cs 1
+'nr AF \n(.u
+'nf
+'cs R 24
+'cs I 24
+'cs B 24
+'if !'\n(.z''  \{\
+\!'  cs R 24
+\!'  cs I 24
+\!'  cs B 24   \}
+\s10
+
+                 \-\-\fI A modified version of the C_Lex package --\fP
+
+\fBwith\fP Calculator_Tokens; \fBuse\fP Calculator_Tokens;
+\fBpackage\fP Calculator_C_Lex \fBis\fP
+  \fBfunction\fP YYLex \fBreturn\fP Token;
+\fBend\fP Calculator_C_Lex;
+
+
+\fBpackage\fP \fBbody\fP Calculator_C_Lex \fBis\fP
+
+  \fBfunction\fP GET_TOKEN \fBreturn\fP Integer;
+
+  \fBpragma\fP INTERFACE(C, GET_TOKEN);
+
+  \-\-\fI These four declarations have been added\fP
+
+  \fBfunction\fP get_register \fBreturn\fP Character;
+  \fBfunction\fP get_value    \fBreturn\fP Integer;
+  \fBpragma\fP interface(c, get_register);
+  \fBpragma\fP interface(c, get_value);
+
+  \fBtype\fP Table \fBis\fP \fBarray\fP(0..255) \fBof\fP token;
+
+  Literals : \fBconstant\fP Table := Table'(0      => END_OF_INPUT,
+                                      40     => '(',
+                                      41     => ')',
+                                      61     => '=',
+                                      43     => '+',
+                                      45     => '-',
+                                      42     => '*',
+                                      47     => '/',
+                                      \fBothers\fP => ERROR);
+
+  \-\-\fI Continued on next page ...\fP
+.br
+'if !\n(AF=0 .fi
+'rr AF
+'cs R
+'cs I
+'cs B
+.if !'\n(.z'' \{\
+\!'  cs R
+\!'  cs I
+\!'  cs B     \}
+'nr Cs 0
+\s0
+.bp
+.br
+'nr Cs 1
+'nr AF \n(.u
+'nf
+'cs R 24
+'cs I 24
+'cs B 24
+'if !'\n(.z''  \{\
+\!'  cs R 24
+\!'  cs I 24
+\!'  cs B 24   \}
+\s10
+  \fBfunction\fP YYLex \fBreturn\fP TOKEN \fBis\fP
+    X   : Integer;
+  \fBbegin\fP
+    X := GET_TOKEN;
+    \fBif\fP X > 255 \fBthen\fP
+
+    \-\-\fI This case statement has been added to assign appropriate\fP
+    \-\-\fI values to YYLVal.\fP
+    \fBcase\fP TOKEN'VAL(X-256) \fBis\fP
+      \fBwhen\fP number     =>
+        YYLVal := (key => ival, value => get_value);
+      \fBwhen\fP identifier =>
+        YYLVal := (key => cval, register => get_register);
+      \fBwhen\fP \fBothers\fP => \fBnull\fP;
+    \fBend\fP \fBcase\fP;
+
+      \fBreturn\fP TOKEN'VAL(X-256);
+    \fBelse\fP
+      \fBreturn\fP LITERALS(X);
+    \fBend\fP \fBif\fP;
+  \fBend\fP YYLex;
+\fBend\fP Calculator_C_Lex;
+.br
+'if !\n(AF=0 .fi
+'rr AF
+'cs R
+'cs I
+'cs B
+.if !'\n(.z'' \{\
+\!'  cs R
+\!'  cs I
+\!'  cs B     \}
+'nr Cs 0
+\s0
+.fi
+.AP "Using the Verbose and Debug Options"
+.pp
+We will introduce the concept of an \fBitem\fP to describe the output file
+created by the \fIVerbose\fP option.  An item consists of a rule with
+an underscore at some position on the right side.  The underscore denotes
+the amount of input seen by the parser.  For example, an item of the form
+.(b
+.(l
+    X	: A B _ C
+.)l
+.)b
+.lp
+shows that the parser is examining input corresponding to the rule
+.q "X : A B C".
+The underscore states that the parser has has already seen
+.q "A B"
+and is expecting input that will match
+.q "C".
+.pp
+Items provide a means of finitely representing the possible
+legal inputs to the parser.  Each state contains a set of items corresponding
+to configurations indistinguishable to the parser.  For technical reasons,
+the set of items associated with a state fall into two categories termed
+the kernel and closure.  Users familiar with LR parsers
+may be interested in both the kernel and closure items, however the
+typical user need only be concerned with items in the closure.
+.pp
+The verbose file contains a list of the states along with their corresponding
+item sets and parse actions.  A sample verbose file for the simple grammar,
+.(b
+.(l
+%token id
+%%
+E : E '+' T
+  | T
+  ;
+
+T : T '*' id
+  | id
+  ;
+.)l
+.)b
+
+.lp
+is shown below.
+.(b
+.(l
+------------------
+State  0
+
+Kernel
+( 0)  $accept	: _ E END_OF_INPUT
+
+Closure
+( 0)  $accept	: _ E END_OF_INPUT
+( 1)  E	: _ E '+' T
+( 2)  E	: _ T
+( 3)  T	: _ T '*' ID
+( 4)  T	: _ ID
+
+
+	T 	goto  2
+	E 	goto  1
+ 	ID 	shift  3
+ 	default 	error
+------------------
+.)l
+.)b
+.(b
+.(l
+State  1
+
+Kernel
+( 0)  $accept	: E _ END_OF_INPUT
+( 1)  E	: E _ '+' T
+
+Closure
+( 0)  $accept	: E _ END_OF_INPUT
+( 1)  E	: E _ '+' T
+
+
+ 	END_OF_INPUT 	accept
+ 	'+' 	shift  5
+ 	default 	error
+------------------
+.)l
+.)b
+.(b
+.(l
+State  2
+
+Kernel
+( 2)  E	: T _
+( 3)  T	: T _ '*' ID
+
+Closure
+( 2)  E	: T _
+( 3)  T	: T _ '*' ID
+
+
+ 	'*' 	shift  6
+ 	default 	reduce  2
+------------------
+.)l
+.)b
+.(b
+.(l
+State  3
+
+Kernel
+( 4)  T	: ID _
+
+Closure
+( 4)  T	: ID _
+
+
+ 	default 	reduce  4
+------------------
+.)l
+.)b
+.(b
+.(l
+State  4
+
+Kernel
+( 0)  $accept	: E END_OF_INPUT _
+
+Closure
+( 0)  $accept	: E END_OF_INPUT _
+
+
+ 	default 	error
+------------------
+.)l
+.)b
+.(b
+.(l
+State  5
+
+Kernel
+( 1)  E	: E '+' _ T
+
+Closure
+( 1)  E	: E '+' _ T
+( 3)  T	: _ T '*' ID
+( 4)  T	: _ ID
+
+
+	T 	goto  7
+ 	ID 	shift  3
+ 	default 	error
+------------------
+.)l
+.)b
+.(b
+.(l
+State  6
+
+Kernel
+( 3)  T	: T '*' _ ID
+
+Closure
+( 3)  T	: T '*' _ ID
+
+
+ 	ID 	shift  8
+ 	default 	error
+------------------
+.)l
+.)b
+.(b
+.(l
+State  7
+
+Kernel
+( 1)  E	: E '+' T _
+( 3)  T	: T _ '*' ID
+
+Closure
+( 1)  E	: E '+' T _
+( 3)  T	: T _ '*' ID
+
+
+ 	'*' 	shift  6
+ 	default 	reduce  1
+------------------
+.)l
+.)b
+.(b
+.(l
+State  8
+
+Kernel
+( 3)  T	: T '*' ID _
+
+Closure
+( 3)  T	: T '*' ID _
+
+
+ 	default 	reduce  3
+
+.)l
+.)b
+.pp
+Using the verbose file it is possible to trace how the parser will
+process a string of tokens.  For example the string `ID * ID + ID' would
+be treated as follows:
+.(b
+.(l
+
+State Stack       Input
+    0          ID * ID + ID END_OF_INPUT
+.)l
+.)b
+.pp
+The verbose entry for state 0 shows that on a lookahead token of
+ID the action is a shift and the new state is 3.  Thus, the new
+configuration of the parser becomes
+.(b
+.(l
+State Stack     Input
+    3
+    0           * ID + ID END_OF_INPUT
+.)l
+.)b
+.pp
+For state 3, there is no explicit action associated with the lookahead
+token and therefore the default action is consulted.  The default
+action associated
+with state 3 is a reduction by rule 4) T : ID.  Recall that a reduction
+consists of two steps.  First state 3 is popped leaving state 0
+on top of the stack.  Next the parser determines a new state
+by consulting the current top of
+the stack and the right hand side of the rule.  This new state is
+signified by a
+.q "goto"
+entry in the current state.  The verbose entry
+for state 0 and symbol T is a goto to state 2 producing the
+new configuration:
+.(b
+.(l
+State Stack     Input
+    2
+    0           * ID + ID END_OF_INPUT
+.)l
+.)b
+.pp
+The remaining configurations in the parse are shown below:
+.(b
+.(l
+Shift 6
+
+State Stack    Input
+    6
+    2
+    0           ID + ID END_OF_INPUT
+.)l
+.)b
+.(b
+.(l
+Shift 8
+
+State Stack    Input
+    8
+    6
+    2
+    0           + ID END_OF_INPUT
+.)l
+.)b
+.(b
+.(l
+Default Reduce 3) T : T '*' ID
+Pop 8 6 2
+Goto state 2
+
+State Stack    Input
+    2
+    0           + ID END_OF_INPUT
+.)l
+.)b
+.(b
+.(l
+Default Reduce 2) E : T
+Pop 2
+Goto state 1
+
+State Stack    Input
+    1
+    0           + ID END_OF_INPUT
+.)l
+.)b
+.(b
+.(l
+Shift 5
+
+State Stack    Input
+    5
+    1
+    0           ID END_OF_INPUT
+.)l
+.)b
+.(b
+.(l
+Shift 3
+
+State Stack    Input
+    3
+    5
+    1
+    0           END_OF_INPUT
+.)l
+.)b
+.(b
+.(l
+Default reduce 4) T : ID
+Pop  3
+Goto 7
+
+State Stack    Input
+    7
+    5
+    1
+    0           END_OF_INPUT
+.)l
+.)b
+.(b
+.(l
+Default reduce 1) E : E +  T
+Pop  7 3 5
+Goto 1
+
+State Stack    Input
+    1
+    0           END_OF_INPUT
+.)l
+.)b
+.(b
+.(l
+Accept END_OF_INPUT
+Parse completes successfully
+.)l
+.)b
+.AP  "Differences between Yacc and Ayacc"
+.pp
+\*(TL was modeled after \fBYacc\fP and adheres to most of the conventions and
+features of its C analogue.  Most of the differences between the
+two programs are minor, but some differences will make it difficult
+to convert Yacc specifications into \*(TL
+counterparts.  Some of the most important differences
+are listed below:
+.sp
+.np
+Ayacc identifiers are case insensitive.
+.sp
+.np
+\*(TL does not provide a feature analogous to the %union and %type
+constructs of \fBYacc\fP.  At some sacrifice of convenience, similar
+functionality may be obtained by declaring YYSType as a
+variant record.
+.sp
+.np
+\*(TL requires the user to define YYSType.
+.sp
+.np
+There are no default actions in \*(TL.
+.sp
+.np
+\*(TL does not support the old and discouraged features of \fBYacc\fP.  In
+particular, %binary and %term are not allowed, actions cannot be
+specified using the
+.q "={"
+delimiter and all rules must end in a
+semicolon.  In addition, \*(TL uses braces rather than,
+.q "%{"and
+.q "%}",
+to denote declarations that should be written to the tokens package.
+.sp
+.np
+In \*(TL the tokens are an enumeration type rather than integers.
+.sp
+.np
+\*(TL does not permit escape characters to be entered as literals.
+.sp
+.np
+\fBYacc\fP generates a file containing the
+parser and parse tables and another file containing the
+macro definitions of the tokens declaration.  \*(TL generates four
+separate files corresponding to
+the parser, the two parse tables, and the tokens package.  In addition,
+\*(TL can generate the parser as a procedure
+or as a package depending on the user's specification
+file.
+.AP "Ayacc Specification File Guidelines"
+.pp
+The key to preparing efficient and readable Ayacc specification files is
+to make each part of the specification distinguishable from the rest.  This
+appendix is provided to give the new \*(TL user suggestions on how to
+prepare specification files which are:
+.br
+.po +2.0i
+.np
+Efficient.
+.np
+Easy to read.
+.np
+Easy to modify.
+.br
+.po -2.0i
+.lp
+\fBSpecification File Format\fP
+.sp
+.pp \" Forces paragraph numbering (.np) back to 1.
+.np
+Group grammar rules with a common left hand side together, and line up the
+right hand sides with the `:', `\^|', and `;'.  This enhances readability and
+makes adding new rules or actions easier.
+.np
+Use upper case for \fITokens\fP returned by the lexical analyzer and lower
+case for \fINon-Terminals\fP of the grammar.  This makes the distinction
+between terminals and non-terminals very clear.
+.np
+Place grammar rules and their corresponding actions on separate lines.  This
+enhances readability and maintainability.
+.pp
+The rule fragment shown in \*(FN defines the rules/actions for Ada
+identifier lists and is intended to exemplify the guidelines
+listed above.
+.FG
+.CS
+identifier_list  :  IDENTIFIER
+                      {
+                        $$ := (Tag  => Identifier_List,
+                               List => Empty_List);
+                        Insert (Item => $1,
+                                Into => $$.List);
+                      }
+                 |  identifier_list ',' IDENTIFIER
+                      {
+                        $$ := $1;
+                        Insert (Item => $3,
+                                Into => $$.List);
+                      }
+                 ;
+.CE
+.FE "Identifier List Grammar and Actions"
+.AP "How the Parser Works"
+.pp
+The parser generated by \*(TL belongs to the class of parsers technically
+known as LALR(1).  Although the use of \*(TL does not require extensive
+knowledge of LALR grammars, an intuitive understanding of
+how the parser works will help the user to resolve ambiguities in the
+grammar specification and to write more efficient parsers.
+.pp
+The parser generated by \*(TL can be seen as a finite state
+machine with a stack of states.  The current state is always on the
+top of the stack; initially the stack contains state 0.  At any given
+moment during the parse, the parser uses its current state  and the
+value of the next lookahead token (obtained by calling
+.q "YYLex")
+to determine its next action.  Based on the current state and
+lookahead token, the parser performs one of four actions:
+
+.ip "ACCEPT"
+The parser accepts the grammar, completing the parse.
+
+.ip "ERROR"
+The parser detects a syntax error and calls
+.q "YYError".
+If no error
+recovery is specified the parser aborts.
+
+.ip "SHIFT"
+The parser uses the current state and the lookahead token to
+choose a new state that is pushed onto the stack.  The
+lookahead token is advanced to the next token in the input.
+
+.ip "REDUCE"
+Reduce actions occur when the parser recognizes the right hand
+side of a rule.  In a reduce action, the parser
+pops a state for every symbol on the right hand side of the rule.  The
+parser then uses the current state uncovered by the succession of pops
+and the nonterminal on the left hand side of the rule to
+choose a new state that is pushed onto the stack.  The
+lookahead token is unaffected by a reduce action.
+.AP "Porting Ayacc to Other Systems"
+.uh "Installing Ayacc"
+.pp
+\*(TL was developed using the Verdix Ada compiler (version v04.06) 
+running under UNIX 4.2 BSD and enhanced using the Dec Ada Compiler
+(version 1.2-15) running under VAX/VMS 4.3.  If you are using a different
+system, you may have to make a minor change to the \*(TL source.
+.uh "Reading arguments from the command line"
+.pp
+The Verdix compiler uses a library package   
+.q "U_Env" 
+to provide C-like facilities for reading arguments from the command
+line.  If your machine uses a different mechanism for passing parameters to
+the program, you will have to modify the subunit
+.q "Command_Line_Interface.Read_Command_Line" 
+from the Command_Line_Interface package.
+.if o \
+\{\
+.   bp
+.   lp
+\&
+.   sp 20
+.   ce
+\fIThis page is left intentionally blank.\fP
+.\}
+.++ P                            \" Start of Preliminary Section
+.CH "Table of Contents"
+.na
+.xp c
+.CH "List of Figures"
+.na
+.xp f
+.CH "List of Tables"
+.na
+.xp t

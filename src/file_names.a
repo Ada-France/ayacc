@@ -1,0 +1,349 @@
+-- $Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/file_names.a,v 1.2 88/11/28 13:38:59 arcadia Exp $ 
+
+-- Copyright (c) 1990 Regents of the University of California.
+-- All rights reserved.
+--
+--    The primary authors of ayacc were David Taback and Deepak Tolani.
+--    Enhancements were made by Ronald J. Schmalz.
+--
+--    Send requests for ayacc information to ayacc-info@ics.uci.edu
+--    Send bug reports for ayacc to ayacc-bugs@ics.uci.edu
+--
+-- Redistribution and use in source and binary forms are permitted
+-- provided that the above copyright notice and this paragraph are
+-- duplicated in all such forms and that any documentation,
+-- advertising materials, and other materials related to such
+-- distribution and use acknowledge that the software was developed
+-- by the University of California, Irvine.  The name of the
+-- University may not be used to endorse or promote products derived
+-- from this software without specific prior written permission.
+-- THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+-- IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+-- WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+-- Module       : file_names.ada
+-- Component of : ayacc
+-- Version      : 1.2
+-- Date         : 11/21/86  12:29:16
+-- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxfile_names.ada
+
+-- $Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/file_names.a,v 1.2 88/11/28 13:38:59 arcadia Exp $ 
+-- $Log:	file_names.a,v $
+--Revision 1.2  88/11/28  13:38:59  arcadia
+--Modified Get_Unit_Name function to accept legal Ada identifiers.
+--
+--Revision 1.1  88/08/08  12:11:56  arcadia
+--Initial revision
+--
+
+-- Revision 0,2  88/03/16  
+-- Set file names modified to include a file extension parameter.
+
+-- Revision 0.1  86/04/01  15:04:19  ada
+--  This version fixes some minor bugs with empty grammars 
+--  and $$ expansion. It also uses vads5.1b enhancements 
+--  such as pragma inline. 
+-- 
+-- 
+-- Revision 0.0  86/02/19  18:36:22  ada
+-- 
+-- These files comprise the initial version of Ayacc
+-- designed and implemented by David Taback and Deepak Tolani.
+-- Ayacc has been compiled and tested under the Verdix Ada compiler
+-- version 4.06 on a vax 11/750 running Unix 4.2BSD.
+--  
+
+    -- The collection of all file names used by Ayacc -- 
+
+package Ayacc_File_Names is
+
+    procedure Set_File_Names(Input_File, Extension: in String);
+    -- Sets the initial value of the file names
+    -- according to the INPUT_FILE.
+
+    function  Get_Source_File_Name        return String;
+    function  Get_Out_File_Name           return String;
+    function  Get_Verbose_File_Name       return String;
+    function  Get_Template_File_Name      return String;
+    function  Get_Actions_File_Name       return String;
+    function  Get_Shift_Reduce_File_Name  return String;
+    function  Get_Goto_File_Name          return String;
+    function  Get_Tokens_File_Name        return String;
+-- UMASS CODES :
+    function  Get_Error_Report_File_Name  return String;
+    function  Get_Listing_File_Name       return String;
+-- END OF UMASS CODES.
+    function  Get_C_Lex_File_Name	  return String;
+    function  Get_Include_File_Name	  return String;
+
+
+--RJS ==========================================
+
+  function C_Lex_Unit_Name               return String;
+  function Goto_Tables_Unit_Name         return String;
+  function Shift_Reduce_Tables_Unit_Name return String;
+  function Tokens_Unit_Name              return String;
+-- UMASS CODES :
+  function Error_Report_Unit_Name        return String;
+-- END OF UMASS CODES.
+--RJS ==========================================
+
+
+    Illegal_File_Name: exception;
+    -- Raised if the file name does not end with ".y"
+
+end Ayacc_File_Names;
+
+
+with STR_Pack;
+use  STR_Pack;
+
+with String_Pkg;
+package body Ayacc_File_Names is
+
+  SCCS_ID : constant String := "@(#) file_names.ada, Version 1.2";
+
+
+
+  Rcs_ID : constant String := "$Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/file_names.a,v 1.2 88/11/28 13:38:59 arcadia Exp $";
+
+    Max_Name_Length : constant := 50;
+
+    Source_File_Name       : STR(Max_Name_Length);
+    Out_File_Name          : STR(Max_Name_Length);
+    Verbose_File_Name      : STR(Max_Name_Length);
+    Template_File_Name     : STR(Max_Name_Length);
+    Actions_File_Name      : STR(Max_Name_Length);
+    Shift_Reduce_File_Name : STR(Max_Name_Length);
+    Goto_File_Name         : STR(Max_Name_Length);
+    Tokens_File_Name       : STR(Max_Name_Length);
+-- UMASS CODES :
+    Error_Report_File_Name : STR(Max_Name_Length);
+    Listing_File_Name      : STR(Max_Name_Length);
+-- END OF UMASS CODES.
+    C_Lex_File_Name        : STR(Max_Name_Length);
+    Include_File_Name      : STR(Max_Name_Length);
+ 
+
+--RJS ==========================================
+
+  function End_of_Unit_Name (Name : in String) return Natural is
+    Dot_Position : Natural := Name'Last;
+  begin
+    while Dot_Position >= Name'First and then
+          Name (Dot_Position) /= '.'
+    loop
+      Dot_Position := Dot_Position - 1;
+    end loop;
+    return Dot_Position - 1;
+  end End_of_Unit_Name;
+
+
+  function Get_Unit_Name (Filename : in String) return String is
+
+  -- modified to check for valid Ada identifiers. 11/28/88 kn
+
+    Filename_Without_Extension : constant String :=
+      Filename (Filename'First .. End_of_Unit_Name (Filename));
+
+    End_of_Directory : Natural := Filename_Without_Extension'Last + 1;
+
+
+    function Is_Alphabetic (Ch : in Character) return Boolean is
+    begin
+      return Ch in 'A' .. 'Z' or else
+             Ch in 'a' .. 'z';
+    end Is_Alphabetic;
+
+    function Is_AlphaNum_or_Underscore (Ch : in Character) return Boolean is
+    begin
+      return Is_Alphabetic(Ch) or else
+             Ch in '0' .. '9'  or else
+             Ch = '_';
+    end Is_AlphaNum_or_Underscore;
+
+  use String_Pkg;
+
+  begin
+    -- find end of directory
+    for Pos in reverse Filename_Without_Extension'FIRST..
+		       Filename_Without_Extension'LAST loop
+      exit when Filename_Without_Extension(Pos) = '/';
+      End_Of_Directory := Pos;
+    end loop;
+
+    if End_Of_Directory <= Filename_Without_Extension'LAST and then
+       Is_Alphabetic (Filename_Without_Extension (End_of_Directory)) then
+
+       Check_Remaining_Characters :
+       for i in End_Of_Directory + 1 .. Filename_Without_Extension'LAST 
+       loop
+	 if not Is_AlphaNum_or_Underscore (Filename_Without_Extension(i)) then
+	   return "";
+	 end if;
+       end loop Check_Remaining_Characters;
+
+       return Value (Mixed (Filename_Without_Extension (End_of_Directory ..
+                            Filename_Without_Extension'Last)));
+    else
+      return "";
+    end if;
+
+  end Get_Unit_Name;
+
+
+  function C_Lex_Unit_Name return String is
+    Filename : constant String := Value_of (Upper_Case (C_Lex_File_Name));
+  begin
+    return Get_Unit_Name (Filename);
+  end C_Lex_Unit_Name;
+
+
+  function Goto_Tables_Unit_Name return String is
+    Filename : constant String := Value_of (Upper_Case (Goto_File_Name));
+  begin
+    return Get_Unit_Name (Filename);
+  end Goto_Tables_Unit_Name;
+
+
+  function Shift_Reduce_Tables_Unit_Name return String is
+    Filename : constant String := Value_of (Upper_Case (Shift_Reduce_File_Name));
+  begin
+    return Get_Unit_Name (Filename);
+  end Shift_Reduce_Tables_Unit_Name;
+
+
+  function Tokens_Unit_Name return String is
+    Filename : constant String := Value_of (Upper_Case (Tokens_File_Name));
+  begin
+    return Get_Unit_Name (Filename);
+  end Tokens_Unit_Name;
+
+-- UMASS CODES :
+  function Error_Report_Unit_Name return String is
+    Filename : constant String := Value_of (Upper_Case (Error_Report_File_Name));
+  begin
+    return Get_Unit_Name (Filename);
+  end Error_Report_Unit_Name;
+-- END OF UMASS CODES.
+
+--RJS ==========================================
+
+
+    function  Get_Source_File_Name return String is
+    begin
+	return Value_of(Source_File_Name);
+    end;
+
+    function  Get_Out_File_Name return String is
+    begin
+	return Value_of(Out_File_Name);
+    end;
+
+    function  Get_Verbose_File_Name return String is
+    begin
+	return Value_of(Verbose_File_Name);
+    end;
+
+    function  Get_Template_File_Name return String is
+    begin
+	return Value_of(Template_File_Name);
+    end;
+
+    function  Get_Actions_File_Name return String is
+    begin
+	return Value_of(Actions_File_Name);
+    end;
+
+    function  Get_Shift_Reduce_File_Name return String is
+    begin
+	return Value_of(Shift_Reduce_File_Name);
+    end;
+
+    function  Get_Goto_File_Name return String is
+    begin
+	return Value_of(Goto_File_Name);
+    end;
+
+    function  Get_Tokens_File_Name return String is
+    begin
+	return Value_of(Tokens_File_Name);
+    end;
+
+-- UMASS CODES :
+    function  Get_Error_Report_File_Name return String is
+    begin
+	return Value_of(Error_Report_File_Name);
+    end;
+
+    function  Get_Listing_File_Name return String is
+    begin
+	return Value_of(Listing_File_Name);
+    end;
+-- END OF UMASS CODES.
+
+    function Get_C_Lex_File_Name return String is
+    begin
+	return Value_of(C_Lex_File_Name);
+    end;
+
+    function Get_Include_File_Name return String is
+    begin
+	return Value_of(Include_File_Name);
+    end;
+
+
+
+    procedure Set_File_Names(Input_File, Extension: in String) is
+	Base: STR(Max_Name_Length);
+    begin
+
+	if Input_File'Length < 3 or else
+	   (Input_File(Input_File'Last) /= 'y' and then
+	    Input_File(Input_File'Last) /= 'Y') or else
+	   Input_File(Input_File'Last - 1) /= '.'
+	then
+	    raise Illegal_File_Name;
+	end if;
+
+	Assign(Input_File(Input_File'First..Input_File'Last-2), To => Base);
+
+	Assign(Input_File, To => Source_File_Name);
+
+	Assign(Base, To => Out_File_Name);
+	Append(Extension, To => Out_File_Name);
+
+	Assign(Base,       To => Verbose_File_Name);
+        Append(".verbose", To => Verbose_File_Name); 
+
+	Assign(Base,        To => Tokens_File_Name);
+        Append("_tokens" & Extension, To => Tokens_File_Name); 
+
+-- UMASS CODES :
+	Assign(Base,        To => Error_Report_File_Name);
+        Append("_error_report" & Extension, To => Error_Report_File_Name); 
+
+	Assign(Base,        To => Listing_File_Name);
+        Append(".lis", To => Listing_File_Name); 
+-- END OF UMASS CODES.
+
+	Assign("yyparse.template", To => Template_File_Name);
+
+	Assign(Base,    To => Actions_File_Name);
+	Append(".accs", To => Actions_File_Name);
+
+	Assign(Base,              To => Shift_Reduce_File_Name);
+	Append("_shift_reduce" & Extension, To => Shift_Reduce_File_Name);
+
+	Assign(Base,      To => Goto_File_Name);
+	Append("_goto" & Extension, To => Goto_File_Name);
+
+	Assign(Base,       To => C_Lex_File_Name);
+	Append("_c_lex" & Extension, To => C_Lex_File_Name);
+
+	Assign(Base, To => Include_File_Name);
+	Append(".h", To => Include_File_Name);
+
+    end Set_File_Names;
+
+end Ayacc_File_Names;

@@ -1,0 +1,74 @@
+#! /bin/csh -f
+
+# Set these variables accordingly
+set COMPILE        = "ada"
+set LINK           = "a.ld"
+
+# compile the utilities
+$COMPILE lists_.a
+$COMPILE lists.a
+$COMPILE stack_pkg_.a
+$COMPILE stack_pkg.a
+$COMPILE string_pkg_.a
+$COMPILE string_pkg.a
+$COMPILE string_lists.a
+$COMPILE string_scanner_.a
+$COMPILE string_scanner.a
+
+$COMPILE  command_line_interface_.a
+$COMPILE  -w command_line_interface.a
+$COMPILE  cli__read_command_line.a
+
+# compile this only if using vads 5.41
+#$COMPILE  str_pack_vads5.41.a
+$COMPILE  str_pack.a
+
+$COMPILE  file_names.a
+$COMPILE  actions_file.a
+$COMPILE  actions_file_body.a
+$COMPILE  source_file.a
+$COMPILE  error_report_file.a
+$COMPILE  symbol_table.a
+$COMPILE  rule_table.a
+$COMPILE  parse_table.a
+$COMPILE  output_file.a
+$COMPILE  tokens_file.a
+$COMPILE  -w parser.a
+$COMPILE  options.a
+$COMPILE  ayacc.a
+$COMPILE  ayacc_separates.a
+$COMPILE  set_pack.a
+$COMPILE  set_pack_body.a
+$COMPILE  lr0_machine.a
+$COMPILE  symbol_info.a
+$COMPILE  stack.a
+$COMPILE  ragged.a
+$COMPILE  -w lalr_symbol_info.a
+$COMPILE  lalr_symbol_info_body.a
+$COMPILE  lexical_analyzer.a
+$COMPILE  lexical_analyzer_body.a
+$COMPILE  lr0_machine_body.a
+$COMPILE  parse_template_file_.a
+$COMPILE  output_file_body.a
+$COMPILE  parser_body.a
+$COMPILE  shift_reduce_file.a
+$COMPILE  goto_file.a
+$COMPILE  verbose_file.a
+$COMPILE  parse_table_body.a
+$COMPILE  parse_template_file.a
+$COMPILE  rule_table_body.a
+$COMPILE  source_file_body.a
+$COMPILE  symbol_info_body.a
+$COMPILE  symbol_table_body.a
+$COMPILE  tokens_file_body.a
+$COMPILE  verbose_file_body.a
+
+echo ""
+echo "Compilations Complete ..."
+echo ""
+echo -n "Linking ... "
+
+$LINK ayacc -o ayacc
+
+echo "Done."
+echo ""

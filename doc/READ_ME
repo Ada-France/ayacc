@@ -1,0 +1,16 @@
+ayacc_user_man.tex
+    The current documentation for ayacc.  Run latex on it twice to
+    get the references correct.
+
+
+The following are older versions of the ayacc documentation.  They don't
+include the newest features, but are included in case you don't have latex
+but do have [nt]roff.
+
+old_docs/ayacc_user_man.me  
+
+    The ayacc user's manual. Use [nt]roff and the -me macros to format. 
+
+old_docs/ayacc.manpage
+
+    Man page for ayacc.  Use nroff and the -man macros to format.

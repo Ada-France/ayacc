@@ -1,0 +1,320 @@
+-- $Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/ayacc_separates.a,v 1.1 88/08/08 12:07:39 arcadia Exp $ 
+-- Copyright (c) 1990 Regents of the University of California.
+-- All rights reserved.
+--
+--    The primary authors of ayacc were David Taback and Deepak Tolani.
+--    Enhancements were made by Ronald J. Schmalz.
+--
+--    Send requests for ayacc information to ayacc-info@ics.uci.edu
+--    Send bug reports for ayacc to ayacc-bugs@ics.uci.edu
+--
+-- Redistribution and use in source and binary forms are permitted
+-- provided that the above copyright notice and this paragraph are
+-- duplicated in all such forms and that any documentation,
+-- advertising materials, and other materials related to such
+-- distribution and use acknowledge that the software was developed
+-- by the University of California, Irvine.  The name of the
+-- University may not be used to endorse or promote products derived
+-- from this software without specific prior written permission.
+-- THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+-- IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+-- WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+-- Module       : ayacc_separates.ada
+-- Component of : ayacc
+-- Version      : 1.2
+-- Date         : 11/21/86  12:28:51
+-- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxayacc_separates.ada
+
+-- $Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/ayacc_separates.a,v 1.1 88/08/08 12:07:39 arcadia Exp $ 
+-- $Log:	ayacc_separates.a,v $
+--Revision 1.1  88/08/08  12:07:39  arcadia
+--Initial revision
+--
+-- Revision 0.0  86/02/19  18:36:14  ada
+-- 
+-- These files comprise the initial version of Ayacc
+-- designed and implemented by David Taback and Deepak Tolani.
+-- Ayacc has been compiled and tested under the Verdix Ada compiler
+-- version 4.06 on a vax 11/750 running Unix 4.2BSD.
+--  
+-- Revision 0.1  88/03/16  
+-- Additional argument added to allow user to specify file extension
+-- to be used for generated Ada files.  -- kn
+
+
+with String_Pkg;  use String_Pkg;
+
+separate (Ayacc)
+procedure Initialize is
+  use Ayacc_File_Names, Options;
+
+  Input_File, Extension, Options : String_Type := Create ("");
+
+  type Switch is ( On , Off );
+
+  C_Lex_Flag,
+  Debug_Flag,
+  Summary_Flag,
+-- UMASS CODES :
+  Error_Recovery_Flag,
+-- END OF UMASS CODES.
+  Verbose_Flag : Switch;
+
+  Invalid_Command_Line : exception;
+
+  procedure Get_Arguments (File           : out String_Type;
+                           C_Lex          : out Switch; 
+                           Debug          : out Switch;
+                           Summary        : out Switch;
+                           Verbose        : out Switch;
+-- UMASS CODES : 
+			   Error_Recovery : out Switch;
+-- END OF UMASS CODES.
+			   Extension      : out String_Type) is separate;
+  
+begin
+
+  Get_Arguments (Input_File,
+                 C_Lex_Flag,
+                 Debug_Flag,
+                 Summary_Flag,
+                 Verbose_Flag,
+-- UMASS CODES :
+                 Error_Recovery_Flag,
+-- END OF UMASS CODES.
+		 Extension);
+
+  New_Line;
+  Put_Line ("  Ayacc (File           => """ & Value (Input_File) & """,");
+  Put_Line ("         C_Lex          => " & 
+                        Value (Mixed (Switch'Image(C_Lex_Flag))) & ',');
+  Put_Line ("         Debug          => " & 
+                        Value (Mixed (Switch'Image(Debug_Flag))) & ',');
+  Put_Line ("         Summary        => " & 
+                        Value (Mixed (Switch'Image(Summary_Flag))) & ',');
+  Put_Line ("         Verbose        => " & 
+                        Value (Mixed (Switch'Image(Verbose_Flag))) & ",");
+-- UMASS CODES :
+  Put_Line ("         Error_Recovery => " &
+                        Value (Mixed (Switch'Image(Error_Recovery_Flag))) & ",");
+-- END OF UMASS CODES.
+  Put_Line ("         Extension      => """ & Value (Extension) & """);");
+  New_Line;
+
+  if C_Lex_Flag = On then
+    Options := Options & Create ("i");
+  end if;
+
+  if Debug_Flag = On then
+    Options := Options & Create ("d");
+  end if;
+
+  if Summary_Flag = On then
+    Options := Options & Create ("s");
+  end if;
+
+  if Verbose_Flag = On then
+    Options := Options & Create ("v");
+  end if;
+
+-- UMASS CODES :
+  if Error_Recovery_Flag = On then
+    Options := Options & Create ("e");
+  end if;
+-- END OF UMASS CODES.
+
+  Set_File_Names (Value (Input_File), Value(Extension));
+  Set_Options    (Value (Options));
+
+exception
+  when Invalid_Command_Line =>
+    raise Illegal_Argument_List;
+end Initialize;
+
+
+separate (Ayacc)
+procedure Print_Statistics is
+    use Text_IO, Parse_Table, Rule_Table, Symbol_Table;
+begin
+
+    if Options.Summary then
+
+	Put_Line(Rule'Image(Last_Rule - First_Rule + 1) & " Productions");
+
+	Put_Line(Grammar_Symbol'Image
+	  (Last_Symbol(Nonterminal) - First_Symbol(Nonterminal) + 1) &
+	   " Nonterminals");
+
+	Put_Line(Grammar_Symbol'Image
+	  (Last_Symbol(Terminal) - First_Symbol(Terminal) + 1) &
+	   " Terminals");
+
+	Put_Line(Integer'Image(Number_of_States) & " States");
+
+	Put_Line (Integer'Image(Shift_Reduce_Conflicts) &
+		  " Shift/Reduce conflicts");
+
+	Put_Line (Integer'Image(Reduce_Reduce_Conflicts) &
+		  " Reduce/Reduce conflicts");
+
+    else
+
+	if Shift_Reduce_Conflicts /= 0 then
+	    Put_Line (Integer'Image(Shift_Reduce_Conflicts) &
+		      " Shift/Reduce Conflicts");
+	end if;
+	if Reduce_Reduce_Conflicts /= 0 then
+	    Put_Line (Integer'Image(Reduce_Reduce_Conflicts) &
+		      " Reduce/Reduce Conflicts");
+	end if;
+
+    end if;
+
+end Print_Statistics;
+
+with Command_Line_Interface; use Command_Line_Interface; 
+with String_Pkg;             use String_Pkg;
+--VAX with Vms_Lib; 
+
+separate (Ayacc.Initialize)
+procedure Get_Arguments (File           : out String_Type;
+                         C_Lex          : out Switch; 
+                         Debug          : out Switch;
+                         Summary        : out Switch;
+                         Verbose        : out Switch;
+-- UMASS CODES :
+                         Error_Recovery : out Switch;
+-- END OF UMASS CODES.
+			 Extension      : out String_Type) is 
+
+  C_Lex_Argument   : String_Type;
+  Debug_Argument   : String_Type;
+  Summary_Argument : String_Type;
+  Verbose_Argument : String_Type;
+-- UMASS CODES :
+  Error_Recovery_Argument : String_Type;
+-- END OF UMASS CODES.
+
+  Positional     : Natural := 0; 
+
+  -- Number of positional parameters
+  Total          : Natural := 0; 
+
+  -- Total number of parameters
+  Max_Parameters : constant := 7;
+
+  Incorrect_Call : exception; 
+
+  function Convert_Switch is new
+    Convert (Parameter_Type => Switch,
+             Type_Name      => "Switch");
+
+  procedure Put_Help_Message is
+  begin
+    New_Line;
+    Put_Line ("  -- Ayacc: An Ada Parser Generator.");
+    New_Line; 
+    Put_Line ("  type Switch is (On, Off);");
+    New_Line;
+    Put_Line ("  procedure Ayacc (File           : in String;"); 
+    Put_Line ("                   C_Lex          : in Switch := Off;");
+    Put_Line ("                   Debug          : in Switch := Off;");
+    Put_Line ("                   Summary        : in Switch := On;");
+    Put_Line ("                   Verbose        : in Switch := Off;"); 
+-- UMASS CODES :
+    Put_Line ("                   Error_Recovery : in Switch := Off;");
+-- END OF UMASS CODES.
+    Put_Line ("                   Extension      : in String := "".a"");"); 
+    New_Line; 
+    Put_Line ("  -- File       Specifies the Ayacc Input Source File."); 
+    Put_Line ("  -- C_Lex      Specifies the Generation of a 'C' Lex Interface.");
+    Put_Line ("  -- Debug      Specifies the Production of Debugging Output"); 
+    Put_Line ("  --              By the Generated Parser.");
+    Put_Line ("  -- Summary    Specifies the Printing of Statistics About the");
+    Put_Line ("  --              Generated Parser.");
+    Put_Line ("  -- Verbose    Specifies the Production of a Human Readable");
+    Put_Line ("  --              Report of States in the Generated Parser.");
+-- UMASS CODES :
+    Put_Line ("  -- Error_Recovery  Specifies the Generation of extension of");
+    Put_Line ("  --                   error recovery.");
+-- END OF UMASS CODES.
+    Put_Line ("  -- Extension  Specifies the file extension to be used for");
+    Put_Line ("                  generated Ada files.");
+    New_Line;
+  end Put_Help_Message; 
+
+begin
+
+--VAX   Vms_Lib.Set_Error; 
+  Command_Line_Interface.Initialize (Tool_Name => "Ayacc"); 
+
+  Positional := Positional_Arg_Count; 
+  Total := Named_Arg_Count + Positional; 
+
+  if Total = 0 then
+    raise Incorrect_Call;
+  elsif Total > Max_Parameters then 
+    Put_Line ("Ayacc: Too many parameters."); 
+    raise Incorrect_Call; 
+  end if; 
+
+  -- Get named values
+  File             := Named_Arg_Value ("File",      "");
+  C_Lex_Argument   := Named_Arg_Value ("C_Lex",     "Off");
+  Debug_Argument   := Named_Arg_Value ("Debug",     "Off");
+  Summary_Argument := Named_Arg_Value ("Summary",   "On");
+  Verbose_Argument := Named_Arg_Value ("Verbose",   "Off");
+-- UMASS CODES :
+  Error_Recovery_Argument := Named_Arg_Value ("Error_Recovery",   "Off");
+-- END OF UMASS CODES.
+  Extension        := Named_Arg_Value ("Extension", ".a");
+
+  -- Get any positional associations
+  if Positional >= 1 then 
+    File := Positional_Arg_Value (1); 
+    if Positional >= 2 then 
+      C_Lex_Argument := Positional_Arg_Value (2);
+      if Positional >= 3 then
+        Debug_Argument := Positional_Arg_Value (3);
+        if Positional >= 4 then
+          Summary_Argument := Positional_Arg_Value (4);
+          if Positional >= 5 then
+            Verbose_Argument := Positional_Arg_Value (5);
+-- UMASS CODES :
+            if Positional >= 6 then
+              Error_Recovery_Argument := Positional_Arg_Value (5);
+-- END OF UMASS CODES.
+              if Positional = Max_Parameters then
+                Extension := Positional_Arg_Value (Max_Parameters); 
+	      end if;
+-- UMASS CODES :
+            end if;
+-- END OF UMASS CODES.
+          end if;
+        end if;
+      end if;
+    end if; 
+  end if; 
+
+  Command_Line_Interface.Finalize; 
+
+  C_Lex   := Convert_Switch (Value (C_Lex_Argument));
+  Debug   := Convert_Switch (Value (Debug_Argument));
+  Summary := Convert_Switch (Value (Summary_Argument));
+  Verbose := Convert_Switch (Value (Verbose_Argument));
+-- UMASS CODES :
+  Error_Recovery := Convert_Switch (Value (Error_Recovery_Argument));
+-- END OF UMASS CODES.
+
+exception
+
+  when Incorrect_Call          | Invalid_Parameter         |
+       Invalid_Parameter_Order | Missing_Positional_Arg    |
+       Unreferenced_Named_Arg  | Invalid_Named_Association |
+       Unbalanced_Parentheses  => 
+
+    Put_Help_Message ; 
+    raise Invalid_Command_Line ; 
+
+end Get_Arguments; 

@@ -1,0 +1,6 @@
+Instructions for compiling on DOS machines using Alsys are found
+in src/alsys_dos/README.
+
+To compile under Alsys on a SPARC use the cli__read_command_line.a file
+found in src/alsys_sparc.
+
