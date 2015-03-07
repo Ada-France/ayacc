@@ -1,9 +1,0 @@
-This directory contains changes to let ayacc compile under Alsys on
-a PC running DOS.  These changes were contributed by 
-Sriram Sankar at Stanford <sankar@cs.stanford.edu>
-
-INSTALLATION: The script 'mvfiles' (run on UNIX) will move copy in the
-appropriate files from the main src directory and rename them with file
-names suitable for DOS.  The compile.inv file should let you compile the
-system once you have the files on your PC.
-
