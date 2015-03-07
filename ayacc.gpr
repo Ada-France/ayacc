@@ -1,0 +1,26 @@
+with "config";
+project ayacc is
+
+   Mains := ("ayacc");
+
+   for Main use Mains;
+
+   for Source_Dirs use ("src");
+
+   for Object_Dir use "./" & Config'Object_Dir & "/obj";
+   for Exec_Dir use "./" & Config'Exec_Dir & "/bin";
+
+   package Compiler is
+	  for Default_Switches ("Ada") use Config.Compiler'Default_Switches
+               ("Ada") & ("-gnatn", "-gnatp", "-fdata-sections", "-ffunction-sections", "-gnaty-");
+   end Compiler;
+
+   package Binder renames Config.Binder;
+   package Builder renames Config.Builder;
+
+   package Linker is
+	  for Default_Switches ("Ada") use Config.Linker'Default_Switches
+               ("Ada") & ("-Wl,--gc-sections");
+   end Linker;
+
+end ayacc;
