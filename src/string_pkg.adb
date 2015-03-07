@@ -32,7 +32,7 @@ package body string_pkg is
 --|        The stack is called scopes, referring to the dynamic scopes
 --|        defined by the invocations of mark and release.
 --|        There is an implicit invocation of mark when the
---|        package body is elaborated; this is implemented with an explicit 
+--|        package body is elaborated; this is implemented with an explicit
 --|        invocation in the package initialization code.
 --|
 --|     2. At each invocation of mark, a pointer to an empty list
@@ -93,47 +93,47 @@ package body string_pkg is
         dec_s: constant constr_str := s;
     begin
           return enter(new constr_str'(dec_s));
--- DECada bug; above code (and decl of dec_s) replaces the following: 
+-- DECada bug; above code (and decl of dec_s) replaces the following:
 --        return enter(new constr_str'(s));
     end create;
 
     function "&"(s1, s2: string_type)
         return string_type is
     begin
-	if is_empty(s1) then return enter(make_persistent(s2)); end if;
-	if is_empty(s2) then return enter(make_persistent(s1)); end if; 
+    if is_empty(s1) then return enter(make_persistent(s2)); end if;
+    if is_empty(s2) then return enter(make_persistent(s1)); end if;
         return create(s1.all & s2.all);
     end "&";
 
     function "&"(s1: string_type; s2: string)
         return string_type is
     begin
-	if s1 = null then return create(s2); end if; 
-	return create(s1.all & s2); 
+    if s1 = null then return create(s2); end if;
+    return create(s1.all & s2);
     end "&";
 
     function "&"(s1: string; s2: string_type)
         return string_type is
     begin
-	if s2 = null then return create(s1); end if; 
-	return create(s1 & s2.all); 
+    if s2 = null then return create(s1); end if;
+    return create(s1 & s2.all);
     end "&";
-    
+
     function substr(s: string_type; i: positive; len: natural)
         return string_type is
     begin
-        if len = 0 then return null; end if; 
+        if len = 0 then return null; end if;
         return create(s(i..(i + len - 1)));
     exception
-	when constraint_error =>      -- on array fetch or null deref
-	    raise bounds;
+    when constraint_error =>      -- on array fetch or null deref
+        raise bounds;
     end substr;
 
     function splice(s: string_type; i: positive; len: natural)
         return string_type is
     begin
         if len = 0 then return enter(make_persistent(s)); end if;
-        if i + len - 1 > length(s) then raise bounds; end if; 
+        if i + len - 1 > length(s) then raise bounds; end if;
 
         return create(s(1..(i - 1)) & s((i + len)..length(s)));
     end splice;
@@ -142,7 +142,7 @@ package body string_pkg is
         return string_type is
     begin
         if i > length(s1) then raise bounds; end if;
-	if is_empty(s2) then return create(s1.all); end if;
+    if is_empty(s2) then return create(s1.all); end if;
 
         return create(s1(1..(i - 1)) & s2.all & s1(i..s1'last));
     end insert;
@@ -159,51 +159,72 @@ package body string_pkg is
         return string_type is
     begin
         if not (i in s1'range) then raise bounds; end if;
-	if s2 = null then return create(s1); end if; 
+    if s2 = null then return create(s1); end if;
 
         return create(s1(s1'first..(i - 1)) & s2.all & s1(i..s1'last));
     end insert;
 
-	procedure lc(c: in out character) is
-	begin 
-	    if ('A' <= c) and then (c <= 'Z') then
-		c := character'val(character'pos(c) - character'pos('A')
-						    + character'pos('a'));
-	    end if; 
-	end lc; 
+    procedure lc(c: in out character) is
+    begin
+        if ('A' <= c) and then (c <= 'Z') then
+        c := character'val(character'pos(c) - character'pos('A')
+                            + character'pos('a'));
+        end if;
+    end lc;
 
-	procedure uc(c: in out character) is
-	begin 
-	    if ('a' <= c) and then (c <= 'z') then
-		c := character'val(character'pos(c) - character'pos('a')
-						    + character'pos('A'));
-	    end if; 
-	end uc; 
+    procedure uc(c: in out character) is
+    begin
+        if ('a' <= c) and then (c <= 'z') then
+        c := character'val(character'pos(c) - character'pos('a')
+                            + character'pos('A'));
+        end if;
+    end uc;
 
     function lower(s: string)
-	return string_type is  
-	s2: constant string_type := create(s); 
+    return string_type is
+    s2: constant string_type := create(s);
 
     begin
-	for i in s2'range loop
-	    lc(s2(i));
-	end loop;
-	return s2; 
-    end lower; 
+    for i in s2'range loop
+        lc(s2(i));
+    end loop;
+    return s2;
+    end lower;
 
     function lower(s: string_type)
-	return string_type is
+    return string_type is
     begin
-	if s = null then return null; end if; 
-	return lower(s.all);
+    if s = null then return null; end if;
+    return lower(s.all);
     end lower;
+
+    function To_Package_Name (S: String) return String_Type is
+      Mixed_String : constant String_Type := Create (S);
+    begin
+      if Mixed_String'Length /= 0 then
+        UC (Mixed_String(Mixed_String'First));
+        for i in Mixed_String'First + 1 .. Mixed_String'Last
+        loop
+          if Mixed_String(i-1) = '_' or Mixed_String(i-1) = '.' then
+            UC (Mixed_String(i));
+          elsif Mixed_String(i) = '-' then
+            Mixed_String(I) := '.';
+          else
+            LC (Mixed_String(i));
+          end if;
+        end loop;
+        return Mixed_String;
+      else
+        return Empty_String;
+      end if;
+    end To_Package_Name;
 
     function Mixed (S: String) return String_Type is
       Mixed_String : constant String_Type := Create (S);
     begin
       if Mixed_String'Length /= 0 then
         UC (Mixed_String(Mixed_String'First));
-        for i in Mixed_String'First + 1 .. Mixed_String'Last 
+        for i in Mixed_String'First + 1 .. Mixed_String'Last
         loop
           if Mixed_String(i-1) = '_' then
             UC (Mixed_String(i));
@@ -219,51 +240,51 @@ package body string_pkg is
 
     function Mixed (S : String_Type) return String_Type is
     begin
-      if s = null then 
-        return Empty_String; 
+      if s = null then
+        return Empty_String;
       else
         return Mixed (S.all);
-      end if; 
+      end if;
     end Mixed;
 
     function upper(s: string)
-	return string_type is
-	s2: constant string_type := create(s); 
+    return string_type is
+    s2: constant string_type := create(s);
 
     begin
-	for i in s2'range loop
-	    uc(s2(i));
-	end loop;
-	return s2; 
-    end upper; 
+    for i in s2'range loop
+        uc(s2(i));
+    end loop;
+    return s2;
+    end upper;
 
     function upper(s: string_type)
-	return string_type is
+    return string_type is
     begin
-	if s = null then return null; end if; 
-	return upper(s.all);
+    if s = null then return null; end if;
+    return upper(s.all);
     end upper;
-      
-    
+
+
 -- Heap Management:
 
     function make_persistent(s: string_type)
-	return string_type is
+    return string_type is
         subtype constr_str is string(1..length(s));
     begin
         if s = null or else s.all = "" then return null;
         else return new constr_str'(s.all);
-        end if; 
-    end make_persistent; 
-    
+        end if;
+    end make_persistent;
+
     function make_persistent(s: string)
-	return string_type is
+    return string_type is
         subtype constr_str is string(1..s'length);
     begin
-	if s = "" then return null; 
-        else return new constr_str'(s); end if; 
-    end make_persistent; 
-    
+    if s = "" then return null;
+        else return new constr_str'(s); end if;
+    end make_persistent;
+
     procedure real_flush is new unchecked_deallocation(string,
                                                        string_type);
       --| Effect:
@@ -297,7 +318,7 @@ package body string_pkg is
         while more(iter) loop
             next(iter, s);
             flush(s);             -- real_flush is bad, DECada bug
---          real_flush(s);            
+--          real_flush(s);
         end loop;
         destroy(top_list.all);
         flush_list_ptr(top_list);
@@ -305,8 +326,8 @@ package body string_pkg is
         when empty_stack =>
             raise illegal_dealloc;
     end release;
-    
-    
+
+
 -- Queries:
 
     function is_empty(s: string_type)
@@ -318,7 +339,7 @@ package body string_pkg is
     function length(s: string_type)
         return natural is
     begin
-	if s = null then return 0; end if; 
+    if s = null then return 0; end if;
         return(s.all'length);
     end length;
 
@@ -327,40 +348,40 @@ package body string_pkg is
         subtype null_range is positive range 1..0;
         subtype null_string is string(null_range);
     begin
-	if s = null then return null_string'(""); end if; 
+    if s = null then return null_string'(""); end if;
         return s.all;
     end value;
 
     function fetch(s: string_type; i: positive)
         return character is
     begin
-	if is_empty(s) or else (not (i in s'range)) then raise bounds; end if; 
+    if is_empty(s) or else (not (i in s'range)) then raise bounds; end if;
         return s(i);
     end fetch;
 
     function equal(s1, s2: string_type)
         return boolean is
     begin
-        if is_empty(s1) then return is_empty(s2); end if; 
-        return (s2 /= null) and then (s1.all = s2.all); 
+        if is_empty(s1) then return is_empty(s2); end if;
+        return (s2 /= null) and then (s1.all = s2.all);
 -- The above code replaces the following.  (DECada buggy)
 --        return s1.all = s2.all;
 --    exception
---	when constraint_error =>     -- s is null
---	    return is_empty(s1) and is_empty(s2);
+--  when constraint_error =>     -- s is null
+--      return is_empty(s1) and is_empty(s2);
     end equal;
 
     function equal(s1: string_type; s2: string)
         return boolean is
     begin
-	if s1 = null then return s2 = ""; end if; 
+    if s1 = null then return s2 = ""; end if;
         return s1.all = s2;
     end equal;
 
     function equal(s1: string; s2: string_type)
         return boolean is
     begin
-	if s2 = null then return s1 = ""; end if; 
+    if s2 = null then return s1 = ""; end if;
         return s1 = s2.all;
     end equal;
 
@@ -388,64 +409,64 @@ package body string_pkg is
     function "<" (s1: string_type; s2: string_type)
         return boolean is
     begin
-        if is_empty(s1) then 
-		return (not is_empty(s2)); 
-	    else 
-		return (s1.all < s2); 
-	    end if; 
+        if is_empty(s1) then
+        return (not is_empty(s2));
+        else
+        return (s1.all < s2);
+        end if;
 -- Got rid of the following code:  (Think that DECada is buggy)
-        --return s1.all < s2.all; 
+        --return s1.all < s2.all;
     --exception
         --when constraint_error =>   -- on null deref
-	    --return (not is_empty(s2)); 
-		   -- one of them must be empty
+        --return (not is_empty(s2));
+           -- one of them must be empty
     end "<";
 
     function "<"(s1: string_type; s2: string)
-        return boolean is 
+        return boolean is
     begin
-	if s1 = null then return s2 /= ""; end if; 
-        return s1.all < s2; 
+    if s1 = null then return s2 /= ""; end if;
+        return s1.all < s2;
     end "<";
 
     function "<"(s1: string; s2: string_type)
-        return boolean is 
+        return boolean is
     begin
-	if s2 = null then return false; end if; 
-        return s1 < s2.all; 
+    if s2 = null then return false; end if;
+        return s1 < s2.all;
     end "<";
 
     function "<="(s1: string_type; s2: string_type)
-        return boolean is 
+        return boolean is
     begin
-	if is_empty(s1) then return true; end if; 
-	return (s1.all <= s2); 
+    if is_empty(s1) then return true; end if;
+    return (s1.all <= s2);
 
     -- Replaces the following:  (I think DECada is buggy)
-        --return s1.all <= s2.all; 
+        --return s1.all <= s2.all;
     --exception
         --when constraint_error =>   -- on null deref
             --return is_empty(s1);   -- one must be empty, so s1<=s2 iff s1 = ""
     end "<=";
 
     function "<="(s1: string_type; s2: string)
-        return boolean is 
+        return boolean is
     begin
-	if s1 = null then return true; end if; 
-        return s1.all <= s2; 
+    if s1 = null then return true; end if;
+        return s1.all <= s2;
     end "<=";
 
     function "<="(s1: string; s2: string_type)
-        return boolean is 
+        return boolean is
     begin
-	if s2 = null then return s1 = ""; end if; 
-        return s1 <= s2.all; 
+    if s2 = null then return s1 = ""; end if;
+        return s1 <= s2.all;
     end "<=";
 
     function match_c(s: string_type; c: character; start: positive := 1)
         return natural is
     begin
-	if s = null then return 0; end if; 
+    if s = null then return 0; end if;
         for i in start..s.all'last loop
             if s(i) = c then
                 return i;
@@ -457,11 +478,11 @@ package body string_pkg is
     function match_not_c(s: string_type; c: character; start: positive := 1)
         return natural is
     begin
-	if s = null then return 0; end if; 
+    if s = null then return 0; end if;
         for i in start..s.all'last loop
-	    if s(i) /= c then
-		return i;
-	    end if;
+        if s(i) /= c then
+        return i;
+        end if;
         end loop;
     return 0;
     end match_not_c;
@@ -469,21 +490,21 @@ package body string_pkg is
     function match_s(s1, s2: string_type; start: positive := 1)
         return natural is
     begin
-	if (s1 = null) or else (s2 = null) then return 0; end if; 
+    if (s1 = null) or else (s2 = null) then return 0; end if;
         return match_string(s1.all, s2.all, start);
     end match_s;
 
     function match_s(s1: string_type; s2: string; start: positive := 1)
         return natural is
     begin
-	if s1 = null then return 0; end if; 
+    if s1 = null then return 0; end if;
         return match_string(s1.all, s2, start);
     end match_s;
 
     function match_any(s, any: string_type; start: positive := 1)
         return natural is
     begin
-	if any = null then raise any_empty; end if; 
+    if any = null then raise any_empty; end if;
         return match_any(s, any.all, start);
     end match_any;
 
@@ -506,8 +527,8 @@ package body string_pkg is
     function match_none(s, none: string_type; start: positive := 1)
         return natural is
     begin
-	if is_empty(s) then return 0; end if; 
-	if is_empty(none) then return 1; end if; 
+    if is_empty(s) then return 0; end if;
+    if is_empty(none) then return 1; end if;
 
         return match_none(s, none.all, start);
     end match_none;
@@ -516,7 +537,7 @@ package body string_pkg is
         return natural is
         found: boolean;
     begin
-	if is_empty(s) then return 0; end if; 
+    if is_empty(s) then return 0; end if;
 
         for i in start..s.all'last loop
             found := true;
@@ -556,9 +577,9 @@ package body string_pkg is
                 return i;
             end if;
         end loop;
-        return 0; 
+        return 0;
     exception when constraint_error =>    -- on offset := s2'length (= 0)
-        return 0; 
+        return 0;
     end match_string;
 
 begin    -- Initialize the scopes stack with an implicit mark.
