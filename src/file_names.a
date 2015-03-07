@@ -1,4 +1,4 @@
--- $Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/file_names.a,v 1.2 88/11/28 13:38:59 arcadia Exp $ 
+-- $Header: C:/CVSROOT/afay/ayacc/src/file_names.a,v 1.3 2004/10/23 22:04:33 Grands Exp $ 
 
 -- Copyright (c) 1990 Regents of the University of California.
 -- All rights reserved.
@@ -27,8 +27,14 @@
 -- Date         : 11/21/86  12:29:16
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxfile_names.ada
 
--- $Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/file_names.a,v 1.2 88/11/28 13:38:59 arcadia Exp $ 
--- $Log:	file_names.a,v $
+-- $Header: C:/CVSROOT/afay/ayacc/src/file_names.a,v 1.3 2004/10/23 22:04:33 Grands Exp $ 
+-- $Log: file_names.a,v $
+-- Revision 1.3  2004/10/23 22:04:33  Grands
+-- no message
+--
+-- Revision 1.2  2004/10/22 18:31:21  Grands
+-- Supports Ada95 parent/child units
+--
 --Revision 1.2  88/11/28  13:38:59  arcadia
 --Modified Get_Unit_Name function to accept legal Ada identifiers.
 --
@@ -52,6 +58,11 @@
 -- Ayacc has been compiled and tested under the Verdix Ada compiler
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
 --  
+--
+-- 2004/10/22 Thierry Bernier
+-- + Less GNAT warnings
+-- + Support for Ada95 parent/child units
+--
 
     -- The collection of all file names used by Ayacc -- 
 
@@ -60,6 +71,10 @@ package Ayacc_File_Names is
     procedure Set_File_Names(Input_File, Extension: in String);
     -- Sets the initial value of the file names
     -- according to the INPUT_FILE.
+
+    procedure Set_Parent_Unit_Name (Name : in String);
+    -- Sets the name of the parent package of all yacc generated units
+    -- If not called, name is derived from INPUT_FILE
 
     function  Get_Source_File_Name        return String;
     function  Get_Out_File_Name           return String;
@@ -105,11 +120,12 @@ package body Ayacc_File_Names is
 
 
 
-  Rcs_ID : constant String := "$Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/file_names.a,v 1.2 88/11/28 13:38:59 arcadia Exp $";
+  Rcs_ID : constant String := "$Header: C:/CVSROOT/afay/ayacc/src/file_names.a,v 1.3 2004/10/23 22:04:33 Grands Exp $";
 
     Max_Name_Length : constant := 50;
 
     Source_File_Name       : STR(Max_Name_Length);
+    Parent_Unit_Name       : STR(Max_Name_Length);
     Out_File_Name          : STR(Max_Name_Length);
     Verbose_File_Name      : STR(Max_Name_Length);
     Template_File_Name     : STR(Max_Name_Length);
@@ -124,35 +140,37 @@ package body Ayacc_File_Names is
     C_Lex_File_Name        : STR(Max_Name_Length);
     Include_File_Name      : STR(Max_Name_Length);
  
+    Error_Report_Unit      : STR(Max_Name_Length);
+    Shift_Reduce_Unit      : STR(Max_Name_Length);
+    Goto_Unit              : STR(Max_Name_Length);
+    Tokens_Unit            : STR(Max_Name_Length);
+    C_Lex_Unit             : STR(Max_Name_Length);
 
 --RJS ==========================================
 
-  function End_of_Unit_Name (Name : in String) return Natural is
-    Dot_Position : Natural := Name'Last;
-  begin
-    while Dot_Position >= Name'First and then
-          Name (Dot_Position) /= '.'
-    loop
-      Dot_Position := Dot_Position - 1;
-    end loop;
-    return Dot_Position - 1;
-  end End_of_Unit_Name;
 
 
   function Get_Unit_Name (Filename : in String) return String is
 
+    function Seek (Name : in String; This : in Character) return Natural is
+      Position : Natural := Name'Last;
+    begin
+      while Position >= Name'First and then Name (Position) /= This loop
+        Position := Position - 1;
+      end loop;
+      if Position >= Name'First then return Position; else return 0; end if;
+    end Seek;
+
   -- modified to check for valid Ada identifiers. 11/28/88 kn
 
-    Filename_Without_Extension : constant String :=
-      Filename (Filename'First .. End_of_Unit_Name (Filename));
-
-    End_of_Directory : Natural := Filename_Without_Extension'Last + 1;
+    --Dot_Position : Natural := Seek (Filename, '.');
+    Dot_Position : Natural := Filename'Last;
+    Dir_Position : Natural := Seek (Filename, '/');
 
 
     function Is_Alphabetic (Ch : in Character) return Boolean is
     begin
-      return Ch in 'A' .. 'Z' or else
-             Ch in 'a' .. 'z';
+      return Ch in 'A' .. 'Z' or else Ch in 'a' .. 'z';
     end Is_Alphabetic;
 
     function Is_AlphaNum_or_Underscore (Ch : in Character) return Boolean is
@@ -165,65 +183,55 @@ package body Ayacc_File_Names is
   use String_Pkg;
 
   begin
-    -- find end of directory
-    for Pos in reverse Filename_Without_Extension'FIRST..
-		       Filename_Without_Extension'LAST loop
-      exit when Filename_Without_Extension(Pos) = '/';
-      End_Of_Directory := Pos;
-    end loop;
+    if Dir_Position = 0 then
+      Dir_Position := Filename'First;
+    else
+      Dir_Position := Dir_Position + 1;
+    end if;
 
-    if End_Of_Directory <= Filename_Without_Extension'LAST and then
-       Is_Alphabetic (Filename_Without_Extension (End_of_Directory)) then
-
+    if not Is_Alphabetic (Filename (Dir_Position)) then
+      return "";
+    else
        Check_Remaining_Characters :
-       for i in End_Of_Directory + 1 .. Filename_Without_Extension'LAST 
-       loop
-	 if not Is_AlphaNum_or_Underscore (Filename_Without_Extension(i)) then
-	   return "";
+       for i in Dir_Position + 1 .. Dot_Position loop
+	 if not Is_AlphaNum_or_Underscore (Filename(i)) then
+	   return "B" & Natural'Image(i);
 	 end if;
        end loop Check_Remaining_Characters;
 
-       return Value (Mixed (Filename_Without_Extension (End_of_Directory ..
-                            Filename_Without_Extension'Last)));
-    else
-      return "";
+       return Value (Mixed (Filename (Dir_Position .. Dot_Position)));
     end if;
 
   end Get_Unit_Name;
 
 
   function C_Lex_Unit_Name return String is
-    Filename : constant String := Value_of (Upper_Case (C_Lex_File_Name));
   begin
-    return Get_Unit_Name (Filename);
+    return Value_of (C_Lex_Unit);
   end C_Lex_Unit_Name;
 
 
   function Goto_Tables_Unit_Name return String is
-    Filename : constant String := Value_of (Upper_Case (Goto_File_Name));
   begin
-    return Get_Unit_Name (Filename);
+    return Value_of (Goto_Unit);
   end Goto_Tables_Unit_Name;
 
 
   function Shift_Reduce_Tables_Unit_Name return String is
-    Filename : constant String := Value_of (Upper_Case (Shift_Reduce_File_Name));
   begin
-    return Get_Unit_Name (Filename);
+    return Value_of (Shift_Reduce_Unit);
   end Shift_Reduce_Tables_Unit_Name;
 
 
   function Tokens_Unit_Name return String is
-    Filename : constant String := Value_of (Upper_Case (Tokens_File_Name));
   begin
-    return Get_Unit_Name (Filename);
+    return Value_of (Tokens_Unit);
   end Tokens_Unit_Name;
 
 -- UMASS CODES :
   function Error_Report_Unit_Name return String is
-    Filename : constant String := Value_of (Upper_Case (Error_Report_File_Name));
   begin
-    return Get_Unit_Name (Filename);
+    return Value_of (Error_Report_Unit);
   end Error_Report_Unit_Name;
 -- END OF UMASS CODES.
 
@@ -293,6 +301,19 @@ package body Ayacc_File_Names is
     end;
 
 
+    procedure Set_Units_Name (Base : in String) is
+    begin
+	Assign(Base & "Tokens",       To => Tokens_Unit); 
+	Assign(Base & "Shift_Reduce", To => Shift_Reduce_Unit);
+	Assign(Base & "Error_Report", To => Error_Report_Unit); 
+        if Base(Base'Last) = '_' then
+	    Assign(Base & "Goto",     To => Goto_Unit);
+        else
+	    Assign(Base & "Go_To",    To => Goto_Unit);
+        end if;
+	Assign(Base & "C_Lex",        To => C_Lex_Unit);
+    end;
+
 
     procedure Set_File_Names(Input_File, Extension: in String) is
 	Base: STR(Max_Name_Length);
@@ -310,6 +331,7 @@ package body Ayacc_File_Names is
 
 	Assign(Input_File, To => Source_File_Name);
 
+        -- TODO: strip out dirname, use basename only ?
 	Assign(Base, To => Out_File_Name);
 	Append(Extension, To => Out_File_Name);
 
@@ -344,6 +366,13 @@ package body Ayacc_File_Names is
 	Assign(Base, To => Include_File_Name);
 	Append(".h", To => Include_File_Name);
 
+        Set_Units_Name (Get_Unit_Name (Value_Of (Base)) & "_");
     end Set_File_Names;
+
+    procedure Set_Parent_Unit_Name (Name : in String) is
+    begin
+	Assign(Name, To => Parent_Unit_Name);
+        Set_Units_Name (Name & ".");
+    end Set_Parent_Unit_Name;
 
 end Ayacc_File_Names;

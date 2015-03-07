@@ -1,4 +1,4 @@
--- $Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/ayacc_separates.a,v 1.1 88/08/08 12:07:39 arcadia Exp $ 
+-- $Header: C:/CVSROOT/afay/ayacc/src/ayacc_separates.a,v 1.2 2004/10/22 18:31:21 Grands Exp $ 
 -- Copyright (c) 1990 Regents of the University of California.
 -- All rights reserved.
 --
@@ -26,8 +26,11 @@
 -- Date         : 11/21/86  12:28:51
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxayacc_separates.ada
 
--- $Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/ayacc_separates.a,v 1.1 88/08/08 12:07:39 arcadia Exp $ 
--- $Log:	ayacc_separates.a,v $
+-- $Header: C:/CVSROOT/afay/ayacc/src/ayacc_separates.a,v 1.2 2004/10/22 18:31:21 Grands Exp $ 
+-- $Log: ayacc_separates.a,v $
+-- Revision 1.2  2004/10/22 18:31:21  Grands
+-- Supports Ada95 parent/child units
+--
 --Revision 1.1  88/08/08  12:07:39  arcadia
 --Initial revision
 --
@@ -41,6 +44,10 @@
 -- Revision 0.1  88/03/16  
 -- Additional argument added to allow user to specify file extension
 -- to be used for generated Ada files.  -- kn
+--
+-- 2004/10/22 Thierry Bernier
+-- + Distinguish the binary
+
 
 
 with String_Pkg;  use String_Pkg;
@@ -213,7 +220,7 @@ procedure Get_Arguments (File           : out String_Type;
   procedure Put_Help_Message is
   begin
     New_Line;
-    Put_Line ("  -- Ayacc: An Ada Parser Generator.");
+    Put_Line ("  -- Ayacc 1.4a95: An Ada Parser Generator.");
     New_Line; 
     Put_Line ("  type Switch is (On, Off);");
     New_Line;

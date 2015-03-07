@@ -25,8 +25,11 @@
 -- Date         : 11/21/86  12:31:19
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxlr0_machine_body.ada
 
--- $Header: lr0_machine_body.a,v 0.1 86/04/01 15:06:56 ada Exp $ 
--- $Log:	lr0_machine_body.a,v $
+-- $Header: C:/CVSROOT/afay/ayacc/src/lr0_machine_body.a,v 1.2 2004/10/23 22:04:33 Grands Exp $ 
+-- $Log: lr0_machine_body.a,v $
+-- Revision 1.2  2004/10/23 22:04:33  Grands
+-- no message
+--
 -- Revision 0.1  86/04/01  15:06:56  ada
 --  This version fixes some minor bugs with empty grammars 
 --  and $$ expansion. It also uses vads5.1b enhancements 
@@ -40,6 +43,9 @@
 -- Ayacc has been compiled and tested under the Verdix Ada compiler
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
 --  
+-- 2004/10/23 Thierry Bernier
+-- + Less GNAT warnings
+
 
 with Symbol_Info, Text_IO;
 use  Text_IO;
@@ -429,8 +435,6 @@ package body LR0_Machine is
 	Iterator      : Item_Iterator;
 	Temp_Item     : Item;
 	New_Item      : Item;
-	Index         : Yield_Index;
-	Last_Index    : Yield_Index;
 	Closure_Index : Item_Array_Index;  -- for looping thru Closure_Items
 	Next_Free     : Item_Array_Index;  -- next free in closure_items
 	Kernel_Ptr    : Item_Array_Pointer;  -- points to kernel
@@ -493,8 +497,6 @@ package body LR0_Machine is
 	Iterator      : Item_Iterator;
 	Temp_Item     : Item;
 	New_Item      : Item;
-	Index         : Yield_Index;
-	Last_Index    : Yield_Index;
 	Closure_Index : Item_Array_Index;  -- for looping thru Closure_Items
 
     begin
@@ -559,7 +561,6 @@ package body LR0_Machine is
 			Trans_Sym  : Grammar_Symbol) return Parse_State is
 	Last      : constant Item_Array_Index := 
 		     Item_Array_Index(Size_of(Kernel_Set));
-	Temp_Item : Item;
 	Iterator  : Item_Set_Pack.Set_Iterator;
 	Kernel    : Item_Array(1..Last);
 	S         : Parse_State;

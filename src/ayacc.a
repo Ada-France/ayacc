@@ -1,4 +1,4 @@
--- $Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/ayacc.a,v 1.1 88/08/08 12:07:07 arcadia Exp $ 
+-- $Header: C:/CVSROOT/afay/ayacc/src/ayacc.a,v 1.2 2004/10/22 18:31:21 Grands Exp $ 
 --************************************************************************ 
 --                              ayacc
 --                           version 1.1
@@ -38,8 +38,11 @@
 -- Date         : 11/21/86  12:28:24
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxayacc.ada
 
--- $Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/ayacc.a,v 1.1 88/08/08 12:07:07 arcadia Exp $ 
--- $Log:	ayacc.a,v $
+-- $Header: C:/CVSROOT/afay/ayacc/src/ayacc.a,v 1.2 2004/10/22 18:31:21 Grands Exp $ 
+-- $Log: ayacc.a,v $
+-- Revision 1.2  2004/10/22 18:31:21  Grands
+-- Supports Ada95 parent/child units
+--
 --Revision 1.1  88/08/08  12:07:07  arcadia
 --Initial revision
 --
@@ -65,6 +68,7 @@ with Source_File,
      Output_File,
      Parse_Table,
      Text_IO,
+     Ada.Exceptions,
 --     u_env,	  -- For getting the command line arguments
 
      Symbol_Table, -- Used for statistics only
@@ -76,7 +80,7 @@ with Error_Report_File;
 
 procedure Ayacc is
 
-    Rcs_ID : constant String := "$Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/ayacc.a,v 1.1 88/08/08 12:07:07 arcadia Exp $";
+    Rcs_ID : constant String := "$Header: C:/CVSROOT/afay/ayacc/src/ayacc.a,v 1.2 2004/10/22 18:31:21 Grands Exp $";
 
     copyright : constant string :=
     "@(#) Copyright (c) 1990 Regents of the University of California.";
@@ -84,7 +88,7 @@ procedure Ayacc is
     "All rights reserved.";
     Illegal_Argument_List : exception;
 
-    use Text_IO;
+    use Text_IO, Ada.Exceptions;
     procedure Initialize       is separate;
     procedure Print_Statistics is separate;
 
@@ -133,6 +137,7 @@ exception
     when Text_IO.Name_Error | Text_IO.Use_Error =>
         null;  -- Error has already been reported.
 
-    when others =>
+    when E : others =>
         Put_Line ("Ayacc: Internal Error, Please Submit an LCR.");
+        Put_Line (Exception_Information (E));
 end Ayacc;

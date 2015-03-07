@@ -25,8 +25,11 @@
 -- Date         : 11/21/86  12:30:26
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxlexical_analyzer.ada
 
--- $Header: lexical_analyzer.a,v 0.1 86/04/01 15:05:14 ada Exp $ 
--- $Log:	lexical_analyzer.a,v $
+-- $Header: C:/CVSROOT/afay/ayacc/src/lexical_analyzer.a,v 1.2 2004/10/22 18:31:21 Grands Exp $ 
+-- $Log: lexical_analyzer.a,v $
+-- Revision 1.2  2004/10/22 18:31:21  Grands
+-- Supports Ada95 parent/child units
+--
 -- Revision 0.1  86/04/01  15:05:14  ada
 --  This version fixes some minor bugs with empty grammars 
 --  and $$ expansion. It also uses vads5.1b enhancements 
@@ -40,6 +43,10 @@
 -- Ayacc has been compiled and tested under the Verdix Ada compiler
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
 --  
+--
+-- 2004/10/22 Thierry Bernier
+-- + Added support for Ada95 parent/child units
+--  
 
 with Source_File;
 package Lexical_Analyzer is 
@@ -49,7 +56,7 @@ package Lexical_Analyzer is
 
 
     type Ayacc_Token is
-	(Token, Start,
+	(Token, Unit, Start,
 	 Left, Right, Nonassoc, Prec,
          With_Clause, Use_Clause,
 	 Identifier, Character_Literal, 
