@@ -23,7 +23,7 @@ package body Ayacc_File_Names is
 -- END OF UMASS CODES.
     C_Lex_File_Name        : STR(Max_Name_Length);
     Include_File_Name      : STR(Max_Name_Length);
- 
+
 
 --RJS ==========================================
 
@@ -59,7 +59,7 @@ package body Ayacc_File_Names is
     begin
       return Is_Alphabetic(Ch) or else
              Ch in '0' .. '9'  or else
-             Ch = '_';
+             Ch = '_' or else Ch = '-';
     end Is_AlphaNum_or_Underscore;
 
   use String_Pkg;
@@ -67,7 +67,7 @@ package body Ayacc_File_Names is
   begin
     -- find end of directory
     for Pos in reverse Filename_Without_Extension'FIRST..
-		       Filename_Without_Extension'LAST loop
+               Filename_Without_Extension'LAST loop
       exit when Filename_Without_Extension(Pos) = '/';
       End_Of_Directory := Pos;
     end loop;
@@ -76,15 +76,15 @@ package body Ayacc_File_Names is
        Is_Alphabetic (Filename_Without_Extension (End_of_Directory)) then
 
        Check_Remaining_Characters :
-       for i in End_Of_Directory + 1 .. Filename_Without_Extension'LAST 
+       for i in End_Of_Directory + 1 .. Filename_Without_Extension'LAST
        loop
-	 if not Is_AlphaNum_or_Underscore (Filename_Without_Extension(i)) then
-	   return "";
-	 end if;
+     if not Is_AlphaNum_or_Underscore (Filename_Without_Extension(i)) then
+       return "";
+     end if;
        end loop Check_Remaining_Characters;
 
-       return Value (Mixed (Filename_Without_Extension (End_of_Directory ..
-                            Filename_Without_Extension'Last)));
+       return Value (To_Package_Name (Filename_Without_Extension (End_of_Directory ..
+                                      Filename_Without_Extension'Last)));
     else
       return "";
     end if;
@@ -132,117 +132,117 @@ package body Ayacc_File_Names is
 
     function  Get_Source_File_Name return String is
     begin
-	return Value_of(Source_File_Name);
+    return Value_of(Source_File_Name);
     end;
 
     function  Get_Out_File_Name return String is
     begin
-	return Value_of(Out_File_Name);
+    return Value_of(Out_File_Name);
     end;
 
     function  Get_Verbose_File_Name return String is
     begin
-	return Value_of(Verbose_File_Name);
+    return Value_of(Verbose_File_Name);
     end;
 
     function  Get_Template_File_Name return String is
     begin
-	return Value_of(Template_File_Name);
+    return Value_of(Template_File_Name);
     end;
 
     function  Get_Actions_File_Name return String is
     begin
-	return Value_of(Actions_File_Name);
+    return Value_of(Actions_File_Name);
     end;
 
     function  Get_Shift_Reduce_File_Name return String is
     begin
-	return Value_of(Shift_Reduce_File_Name);
+    return Value_of(Shift_Reduce_File_Name);
     end;
 
     function  Get_Goto_File_Name return String is
     begin
-	return Value_of(Goto_File_Name);
+    return Value_of(Goto_File_Name);
     end;
 
     function  Get_Tokens_File_Name return String is
     begin
-	return Value_of(Tokens_File_Name);
+    return Value_of(Tokens_File_Name);
     end;
 
 -- UMASS CODES :
     function  Get_Error_Report_File_Name return String is
     begin
-	return Value_of(Error_Report_File_Name);
+    return Value_of(Error_Report_File_Name);
     end;
 
     function  Get_Listing_File_Name return String is
     begin
-	return Value_of(Listing_File_Name);
+    return Value_of(Listing_File_Name);
     end;
 -- END OF UMASS CODES.
 
     function Get_C_Lex_File_Name return String is
     begin
-	return Value_of(C_Lex_File_Name);
+    return Value_of(C_Lex_File_Name);
     end;
 
     function Get_Include_File_Name return String is
     begin
-	return Value_of(Include_File_Name);
+    return Value_of(Include_File_Name);
     end;
 
 
 
     procedure Set_File_Names(Input_File, Extension: in String) is
-	Base: STR(Max_Name_Length);
+    Base: STR(Max_Name_Length);
     begin
 
-	if Input_File'Length < 3 or else
-	   (Input_File(Input_File'Last) /= 'y' and then
-	    Input_File(Input_File'Last) /= 'Y') or else
-	   Input_File(Input_File'Last - 1) /= '.'
-	then
-	    raise Illegal_File_Name;
-	end if;
+    if Input_File'Length < 3 or else
+       (Input_File(Input_File'Last) /= 'y' and then
+        Input_File(Input_File'Last) /= 'Y') or else
+       Input_File(Input_File'Last - 1) /= '.'
+    then
+        raise Illegal_File_Name;
+    end if;
 
-	Assign(Input_File(Input_File'First..Input_File'Last-2), To => Base);
+    Assign(Input_File(Input_File'First..Input_File'Last-2), To => Base);
 
-	Assign(Input_File, To => Source_File_Name);
+    Assign(Input_File, To => Source_File_Name);
 
-	Assign(Base, To => Out_File_Name);
-	Append(Extension, To => Out_File_Name);
+    Assign(Base, To => Out_File_Name);
+    Append(Extension, To => Out_File_Name);
 
-	Assign(Base,       To => Verbose_File_Name);
-        Append(".verbose", To => Verbose_File_Name); 
+    Assign(Base,       To => Verbose_File_Name);
+        Append(".verbose", To => Verbose_File_Name);
 
-	Assign(Base,        To => Tokens_File_Name);
-        Append("_tokens.ads", To => Tokens_File_Name); 
+    Assign(Base,        To => Tokens_File_Name);
+        Append("_tokens.ads", To => Tokens_File_Name);
 
 -- UMASS CODES :
-	Assign(Base,        To => Error_Report_File_Name);
-        Append("_error_report" & Extension, To => Error_Report_File_Name); 
+    Assign(Base,        To => Error_Report_File_Name);
+        Append("_error_report" & Extension, To => Error_Report_File_Name);
 
-	Assign(Base,        To => Listing_File_Name);
-        Append(".lis", To => Listing_File_Name); 
+    Assign(Base,        To => Listing_File_Name);
+        Append(".lis", To => Listing_File_Name);
 -- END OF UMASS CODES.
 
-	Assign("yyparse.template", To => Template_File_Name);
+    Assign("yyparse.template", To => Template_File_Name);
 
-	Assign(Base,    To => Actions_File_Name);
-	Append(".accs", To => Actions_File_Name);
+    Assign(Base,    To => Actions_File_Name);
+    Append(".accs", To => Actions_File_Name);
 
-	Assign(Base,              To => Shift_Reduce_File_Name);
-	Append("_shift_reduce.ads", To => Shift_Reduce_File_Name);
+    Assign(Base,              To => Shift_Reduce_File_Name);
+    Append("_shift_reduce.ads", To => Shift_Reduce_File_Name);
 
-	Assign(Base,      To => Goto_File_Name);
-	Append("_goto.ads", To => Goto_File_Name);
+    Assign(Base,      To => Goto_File_Name);
+    Append("_goto.ads", To => Goto_File_Name);
 
-	Assign(Base,       To => C_Lex_File_Name);
-	Append("_c_lex" & Extension, To => C_Lex_File_Name);
+    Assign(Base,       To => C_Lex_File_Name);
+    Append("_c_lex" & Extension, To => C_Lex_File_Name);
 
-	Assign(Base, To => Include_File_Name);
-	Append(".h", To => Include_File_Name);
+    Assign(Base, To => Include_File_Name);
+    Append(".h", To => Include_File_Name);
 
     end Set_File_Names;
 
