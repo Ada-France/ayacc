@@ -25,29 +25,30 @@
 -- Date         : 11/21/86  12:33:46
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxparse_template_file_.ada
 
--- $Header: parse_template_file.a,v 0.1 86/04/01 15:09:47 ada Exp $ 
+-- $Header: parse_template_file.a,v 0.1 86/04/01 15:09:47 ada Exp $
 -- $Log:	parse_template_file.a,v $
 -- Revision 0.1  86/04/01  15:09:47  ada
---  This version fixes some minor bugs with empty grammars 
---  and $$ expansion. It also uses vads5.1b enhancements 
---  such as pragma inline. 
--- 
--- 
+--  This version fixes some minor bugs with empty grammars
+--  and $$ expansion. It also uses vads5.1b enhancements
+--  such as pragma inline.
+--
+--
 -- Revision 0.0  86/02/19  18:40:09  ada
--- 
+--
 -- These files comprise the initial version of Ayacc
 -- designed and implemented by David Taback and Deepak Tolani.
 -- Ayacc has been compiled and tested under the Verdix Ada compiler
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
---  
+--
 
 package Parse_Template_File is
 
-    Eof : constant Character := Ascii.Nul;
+   Eof : constant Character := Ascii.Nul;
 
-    procedure Open; 
-    procedure Read (S: out String; Length : out Integer);
-    procedure Close;
-    function  Is_End_of_File return Boolean;
+   procedure Initialize;
+   procedure Open;
+   procedure Read (S: out String; Length : out Integer);
+   procedure Close;
+   function  Is_End_of_File return Boolean;
 
 end Parse_Template_File;
