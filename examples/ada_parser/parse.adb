@@ -1,5 +1,5 @@
-with u_env, parser, ada_lex_io, ada_lex, text_io;
-use  u_env, parser, text_io;
+with parser, ada_lex_io, ada_lex, text_io;
+use  parser, text_io;
 
 procedure parse is
   in_file_name: string(1..80);
