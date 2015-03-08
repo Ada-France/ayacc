@@ -1,7 +1,7 @@
 GNATMAKE=gnatmake
 AYACC=ayacc
 
-LEX_FILES=calc_lex.ads calc_lex.adb calc_lex_dfa.ads calc_lex_dfa.adb calc_lex_io.ads calc_lex_io.adb
+LEX_FILES=calc_lex.ads calc_lex.adb calc_lex_dfa.ads calc_lex_dfa.adb calc_lex_io.ads calc_lex_io.adb yylex.adb
 AYACC_FILES=calc_goto.ads calc_shift_reduce.ads calc_tokens.ads parser.ads parser.adb
 
 build: $(LEX_FILES) $(AYACC_FILES)
