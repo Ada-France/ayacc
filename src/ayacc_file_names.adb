@@ -194,56 +194,56 @@ package body Ayacc_File_Names is
 
 
 
-    procedure Set_File_Names(Input_File, Extension: in String) is
-    Base: STR(Max_Name_Length);
-    begin
+   procedure Set_File_Names(Input_File, Extension: in String) is
+      Base: STR(Max_Name_Length);
+   begin
 
-    if Input_File'Length < 3 or else
-       (Input_File(Input_File'Last) /= 'y' and then
-        Input_File(Input_File'Last) /= 'Y') or else
-       Input_File(Input_File'Last - 1) /= '.'
-    then
-        raise Illegal_File_Name;
-    end if;
+      if Input_File'Length < 3 or else
+        (Input_File(Input_File'Last) /= 'y' and then
+         Input_File(Input_File'Last) /= 'Y') or else
+        Input_File(Input_File'Last - 1) /= '.'
+      then
+         raise Illegal_File_Name;
+      end if;
 
-    Assign(Input_File(Input_File'First..Input_File'Last-2), To => Base);
+      Assign(Input_File(Input_File'First..Input_File'Last-2), To => Base);
 
-    Assign(Input_File, To => Source_File_Name);
+      Assign(Input_File, To => Source_File_Name);
 
-    Assign(Base, To => Out_File_Name);
-    Append(Extension, To => Out_File_Name);
+      Assign(Base, To => Out_File_Name);
+      Append(Extension, To => Out_File_Name);
 
-    Assign(Base,       To => Verbose_File_Name);
-        Append(".verbose", To => Verbose_File_Name);
+      Assign(Base,       To => Verbose_File_Name);
+      Append(".verbose", To => Verbose_File_Name);
 
-    Assign(Base,        To => Tokens_File_Name);
-        Append("_tokens.ads", To => Tokens_File_Name);
+      Assign(Base,        To => Tokens_File_Name);
+      Append("_tokens.ads", To => Tokens_File_Name);
 
--- UMASS CODES :
-    Assign(Base,        To => Error_Report_File_Name);
-        Append("_error_report" & Extension, To => Error_Report_File_Name);
+      -- UMASS CODES :
+      Assign(Base,        To => Error_Report_File_Name);
+      Append("_error_report" & Extension, To => Error_Report_File_Name);
 
-    Assign(Base,        To => Listing_File_Name);
-        Append(".lis", To => Listing_File_Name);
--- END OF UMASS CODES.
+      Assign(Base,        To => Listing_File_Name);
+      Append(".lis", To => Listing_File_Name);
+      -- END OF UMASS CODES.
 
-    Assign("yyparse.template", To => Template_File_Name);
+      Assign("yyparse.template", To => Template_File_Name);
 
-    Assign(Base,    To => Actions_File_Name);
-    Append(".accs", To => Actions_File_Name);
+      Assign(Base,    To => Actions_File_Name);
+      Append(".accs", To => Actions_File_Name);
 
-    Assign(Base,              To => Shift_Reduce_File_Name);
-    Append("_shift_reduce.ads", To => Shift_Reduce_File_Name);
+      Assign(Base,              To => Shift_Reduce_File_Name);
+      Append("_shift_reduce.ads", To => Shift_Reduce_File_Name);
 
-    Assign(Base,      To => Goto_File_Name);
-    Append("_goto.ads", To => Goto_File_Name);
+      Assign(Base,      To => Goto_File_Name);
+      Append("_goto.ads", To => Goto_File_Name);
 
-    Assign(Base,       To => C_Lex_File_Name);
-    Append("_c_lex" & Extension, To => C_Lex_File_Name);
+      Assign(Base,       To => C_Lex_File_Name);
+      Append("_c_lex" & Extension, To => C_Lex_File_Name);
 
-    Assign(Base, To => Include_File_Name);
-    Append(".h", To => Include_File_Name);
+      Assign(Base, To => Include_File_Name);
+      Append(".h", To => Include_File_Name);
 
-    end Set_File_Names;
+   end Set_File_Names;
 
 end Ayacc_File_Names;
