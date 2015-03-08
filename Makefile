@@ -26,6 +26,8 @@ autobuild:
 clean:
 	-$(GNATCLEAN) -q -P "$(GPRPATH)"
 	-rm -rf tests
+	-make -C examples/ada_parser clean
+	-make -C examples/calc clean
 
 # Check *all* sources for errors, even those not changed.
 # Does not build executables.
@@ -38,3 +40,8 @@ rebuild: clean build
 install:
 	$(INSTALL_PROGRAM) bin/ayacc ${bindir}
 	$(INSTALL) doc/ayacc.man $(mandir)/man1/ayacc.1
+
+test:
+	make -C examples/ada_parser AYACC=../../bin/ayacc clean build
+	make -C examples/calc AYACC=../../bin/ayacc clean build
+
