@@ -1,5 +1,5 @@
--- $Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/ayacc.a,v 1.1 88/08/08 12:07:07 arcadia Exp $ 
---************************************************************************ 
+-- $Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/ayacc.a,v 1.1 88/08/08 12:07:07 arcadia Exp $
+--************************************************************************
 --                              ayacc
 --                           version 1.1
 --
@@ -38,29 +38,30 @@
 -- Date         : 11/21/86  12:28:24
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxayacc.ada
 
--- $Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/ayacc.a,v 1.1 88/08/08 12:07:07 arcadia Exp $ 
+-- $Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/ayacc.a,v 1.1 88/08/08 12:07:07 arcadia Exp $
 -- $Log:	ayacc.a,v $
 --Revision 1.1  88/08/08  12:07:07  arcadia
 --Initial revision
 --
 -- Revision 0.1  86/04/01  15:04:07  ada
---  This version fixes some minor bugs with empty grammars 
---  and $$ expansion. It also uses vads5.1b enhancements 
---  such as pragma inline. 
--- 
--- 
+--  This version fixes some minor bugs with empty grammars
+--  and $$ expansion. It also uses vads5.1b enhancements
+--  such as pragma inline.
+--
+--
 -- Revision 0.0  86/02/19  19:00:49  ada
--- 
+--
 -- These files comprise the initial version of Ayacc
 -- designed and implemented by David Taback and Deepak Tolani.
 -- Ayacc has been compiled and tested under the Verdix Ada compiler
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
---  
+--
 
 with Source_File,
      Ayacc_File_Names,
      Options,
      Parser,
+     Parse_Template_File,
      Tokens_File,
      Output_File,
      Parse_Table,
@@ -78,19 +79,13 @@ procedure Ayacc is
 
     --  Rcs_ID : constant String := "$Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/ayacc.a,v 1.1 88/08/08 12:07:07 arcadia Exp $";
 
-    --  copyright : constant string :=
-    --  "@(#) Copyright (c) 1990 Regents of the University of California.";
-    --  copyright2 : constant string :=
-    --  "All rights reserved.";
-    Illegal_Argument_List : exception;
-
     use Text_IO;
-    procedure Initialize       is separate;
     procedure Print_Statistics is separate;
 
 begin
 
-    Initialize;
+   Options.Get_Arguments;
+   Parse_Template_File.Initialize;
 
     Source_File.Open;
     Tokens_File.Open;
@@ -124,7 +119,7 @@ exception
     when Ayacc_File_Names.Illegal_File_Name =>
 	Put_Line("Ayacc: Illegal Filename.");
 
-    when Options.Illegal_Option | Illegal_Argument_List =>
+    when Options.Illegal_Option =>
         null;
 
     when Parser.Syntax_Error =>   -- Error has already been reported.
