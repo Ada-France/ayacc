@@ -25,46 +25,29 @@
 -- Date         : 11/21/86  12:31:39
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxoptions.ada
 
--- $Header: options.a,v 0.1 86/04/01 15:08:15 ada Exp $ 
+-- $Header: options.a,v 0.1 86/04/01 15:08:15 ada Exp $
 -- $Log:	options.a,v $
 -- Revision 0.1  86/04/01  15:08:15  ada
---  This version fixes some minor bugs with empty grammars 
---  and $$ expansion. It also uses vads5.1b enhancements 
---  such as pragma inline. 
--- 
--- 
+--  This version fixes some minor bugs with empty grammars
+--  and $$ expansion. It also uses vads5.1b enhancements
+--  such as pragma inline.
+--
+--
 -- Revision 0.0  86/02/19  18:37:34  ada
--- 
+--
 -- These files comprise the initial version of Ayacc
 -- designed and implemented by David Taback and Deepak Tolani.
 -- Ayacc has been compiled and tested under the Verdix Ada compiler
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
---  
+--
 
 package Options is
 
-    procedure Set_Options(S: in String);
-    -- SET_OPTIONS sets the debug and verbose flags according
-    -- the the string S.
-    -- If S contains the characters 'v' or 'V', the verbose
-    -- option is set.
-    -- If S contains the charactars 'c' or 'C', the vebose conflicts
-    -- option is set.
-    -- If S contains the characters 'd' or 'D', the debug
-    -- option is set.
-    -- If S contains the characters 's' or 'S', the summary option
-    -- is set.
--- UMASS CODES :
-    -- If S contains the characters 'e' or 'E', the error recovery 
-    -- extension option is set.
--- END OF UMASS CODES.
+   procedure Get_Arguments;
+   -- Get the program arguments and setup the options.
 
     function Verbose return Boolean;
     -- Returns TRUE if the verbose file is to be created.
-
-    function Verbose_Conflict return Boolean;
-    -- Returns TRUE if only the states involved in conflicts
-    -- are to printed.
 
     function Debug return Boolean;
     -- Returns TRUE if the YYPARSE procedure should generate
@@ -85,6 +68,9 @@ package Options is
     -- Returns TRUE if the codes of error recovery extension should
     -- be generated.
 -- END OF UMASS CODES.
+
+   function Ayacc_Stack_Size return String;
+   -- Returns the stack size that the parser must use.
 
     Illegal_Option: exception;
 
