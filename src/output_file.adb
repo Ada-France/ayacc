@@ -186,12 +186,12 @@ package body Output_File is
         Put_Line (Outfile, "    package yy_tokens              renames");
         Put_Line (Outfile, "      " & Tokens_Unit_Name & ';');
 
-        Put_Line (Outfile, "    package yy_io                  renames -- (+GdM 2008)");
-        declare
-          t: constant String:= Tokens_Unit_Name;
-        begin
-          Put_Line (Outfile, "      " & t(t'First..t'Last-6) & "IO" & ';');
-        end;
+--          Put_Line (Outfile, "    package yy_io                  renames -- (+GdM 2008)");
+--          declare
+--            t: constant String:= Tokens_Unit_Name;
+--          begin
+--            Put_Line (Outfile, "      " & t(t'First..t'Last-6) & "IO" & ';');
+--          end;
 
 -- UMASS CODES :
         if Options.Error_Recovery_Extension then
