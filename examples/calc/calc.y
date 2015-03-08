@@ -69,12 +69,12 @@ package parser is
     procedure yyparse; 
 end parser; 
 
-with yylex, calc_lex_dfa, calc_lex_io, text_io, calc_error_report, calc_tokens, calc_goto, calc_shift_reduce; 
+with yylex, calc_lex_dfa, calc_lex_io, text_io, calc_tokens, calc_goto, calc_shift_reduce; 
 use  text_io, calc_tokens, calc_goto, calc_lex_io, calc_shift_reduce; 
 
 package body parser is 
 
-    registers : array('A'..'Z') of integer; 
+    registers : array(Character '('A') .. Character '('Z')) of integer; 
 
     function to_upper(ch : in character) return character is
     begin
