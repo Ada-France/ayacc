@@ -1,4 +1,5 @@
 GNATMAKE=gnatmake
+AYACC=ayacc
 
 LEX_FILES=ada_lex.ads ada_lex.adb ada_lex_dfa.ads ada_lex_dfa.adb ada_lex_io.ads ada_lex_io.adb
 AYACC_FILES=ada_goto.ads ada_shift_reduce.ads ada_tokens.ads parser.ads parser.adb
@@ -16,6 +17,6 @@ $(LEX_FILES): ada_lex.l
 	gnatchop -w ada_lex.ada
 
 $(AYACC_FILES):	ada.y
-	ayacc ada.y
+	$(AYACC) ada.y
 	gnatchop -w ada.ada
 	rm -f ada.ada
