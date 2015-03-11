@@ -3,7 +3,9 @@
 ayacc \- An Ada LALR(1) parser generator
 .SH SYNOPSIS
 .B ayacc
-[ -cdrsv ] [ -e
+[ -cdrsv ] [ -n
+.I size
+] [ -e
 .I ext
 ]
 .I grammar
@@ -199,6 +201,10 @@ Generate some error recovery support.
 .TP 5
 -s
 Print statistics about the parser such as the number of shift/reduce and reduce/reduce conflicts.
+.\"
+.TP 5
+-n size
+Defines the size of the value and stack stack.  The default value is 8192.
 .\"
 .TP 5
 -v
