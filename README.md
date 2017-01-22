@@ -13,13 +13,14 @@ This version brings a number of improvements:
 - Ayacc now uses more standard options to configure the code generation
 - The parser was improved to configure the parser stack size and
   support Ada child packages.
+- The grammar supports the %unit directive to control the Ada child packages
 
 
 Build
-
+```
   make
-
+```
 Install
-
+```
   make install prefix=/usr
-
+```
