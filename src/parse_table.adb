@@ -25,27 +25,27 @@
 -- Date         : 11/21/86  12:33:16
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxparse_table_body.ada
 
--- $Header: parse_table_body.a,v 0.1 86/04/01 15:08:38 ada Exp $ 
+-- $Header: parse_table_body.a,v 0.1 86/04/01 15:08:38 ada Exp $
 -- $Log:	parse_table_body.a,v $
 -- Revision 0.1  86/04/01  15:08:38  ada
---  This version fixes some minor bugs with empty grammars 
---  and $$ expansion. It also uses vads5.1b enhancements 
---  such as pragma inline. 
--- 
--- 
+--  This version fixes some minor bugs with empty grammars
+--  and $$ expansion. It also uses vads5.1b enhancements
+--  such as pragma inline.
+--
+--
 -- Revision 0.0  86/02/19  18:39:53  ada
--- 
+--
 -- These files comprise the initial version of Ayacc
 -- designed and implemented by David Taback and Deepak Tolani.
 -- Ayacc has been compiled and tested under the Verdix Ada compiler
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
---  
+--
 
-with LALR_Symbol_Info, LR0_Machine, Symbol_Table, Rule_Table, 
+with LALR_Symbol_Info, LR0_Machine, Symbol_Table, Rule_Table,
      Text_IO, Symbol_Info, Verbose_File, Options, Goto_File,
      Shift_Reduce_File;
 
-use  LALR_Symbol_Info, LR0_Machine, Symbol_Table, Rule_Table, 
+use  LALR_Symbol_Info, LR0_Machine, Symbol_Table, Rule_Table,
      Text_IO, Symbol_Info, Options;
 
 with Ada.Strings.Fixed;                 use Ada.Strings, Ada.Strings.Fixed;
@@ -77,7 +77,7 @@ package body Parse_Table is
 	    end case;
 	end record;
 
-    type Action_Table_Array is 
+    type Action_Table_Array is
 	array(Grammar_Symbol range <>) of Action_Table_Entry;
     type Action_Table_Array_Pointer is access Action_Table_Array;
 
@@ -261,7 +261,7 @@ package body Parse_Table is
             entries_in_row:= entries_in_row + 1;
 
 		if entries_in_row mod 13 = 0 then
-		    Shift_Reduce_File.Write_Line(""); 
+		    Shift_Reduce_File.Write_Line("");
                 terminate_line:= False;
 		end if;
 
@@ -280,7 +280,7 @@ package body Parse_Table is
 		    end if;
 		end if;
 	    end if;
-            
+
 
 	end loop;
 
@@ -307,10 +307,10 @@ package body Parse_Table is
 	Shift_Reduce_File.Write(Integer'Image(Default) & ")" );
 	Num_of_Action_Entries := Num_of_Action_Entries + 1;
 
-	Shift_Reduce_File.Write_Line(""); 
+	Shift_Reduce_File.Write_Line("");
 
     end Print_Action_Row;
-	    
+
 
 
 
@@ -326,10 +326,6 @@ package body Parse_Table is
 
 	Action_Offset := new Action_Offset_Array
 			   (First_Parse_State..Last_Parse_State);
-
-	Goto_File.Open_Write;
-	Shift_Reduce_File.Open_Write;
-
     end Init_Table_Files;
 
 
@@ -348,7 +344,7 @@ package body Parse_Table is
 	Goto_File.Write
 	    (Integer'Image(Goto_Offset(Goto_Offset.all'Last)));
 	Goto_File.Write_Line(");");
-        Goto_File.Close_Write; 
+        Goto_File.Close_Write;
 
 	Shift_Reduce_File.Write_Line(");");
 	Shift_Reduce_File.Write_Line("--  The offset vector");
@@ -374,7 +370,7 @@ package body Parse_Table is
 	Shift_Reduce_File.Write_Line(");");
 
         Shift_Reduce_File.Close_Write;
-    
+
     end  Finish_Table_Files;
 
 
@@ -418,7 +414,7 @@ package body Parse_Table is
 	    case Action_Table_Row(Sym).Action is
 		when Shift =>
 
-		    Num_Shift_Reduce_Conflicts := 
+		    Num_Shift_Reduce_Conflicts :=
 			      Num_Shift_Reduce_Conflicts + 1;
 
 		    if Show_Verbose then
@@ -457,7 +453,7 @@ package body Parse_Table is
 
 
     begin
-     
+
 	Action_Table_Row := new Action_Table_Array
 		 (First_Symbol(Terminal)..Last_Symbol(Terminal));
 	Goto_Table_Row   := new Goto_Table_Array
@@ -470,7 +466,7 @@ package body Parse_Table is
 --& The verdix compiler apparently ALOCATES more memory for the following
 --& assignments. We commented them out and replaced these statements by
 --& the for loops
---& 	    action_table_row.all := 
+--& 	    action_table_row.all :=
 --& 		(action_table_row.all'range => (action => undefined));
 --& 	    goto_table_row.all :=
 --& 		(goto_table_row.all'range => null_parse_state);
@@ -480,7 +476,7 @@ package body Parse_Table is
 	    end loop;
 
 	    for I in Goto_Table_Row.all'range loop
-		Goto_Table_Row(I) := Null_Parse_State; 
+		Goto_Table_Row(I) := Null_Parse_State;
 	    end loop;
 
 
@@ -511,7 +507,7 @@ package body Parse_Table is
 	    while More(Term_Iter) loop
 		Next(Term_Iter, Trans);
 		if Trans.Symbol = End_Symbol then
-		    Action_Table_Row(Trans.Symbol) := 
+		    Action_Table_Row(Trans.Symbol) :=
 			(Action => Accept_Input);
 		else
 		    Action_Table_Row(Trans.Symbol) :=
@@ -529,7 +525,7 @@ package body Parse_Table is
 
 
 		--    Make Reduce Entries    ----
-	    
+
 	    Initialize(Item_Iter, Item_Set_1);
 
 		-- check for degenerate reduce --
@@ -545,7 +541,7 @@ package body Parse_Table is
 		end if;
 		goto Continue_Loop;
 	    end if;
-		    
+
 	    -- The following is really messy. It used to be ok before
 	    -- we added precedence. Some day we should rewrite it.
 	    while More(Item_Iter) loop
@@ -567,9 +563,9 @@ package body Parse_Table is
 				    Rule_ID => Temp_Item.Rule_ID);
 
 			    when Shift =>
-				Sym_Prec  := 
+				Sym_Prec  :=
 				    Get_Precedence(Sym);
-				Rule_Prec := 
+				Rule_Prec :=
 				    Get_Rule_Precedence(Temp_Item.Rule_ID);
 
 				if Sym_Prec = 0 or else Rule_Prec = 0 then
@@ -618,7 +614,9 @@ package body Parse_Table is
 
 	<<Continue_Loop>>
 
-	    if Show_Verbose then
+            Goto_File.Open_Write;
+            Shift_Reduce_File.Open_Write;
+            if Show_Verbose then
 		Print_Goto_Row_Verbose;
 	    end if;
 
@@ -648,11 +646,11 @@ package body Parse_Table is
 
 	LR0_Machine.LR0_Initialize;
 
-	if Options.Loud then 
+	if Options.Loud then
 	    Put_Line("Ayacc: Making Follow Sets.");
 	end if;
 
-        Make_LALR_Sets; 
+        Make_LALR_Sets;
 
 	if Options.Loud then
 	    Put_Line("Ayacc: Making Parse Table.");
