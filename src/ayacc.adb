@@ -88,7 +88,6 @@ begin
    Parse_Template_File.Initialize;
 
     Source_File.Open;
-    Tokens_File.Open;
 
     Parser.Parse_Declarations;
     Parser.Parse_Rules;
