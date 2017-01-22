@@ -25,21 +25,21 @@
 -- Date         : 11/21/86  12:30:42
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxlexical_analyzer_body.ada
 
--- $Header: lexical_analyzer_body.a,v 0.1 86/04/01 15:05:27 ada Exp $ 
+-- $Header: lexical_analyzer_body.a,v 0.1 86/04/01 15:05:27 ada Exp $
 -- $Log:	lexical_analyzer_body.a,v $
 -- Revision 0.1  86/04/01  15:05:27  ada
---  This version fixes some minor bugs with empty grammars 
---  and $$ expansion. It also uses vads5.1b enhancements 
---  such as pragma inline. 
--- 
--- 
+--  This version fixes some minor bugs with empty grammars
+--  and $$ expansion. It also uses vads5.1b enhancements
+--  such as pragma inline.
+--
+--
 -- Revision 0.0  86/02/19  18:37:05  ada
--- 
+--
 -- These files comprise the initial version of Ayacc
 -- designed and implemented by David Taback and Deepak Tolani.
 -- Ayacc has been compiled and tested under the Verdix Ada compiler
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
---  
+--
 
 with Actions_File, Source_File, STR_Pack, Tokens_File, Text_IO;
 use  Actions_File, Source_File, STR_Pack, Tokens_File, Text_IO;
@@ -53,6 +53,7 @@ package body Lexical_Analyzer is
     Current_Line_Number: Natural := 1;
 
     Lexeme_Text : STR(Max_Lexeme_Length);
+    Original_Lexeme_Text : STR(Max_Lexeme_Length);
 
 
 
@@ -61,6 +62,11 @@ package body Lexical_Analyzer is
 	return Value_of(Lexeme_Text);
     end Get_Lexeme_Text;
 
+   --  The scanned text as found in the grammar (ie, no upper case).
+   function Get_Original_Text return String is
+   begin
+      return Value_Of (Original_Lexeme_Text);
+   end Get_Original_Text;
 
     function Line_Number return Natural is
     begin
@@ -152,6 +158,8 @@ package body Lexical_Analyzer is
                             return With_Clause;
                         elsif Value_of (Lexeme_Text) = "%USE" then
                             return Use_Clause;
+                        elsif Value_of (Lexeme_Text) = "%UNIT" then
+                            return Unit_Clause;
 			else
 			    raise Illegal_Token;
 			end if;
@@ -192,7 +200,8 @@ package body Lexical_Analyzer is
 			    Unget_Char; -- (Ch);
 			    exit;
 			end if;
-		    end loop;
+                    end loop;
+                    Assign (Value_Of(Lexeme_Text), Original_Lexeme_Text);
 		    Upper_Case(Lexeme_Text);
 		    return Identifier;
 		when others =>
@@ -203,7 +212,7 @@ package body Lexical_Analyzer is
 
 
 
-    procedure Handle_Action(Rule, Rule_Length : Integer) is 
+    procedure Handle_Action(Rule, Rule_Length : Integer) is
         Char   : Character;
         Base   : Integer;
     begin
@@ -215,47 +224,47 @@ package body Lexical_Analyzer is
 	Actions_File.Writeln;
         loop
             Get_Char(Char);
-            if Char = '-' and then Peek_Next_Char = '-' then 
-		loop 
+            if Char = '-' and then Peek_Next_Char = '-' then
+		loop
 		    Actions_File.Write(Char);
 		    Get_Char(Char);
-		    exit when Char = Eoln; 
-		end loop; 
+		    exit when Char = Eoln;
+		end loop;
 	    end if;
-       
+
             case Char is
-                when '"' =>  
-                    Actions_File.Write(Char); 
+                when '"' =>
+                    Actions_File.Write(Char);
                     loop
                         Get_Char(Char);
-                        Actions_File.Write(Char); 
+                        Actions_File.Write(Char);
                         exit when Char = '"';
                     end loop;
-		    
+
 		-- handle special case '"' where there is no matching ".
-		when ''' => 
-                    Actions_File.Write(Char); 
+		when ''' =>
+                    Actions_File.Write(Char);
 		    if Peek_Next_Char= '"' then
 		      Get_Char(Char);
 		      if Peek_Next_Char = ''' then
                         Actions_File.Write(Char); -- '"'
 			Get_Char(Char);   -- '''
-                        Actions_File.Write(Char); 
+                        Actions_File.Write(Char);
 		      else
 			UnGet_Char; -- (Char);  -- '"'
 		      end if;
-		    end if;    
+		    end if;
                 when '$' =>
                     Actions_File.Writeln;
 
                     Get_Char(Char);
                     if Char = '$' then
-                        Actions_File.Write("yyval"); 
-                    elsif Char in '0'..'9' then 
+                        Actions_File.Write("yyval");
+                    elsif Char in '0'..'9' then
                         Base := Character'Pos(Char) - Character'Pos('0');
-                        while Peek_Next_Char in '0'..'9' loop 
+                        while Peek_Next_Char in '0'..'9' loop
                             Get_Char(Char);
-                            Base := Base * 10 + 
+                            Base := Base * 10 +
                                     Character'Pos(Char) - Character'Pos('0');
                         end loop;
                         if Base > Rule_Length then
@@ -263,68 +272,68 @@ package body Lexical_Analyzer is
                             raise Illegal_Token;
                         end if;
                         Base := Base - Rule_Length;
-                        if Base = 0 then 
-                            Actions_File.Write("yy.value_stack(yy.tos)"); 
-                        else 
-                            Actions_File.Write("yy.value_stack(yy.tos" & 
+                        if Base = 0 then
+                            Actions_File.Write("yy.value_stack(yy.tos)");
+                        else
+                            Actions_File.Write("yy.value_stack(yy.tos" &
                                    Integer'Image(Base) & ")");
                         end if;
                     else
                         Put_Line("Ayacc: Illegal symbol following $");
                         raise Illegal_Token;
-                    end if; 
+                    end if;
 
-                when Eoln => 
-                    Actions_File.Writeln; 
-                    Current_Line_Number := Current_Line_Number + 1;  
-    
-                when '}'  => 
+                when Eoln =>
+                    Actions_File.Writeln;
+                    Current_Line_Number := Current_Line_Number + 1;
+
+                when '}'  =>
                     exit;
 
-                when others =>  
+                when others =>
                     Actions_File.Write(Char);
-            end case;  
+            end case;
 
-        end loop; 
-        Actions_File.Writeln;  
-    end Handle_Action; 
+        end loop;
+        Actions_File.Writeln;
+    end Handle_Action;
 
-    procedure Dump_Declarations is 
+    procedure Dump_Declarations is
         Ch   : Character;
         Text : STR(Source_File.Maximum_Line_Length);
-    begin 
-        Assign("", To => Text); 
-        loop 
-            Get_Char(Ch); 
+    begin
+        Assign("", To => Text);
+        loop
+            Get_Char(Ch);
             exit when Ch = '}' ;
 
-            case Ch is 
-                when  '-'   => Append(Ch, To => Text);  
-                               if Peek_Next_Char = '-' then 
+            case Ch is
+                when  '-'   => Append(Ch, To => Text);
+                               if Peek_Next_Char = '-' then
 	                           loop
 	                               Get_Char(Ch);
-                                       Append(Ch, To => Text);      
+                                       Append(Ch, To => Text);
                                        exit when Peek_Next_Char = Eoln or
-                                                 Peek_Next_Char = Eof; 
+                                                 Peek_Next_Char = Eof;
 	                           end loop;
                                end if;
-                when  '"'   => Append(Ch, To => Text); 
-                               loop 
-                                   Get_Char(Ch); 
-                                   if Ch = Eoln or Ch = Eof then 
-                                       raise Illegal_Token; 
+                when  '"'   => Append(Ch, To => Text);
+                               loop
+                                   Get_Char(Ch);
+                                   if Ch = Eoln or Ch = Eof then
+                                       raise Illegal_Token;
                                    end if;
-                                   Append(Ch, To => Text); 
-                                   exit when Ch = '"'; 
-                               end loop; 
-                when Eoln   => Tokens_File.Writeln(Value_of(Text)); 
-                               Assign("", To => Text); 
-                               Current_Line_Number := Current_Line_Number + 1; 
-                when Eof    => exit;  
-                when others => Append(Ch, To => Text); 
-            end case; 
+                                   Append(Ch, To => Text);
+                                   exit when Ch = '"';
+                               end loop;
+                when Eoln   => Tokens_File.Writeln(Value_of(Text));
+                               Assign("", To => Text);
+                               Current_Line_Number := Current_Line_Number + 1;
+                when Eof    => exit;
+                when others => Append(Ch, To => Text);
+            end case;
         end loop;
-        Tokens_File.Writeln(Value_of(Text)); 
-    end Dump_Declarations; 
+        Tokens_File.Writeln(Value_of(Text));
+    end Dump_Declarations;
 
-end Lexical_Analyzer; 
+end Lexical_Analyzer;
