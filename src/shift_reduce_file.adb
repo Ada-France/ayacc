@@ -10,6 +10,9 @@ package body Shift_Reduce_File is
 
     procedure Open_Write is
     begin
+        if Is_Open (The_File) then
+           return;
+        end if;
         Create(The_File, Out_File, Get_Shift_Reduce_File_Name);
         Write_Line("pragma Style_Checks (Off);");
         Write_Line("package " & Shift_Reduce_Tables_Unit_Name & " is");
