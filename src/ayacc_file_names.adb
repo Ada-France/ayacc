@@ -22,7 +22,8 @@ package body Ayacc_File_Names is
     Listing_File_Name      : STR(Max_Name_Length);
 -- END OF UMASS CODES.
     C_Lex_File_Name        : STR(Max_Name_Length);
-    Include_File_Name      : STR(Max_Name_Length);
+   Include_File_Name      : STR(Max_Name_Length);
+   Unit_Name : STR(Max_Name_Length);
 
 
 --RJS ==========================================
@@ -91,6 +92,11 @@ package body Ayacc_File_Names is
 
   end Get_Unit_Name;
 
+   procedure Set_Unit_Name (Name : in String) is
+   begin
+      Assign (Name, Unit_Name);
+   end Set_Unit_Name;
+
 
   function C_Lex_Unit_Name return String is
     Filename : constant String := Value_of (Upper_Case (C_Lex_File_Name));
@@ -101,22 +107,34 @@ package body Ayacc_File_Names is
 
   function Goto_Tables_Unit_Name return String is
     Filename : constant String := Value_of (Upper_Case (Goto_File_Name));
-  begin
-    return Get_Unit_Name (Filename);
+   begin
+      if Is_Empty (Unit_Name) then
+         return Get_Unit_Name (Filename);
+      else
+         return Value_Of (Unit_Name) & "_Goto";
+      end if;
   end Goto_Tables_Unit_Name;
 
 
   function Shift_Reduce_Tables_Unit_Name return String is
     Filename : constant String := Value_of (Upper_Case (Shift_Reduce_File_Name));
   begin
-    return Get_Unit_Name (Filename);
+     if Is_Empty (Unit_Name) then
+        return Get_Unit_Name (Filename);
+     else
+        return Value_Of (Unit_Name) & "_Shift_Reduce";
+     end if;
   end Shift_Reduce_Tables_Unit_Name;
 
 
   function Tokens_Unit_Name return String is
     Filename : constant String := Value_of (Upper_Case (Tokens_File_Name));
-  begin
-    return Get_Unit_Name (Filename);
+   begin
+      if Is_Empty (Unit_Name) then
+         return Get_Unit_Name (Filename);
+      else
+         return Value_Of (Unit_Name) & "_Tokens";
+      end if;
   end Tokens_Unit_Name;
 
 -- UMASS CODES :
