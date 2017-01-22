@@ -25,51 +25,53 @@
 -- Date         : 11/21/86  12:30:26
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxlexical_analyzer.ada
 
--- $Header: lexical_analyzer.a,v 0.1 86/04/01 15:05:14 ada Exp $ 
+-- $Header: lexical_analyzer.a,v 0.1 86/04/01 15:05:14 ada Exp $
 -- $Log:	lexical_analyzer.a,v $
 -- Revision 0.1  86/04/01  15:05:14  ada
---  This version fixes some minor bugs with empty grammars 
---  and $$ expansion. It also uses vads5.1b enhancements 
---  such as pragma inline. 
--- 
--- 
+--  This version fixes some minor bugs with empty grammars
+--  and $$ expansion. It also uses vads5.1b enhancements
+--  such as pragma inline.
+--
+--
 -- Revision 0.0  86/02/19  18:36:57  ada
--- 
+--
 -- These files comprise the initial version of Ayacc
 -- designed and implemented by David Taback and Deepak Tolani.
 -- Ayacc has been compiled and tested under the Verdix Ada compiler
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
---  
+--
 
 with Source_File;
-package Lexical_Analyzer is 
+package Lexical_Analyzer is
 
 
     function Get_Lexeme_Text return String;   -- Scanned text.
 
+   --  The scanned text as found in the grammar (ie, no upper case).
+   function Get_Original_Text return String;
 
     type Ayacc_Token is
 	(Token, Start,
 	 Left, Right, Nonassoc, Prec,
-         With_Clause, Use_Clause,
-	 Identifier, Character_Literal, 
+         With_Clause, Use_Clause, Unit_Clause,
+	 Identifier, Character_Literal,
          Comma, Colon, Semicolon, Vertical_Bar, Left_Brace,
 	 Mark, Eof_Token);
 
-    
+
     function Get_Token return Ayacc_Token;
-    
-    
+
+
     function Line_Number return Natural;  -- Current line of source file
 
-    
-    procedure Handle_Action(Rule, Rule_Length : Integer); 
+
+    procedure Handle_Action(Rule, Rule_Length : Integer);
 
 
     procedure Print_Context_Lines renames Source_File.Print_Context_Lines;
 
 
-    procedure Dump_Declarations; 
+    procedure Dump_Declarations;
 
 
     Illegal_Token         : exception;
