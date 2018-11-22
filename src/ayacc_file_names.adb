@@ -212,8 +212,21 @@ package body Ayacc_File_Names is
 
 
 
-   procedure Set_File_Names(Input_File, Extension: in String) is
+   procedure Set_File_Names(Input_File, Extension, Output_Directory: in String) is
       Base: STR(Max_Name_Length);
+
+      function Find_Start_Of_Base (Filename: in String) return Natural is
+      begin
+         for Index in reverse Filename'Range loop
+            if Filename (Index) = '/' then
+               return Index;
+            end if;
+         end loop;
+
+         return Natural'First;  --  Return 0, failed to find a directory.
+      end Find_Start_Of_Base;
+
+      Directory_Index : constant Natural := Find_Start_Of_Base (Input_File);
    begin
 
       if Input_File'Length < 3 or else
@@ -224,7 +237,22 @@ package body Ayacc_File_Names is
          raise Illegal_File_Name;
       end if;
 
-      Assign(Input_File(Input_File'First..Input_File'Last-2), To => Base);
+      if Output_Directory = "" then
+         Assign(Input_File(Input_File'First..Input_File'Last-2), To => Base);
+      else
+         if Directory_Index /= 0 then
+            --  String out any leading directory, i.e. "../../"
+            if Output_Directory (Output_Directory'Length) /= '/' then
+               Assign(Output_Directory & '/', To => Base);
+            else
+               Assign(Output_Directory, To => Base);
+            end if;
+
+            Append(Input_File (Directory_Index + 1 .. Input_File'Last - 2), To => Base);
+         else
+            Assign(Input_File (Input_File'First .. Input_File'Last - 2), To => Base);
+         end if;
+      end if;
 
       Assign(Input_File, To => Source_File_Name);
 
