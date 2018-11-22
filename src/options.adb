@@ -36,6 +36,7 @@ package body Options is
       Put_Line (Standard_Error, "Usage: ayacc [-cdlrsv] [-e ext] [-n size] grammar");
       Put_Line (Standard_Error, "-c          Specifies the generation of a 'C' Lex interface.");
       Put_Line (Standard_Error, "-d          Specifies the production of debugging output");
+      Put_Line (Standard_Error, "-D dir      Write file to the directory specified");
       Put_Line (Standard_Error, "-l          Loud option to tell what's going on");
       Put_Line (Standard_Error, "-n size     Defines the size of the value and state stack (8192)");
       Put_Line (Standard_Error, "-r          Generate error recovery");
@@ -48,9 +49,10 @@ package body Options is
    -- Get the program arguments and setup the options.
    procedure Get_Arguments is
       Extension : String_Type := Create(".ada");
+      Directory : String_Type;
    begin
       loop
-         case GNAT.Command_Line.Getopt ("c d l s v r: e: n:") is
+         case GNAT.Command_Line.Getopt ("c d D: l s v r: e: n:") is
             when ASCII.NUL =>
                exit;
 
@@ -59,6 +61,9 @@ package body Options is
 
             when 'd' =>
                Debug_Option := True;
+
+            when 'D' =>
+               Directory := Create (GNAT.Command_Line.Parameter);
 
             when 'l' =>
                Loud_Option := True;
@@ -100,7 +105,7 @@ package body Options is
             Put_Help_Message;
             raise Illegal_Option;
          end if;
-         Ayacc_File_Names.Set_File_Names (Name, Value(Extension));
+         Ayacc_File_Names.Set_File_Names (Name, Value(Extension), Value (Directory));
       end;
 
    exception
