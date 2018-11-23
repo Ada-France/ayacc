@@ -241,7 +241,7 @@ package body Ayacc_File_Names is
          Assign(Input_File(Input_File'First..Input_File'Last-2), To => Base);
       else
          if Directory_Index /= 0 then
-            --  String out any leading directory, i.e. "../../"
+            --  Strip out any leading directory, i.e. "../../"
             if Output_Directory (Output_Directory'Last) /= '/' then
                Assign(Output_Directory & '/', To => Base);
             else
