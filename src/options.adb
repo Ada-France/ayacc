@@ -36,7 +36,7 @@ package body Options is
       Put_Line (Standard_Error, "Usage: ayacc [-cdlrsv] [-e ext] [-n size] grammar");
       Put_Line (Standard_Error, "-c          Specifies the generation of a 'C' Lex interface.");
       Put_Line (Standard_Error, "-d          Specifies the production of debugging output");
-      Put_Line (Standard_Error, "-D dir      Write file to the directory specified");
+      Put_Line (Standard_Error, "-D dir      Write the generated files to the directory specified");
       Put_Line (Standard_Error, "-l          Loud option to tell what's going on");
       Put_Line (Standard_Error, "-n size     Defines the size of the value and state stack (8192)");
       Put_Line (Standard_Error, "-r          Generate error recovery");
