@@ -57,7 +57,7 @@
 
 package Ayacc_File_Names is
 
-    procedure Set_File_Names(Input_File, Extension: in String);
+    procedure Set_File_Names(Input_File, Extension, Output_Directory: in String);
     -- Sets the initial value of the file names
     -- according to the INPUT_FILE.
 
