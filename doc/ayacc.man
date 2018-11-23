@@ -195,6 +195,10 @@ Lex interface.
 Specifies the production of debugging output in the generated parser.
 .\"
 .TP 5
+-D
+Write the generated files to the directory specified.
+.\"
+.TP 5
 -r
 Generate some error recovery support.
 .\"
