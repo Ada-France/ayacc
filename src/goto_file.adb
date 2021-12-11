@@ -17,25 +17,29 @@ package body Goto_File is
        end if;
        Create(The_File, Out_File, Get_Goto_File_Name);
 
-       Write_Line("pragma Style_Checks (Off);");
        Write_Line("package " & Goto_Tables_Unit_Name & " is");
        Write_Line("");
-       Write_Line("    type Small_Integer is range -32_000 .. 32_000;");
        Write_Line("");
-       Write_Line("    type Goto_Entry is record");
-       Write_Line("        Nonterm  : Small_Integer;");
-       Write_Line("        Newstate : Small_Integer;");
-       Write_Line("    end record;");
+       Write_Line("   type Rule        is new Natural;");
+       Write_Line("   type Nonterminal is new Integer;");
        Write_Line("");
-       Write_Line("  --pragma suppress(index_check);");
+       Write_Line("   type Small_Integer is range -32_000 .. 32_000;");
+       Write_Line("   subtype Small_Nonterminal is Nonterminal range -32_000 .. 32_000;");
        Write_Line("");
-       Write_Line("    subtype Row is Integer range -1 .. Integer'Last;");
+       Write_Line("   type Goto_Entry is record");
+       Write_Line("      Nonterm  : Small_Nonterminal;");
+       Write_Line("      Newstate : Small_Integer;");
+       Write_Line("   end record;");
        Write_Line("");
-       Write_Line("    type Goto_Parse_Table is array (Row range <>) of " &
+       Write_Line("   --  pragma suppress(index_check);");
+       Write_Line("");
+       Write_Line("   type Row is new Integer range -1 .. Integer'Last;");
+       Write_Line("");
+       Write_Line("   type Goto_Parse_Table is array (Row range <>) of " &
                   "Goto_Entry;");
        Write_Line("");
-       Write_Line("    Goto_Matrix : constant Goto_Parse_Table :=");
-       Write_Line("       ((-1,-1)  -- Dummy Entry.");
+       Write_Line("   Goto_Matrix : constant Goto_Parse_Table :=");
+       Write_Line("      ((-1, -1)  -- Dummy Entry.");
        exception
             when Name_Error | Use_Error =>
                 Put_Line("Ayacc: Error Opening """ & Get_Goto_File_Name & """.");
@@ -45,42 +49,44 @@ package body Goto_File is
 
     procedure Close_Write is
     begin
-        Write_Line("");
-        Write_Line("subtype Rule        is Natural;");
-        Write_Line("subtype Nonterminal is Integer;");
-        Write_Line("");
 
         -- Write the rule length array --
-        Write( "   Rule_Length : array (Rule range " & Rule'Image(First_Rule) &
-              " .. " & Rule'Image(Last_Rule) & ") of Natural := (");
+        Write( "   Rule_Length : constant array (Rule range" & Rule'Image(First_Rule) &
+              " .." & Rule'Image(Last_Rule) & ") of Natural := (");
 
         for R in First_Rule..Last_Rule loop
             Write( Trim(Natural'Image(Length_of(R)),left) );
-        if R = Last_Rule then
+         if R = Last_Rule then
             Write_Line( ");");
-        elsif R mod 37 = 0 then
+         elsif R mod 23 = 0 then
             Write_Line( ",");
-        else
-            Write( ',');
-        end if;
+            Write("      ");
+         else
+            Write( ", ");
+         end if;
         end loop;
 
         -- Write the lefth hand side array
-        Write("   Get_LHS_Rule: array (Rule range " &
-              Rule'Image(First_Rule) & " .. " &
+        Write_Line("");
+        Write("   Get_LHS_Rule : constant array (Rule range" &
+              Rule'Image(First_Rule) & " .." &
         Rule'Image(Last_Rule) & ") of Nonterminal := (");
 
         for R in First_Rule..Last_Rule loop
-        if R = Last_Rule then
-            Write_Line( Grammar_Symbol'Image(Get_LHS(R)) & ");");
-        elsif R mod 14 = 0 then
-            Write_Line( Grammar_Symbol'Image(Get_LHS(R)) & ',');
-        else
-            Write(Grammar_Symbol'Image(Get_LHS(R)) & ',');
-        end if;
+         if R = Last_Rule then
+            Write_Line(' ' & Grammar_Symbol'Image(Get_LHS(R)) & ");");
+         elsif R = First_Rule then
+            Write_Line(Grammar_Symbol'Image(Get_LHS(R)) & ',');
+            Write("      ");
+         elsif R mod 14 = 0 then
+            Write_Line(' ' & Grammar_Symbol'Image(Get_LHS(R)) & ',');
+            Write("      ");
+         else
+            Write(' ' & Grammar_Symbol'Image(Get_LHS(R)) & ',');
+         end if;
         end loop;
 
-
+        Write_Line("");
         Write_Line("end " & Goto_Tables_Unit_Name & ";");
     Close(The_File);
     end Close_Write;
@@ -103,5 +109,12 @@ package body Goto_File is
     Put(The_File, C);
     end Write;
 
+   procedure Write_Indented (S : in String) is
+   begin
+      if Col(The_File) = 1 then
+         Put(The_File, "      ");
+      end if;
+      Put(The_File, S);
+   end Write_Indented;
 
 end Goto_File;

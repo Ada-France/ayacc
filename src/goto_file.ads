@@ -59,5 +59,6 @@ package Goto_File is
     procedure Write(S: in String); 
     procedure Write_Line(S: in String);
     procedure Write(C: in Character);
+    procedure Write_Indented (S : in String);
 
 end Goto_File;
