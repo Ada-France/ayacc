@@ -56,6 +56,7 @@
 with Ayacc_File_Names, Source_File, Symbol_Table, Text_IO;
 
 with String_Pkg;
+with Options;
 package body Tokens_File is
 
   -- SCCS_ID : constant String := "@(#) tokens_file_body.ada, Version 1.2";
@@ -86,7 +87,6 @@ package body Tokens_File is
     begin
       if not Package_Header_Generated then
         Open;
-        Writeln("pragma Style_Checks (Off);");
         Writeln("package " & Ayacc_File_Names.Tokens_Unit_Name & " is");
         Writeln("");
         Package_Header_Generated := True;
@@ -115,7 +115,8 @@ package body Tokens_File is
 
 
     procedure Complete_Tokens_Package is
-
+      
+      Keep_Token_Case : constant Boolean := Options.Keep_Token_Case;
     Tokens_On_Line: Natural := 1;
         use String_Pkg;
     use Symbol_Table;
@@ -126,29 +127,41 @@ package body Tokens_File is
         Start_Tokens_Package;
       end if;
 
-        Writeln("    YYLVal, YYVal : YYSType; ");
-    Writeln("    type Token is");
-    Write("        (");
+      Writeln("   YYLVal, YYVal : YYSType;");
+      Writeln("   type Token is");
+      Write("        (");
 
-    for I in First_Symbol(Terminal)..Last_Symbol(Terminal)-1 loop
-        if Tokens_On_Line = 4 then
-        Write(Value (Mixed (Get_Symbol_Name(I))));
-        Writeln(",");
-        Write("         ");
-        Tokens_On_Line := 1;
-        else
-        Write(Value (Mixed (Get_Symbol_Name(I))));
-        Write(", ");
-        end if;
-        Tokens_On_Line := Tokens_On_Line + 1;
-    end loop;
-
-    Write(Value (Mixed (Get_Symbol_Name(Last_Symbol(Terminal)))));
-    Writeln(" );");
-    Writeln("");
-    Writeln("    Syntax_Error : exception;");
-    Writeln("");
-    Writeln("end " & Ayacc_File_Names.Tokens_Unit_Name & ";");
+      for I in First_Symbol(Terminal)..Last_Symbol(Terminal)-1 loop
+         if Tokens_On_Line = 4 then
+            if Keep_Token_Case then
+               Write(Get_Symbol_Name(I));
+            else
+               Write(Value (Mixed (Get_Symbol_Name(I))));
+            end if;
+            Writeln(",");
+            Write("         ");
+            Tokens_On_Line := 1;
+         else
+            if Keep_Token_Case then
+               Write(Get_Symbol_Name(I));
+            else
+               Write(Value (Mixed (Get_Symbol_Name(I))));
+            end if;
+            Write(", ");
+         end if;
+         Tokens_On_Line := Tokens_On_Line + 1;
+      end loop;
+      
+      if Keep_Token_Case then
+         Write(Get_Symbol_Name(Last_Symbol(Terminal)));
+      else
+         Write(Value (Mixed (Get_Symbol_Name(Last_Symbol(Terminal)))));
+      end if;
+      Writeln(");");
+      Writeln("");
+      Writeln("   Syntax_Error : exception;");
+      Writeln("");
+      Writeln("end " & Ayacc_File_Names.Tokens_Unit_Name & ";");
 
     end Complete_Tokens_Package;
 
