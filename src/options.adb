@@ -58,7 +58,7 @@ package body Options is
       Directory : String_Type;
    begin
       loop
-         case GNAT.Command_Line.Getopt ("c d C E D: k l s v r: e: n:") is
+         case GNAT.Command_Line.Getopt ("c d C E D: k l s v r e: n:") is
             when ASCII.NUL =>
                exit;
 
