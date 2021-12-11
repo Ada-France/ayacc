@@ -15,12 +15,24 @@ This version brings a number of improvements:
   support Ada child packages.
 - The grammar supports the %unit directive to control the Ada child packages
 
+## Version 1.3.0 - Dec 2021
 
-Build
+- New option `-C` to disable the generation of `yyclearin` procedure,
+- New option `-E` to disable the generation of `yyerrok` procedure,
+- New option `-D` to write the generated files to the directory specified,
+- New option `-k` to keep the case of grammar symbols,
+- Fixed various compilation warnings,
+- Generate constants for shift reduce and goto arrays,
+- Better strong typing in the generated state tables,
+- Reduced number of style compilation warnings in generated code
+
+# Build
+
 ```
   make
 ```
-Install
+
+# Install
 ```
   make install prefix=/usr
 ```
