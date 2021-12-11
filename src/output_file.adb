@@ -59,8 +59,7 @@
 with Actions_File, Ayacc_File_Names, Options,
      Parse_Template_File, Source_File, Text_IO;
 
-use  Actions_File, Ayacc_File_Names, Options,
-     Parse_Template_File, Source_File, Text_IO;
+use  Actions_File, Ayacc_File_Names, Text_IO;
 
 package body Output_File is
 
@@ -98,6 +97,9 @@ package body Output_File is
     -- Indicates whether or not current line of the template
     -- is UCI codes which should be deleted in Ayacc-extension.
 -- END OF UMASS CODES.
+       Yyclearin_Codes   : Boolean := False;
+       Yyerrok_Codes     : Boolean := False;
+       Skip_Line         : Boolean := False;
     begin
         Open; -- Open the output file.
 
@@ -125,7 +127,8 @@ package body Output_File is
             if Length > 1 and then Text(1..2) = "%%" then
                 exit;
             else
-
+            
+                Skip_Line := False;
 -- UMASS CODES :
 --   In the template, the codes between "-- UMASS CODES : " and
 --   "-- END OF UMASS CODES." are specific to be used by Ayacc-extension.
@@ -138,6 +141,26 @@ package body Output_File is
 --   Extension is True.
                 if Length = 16 and then Text(1..16) = "-- UMASS CODES :" then
                   Umass_Codes := True;
+                elsif Length = 12 and then Text(1..12) = "-- YYERROK :" then
+                  Yyerrok_Codes := True;
+                  Skip_Line := True;
+                elsif Length = 14 and then Text(1..14) = "-- YYCLEARIN :" then
+                  Yyclearin_Codes := True;
+                  Skip_Line := True;
+                elsif Length = 20 and then Text(1..20) = "-- END OF YYCLEARIN." then
+                  Yyclearin_Codes := False;
+                  Skip_Line := True;
+                elsif Length = 18 and then Text(1..18) = "-- END OF YYERROK." then
+                  Yyerrok_Codes := False;
+                  Skip_Line := True;
+                end if;
+            
+                if Yyclearin_Codes and Options.Skip_Yyclearin then
+                  Skip_Line := True;
+                end if;
+
+                if Yyerrok_Codes and Options.Skip_Yyerrok then
+                  Skip_Line := True;
                 end if;
 
                 if Length = 22 and then Text(1..22) = "-- UCI CODES DELETED :" then
@@ -154,12 +177,12 @@ package body Output_File is
 
                 if Options.Error_Recovery_Extension then
                   -- Do not generate UCI codes which should be deleted.
-                  if not UCI_CODES_Deleted then
+                  if not UCI_CODES_Deleted and not Skip_Line then
                     PUT_LINE(Outfile,Text(1..Length));
                   end if;
                 else
                   -- Do not generate UMASS codes.
-                  if not Umass_Codes then
+                  if not Umass_Codes and not Skip_Line then
                     PUT_LINE(Outfile,Text(1..Length));
                   end if;
                 end if;
@@ -177,14 +200,14 @@ package body Output_File is
             end if;
         end loop;
 
-        Put_Line (Outfile, "    package yy_goto_tables         renames");
-        Put_Line (Outfile, "      " & Goto_Tables_Unit_Name & ';');
+        Put_Line (Outfile, "      package yy_goto_tables renames");
+        Put_Line (Outfile, "         " & Goto_Tables_Unit_Name & ';');
 
-        Put_Line (Outfile, "    package yy_shift_reduce_tables renames");
-        Put_Line (Outfile, "      " & Shift_Reduce_Tables_Unit_Name & ';');
+        Put_Line (Outfile, "      package yy_shift_reduce_tables renames");
+        Put_Line (Outfile, "         " & Shift_Reduce_Tables_Unit_Name & ';');
 
-        Put_Line (Outfile, "    package yy_tokens              renames");
-        Put_Line (Outfile, "      " & Tokens_Unit_Name & ';');
+        Put_Line (Outfile, "      package yy_tokens renames");
+        Put_Line (Outfile, "         " & Tokens_Unit_Name & ';');
 
 --          Put_Line (Outfile, "    package yy_io                  renames -- (+GdM 2008)");
 --          declare
@@ -209,6 +232,8 @@ package body Output_File is
                 exit;
             else
 
+               Skip_Line := False;
+
 -- UMASS CODES :
 --   In the template, the codes between "-- UMASS CODES : " and
 --   "-- END OF UMASS CODES." are specific to be used by Ayacc-extension.
@@ -221,6 +246,26 @@ package body Output_File is
 --   Extension is True.
                 if Length = 16 and then Text(1..16) = "-- UMASS CODES :" then
                   Umass_Codes := True;
+                elsif Length = 12 and then Text(1..12) = "-- YYERROK :" then
+                  Yyerrok_Codes := True;
+                  Skip_Line := True;
+                elsif Length = 14 and then Text(1..14) = "-- YYCLEARIN :" then
+                  Yyclearin_Codes := True;
+                  Skip_Line := True;
+                elsif Length = 20 and then Text(1..20) = "-- END OF YYCLEARIN." then
+                  Yyclearin_Codes := False;
+                  Skip_Line := True;
+                elsif Length = 18 and then Text(1..18) = "-- END OF YYERROK." then
+                  Yyerrok_Codes := False;
+                  Skip_Line := True;
+                end if;
+            
+                if Yyclearin_Codes and Options.Skip_Yyclearin then
+                  Skip_Line := True;
+                end if;
+
+                if Yyerrok_Codes and Options.Skip_Yyerrok then
+                  Skip_Line := True;
                 end if;
 
                 if Length = 22 and then Text(1..22) = "-- UCI CODES DELETED :" then
@@ -237,12 +282,12 @@ package body Output_File is
 
                 if Options.Error_Recovery_Extension then
                   -- Do not generate UCI codes which should be deleted.
-                  if not UCI_CODES_Deleted then
+                  if not UCI_CODES_Deleted and not Skip_Line then
                     PUT_LINE(Outfile,Text(1..Length));
                   end if;
                 else
                   -- Do not generate UMASS codes.
-                  if not Umass_Codes then
+                  if not Umass_Codes and not Skip_Line then
                     PUT_LINE(Outfile,Text(1..Length));
                   end if;
                 end if;
@@ -261,8 +306,11 @@ package body Output_File is
         end loop;
 
         -- Copy declarations and procedures needed in the parse template
-        Put_Line (Outfile,"        DEBUG : constant boolean := " &
-                          Boolean'Image (Options.Debug) & ';');
+        if (Options.Debug) then
+           Put_Line (Outfile, "         debug : constant Boolean := True;");
+        else
+           Put_Line (Outfile, "         debug : constant Boolean := False;");
+        end if;
 
         -- Consume Template Up To User Action Routines.
         loop
@@ -270,6 +318,8 @@ package body Output_File is
             if Length > 1 and then Text(1..2) = "%%" then
                 exit;
             else
+
+               Skip_Line := False;
 
 -- UMASS CODES :
 --   In the template, the codes between "-- UMASS CODES : " and
@@ -283,6 +333,26 @@ package body Output_File is
 --   Extension is True.
                 if Length = 16 and then Text(1..16) = "-- UMASS CODES :" then
                   Umass_Codes := True;
+                elsif Length = 12 and then Text(1..12) = "-- YYERROK :" then
+                  Yyerrok_Codes := True;
+                  Skip_Line := True;
+                elsif Length = 14 and then Text(1..14) = "-- YYCLEARIN :" then
+                  Yyclearin_Codes := True;
+                  Skip_Line := True;
+                elsif Length = 20 and then Text(1..20) = "-- END OF YYCLEARIN." then
+                  Yyclearin_Codes := False;
+                  Skip_Line := True;
+                elsif Length = 18 and then Text(1..18) = "-- END OF YYERROK." then
+                  Yyerrok_Codes := False;
+                  Skip_Line := True;
+                end if;
+            
+                if Yyclearin_Codes and Options.Skip_Yyclearin then
+                  Skip_Line := True;
+                end if;
+
+                if Yyerrok_Codes and Options.Skip_Yyerrok then
+                  Skip_Line := True;
                 end if;
 
                 if Length = 22 and then Text(1..22) = "-- UCI CODES DELETED :" then
@@ -299,12 +369,12 @@ package body Output_File is
 
                 if Options.Error_Recovery_Extension then
                   -- Do not generate UCI codes which should be deleted.
-                  if not UCI_CODES_Deleted then
+                  if not UCI_CODES_Deleted and not Skip_Line then
                     PUT_LINE(Outfile,Text(1..Length));
                   end if;
                 else
                   -- Do not generate UMASS codes.
-                  if not Umass_Codes then
+                  if not Umass_Codes and not Skip_Line then
                     PUT_LINE(Outfile,Text(1..Length));
                   end if;
                 end if;
@@ -335,6 +405,8 @@ package body Output_File is
             exit when Parse_Template_File.Is_End_of_File;
             Parse_Template_File.Read(Text,Length);
 
+            Skip_Line := False;
+
 -- UMASS CODES :
 --   In the template, the codes between "-- UMASS CODES : " and
 --   "-- END OF UMASS CODES." are specific to be used by Ayacc-extension.
@@ -347,6 +419,26 @@ package body Output_File is
 --   Extension is True.
             if Length = 16 and then Text(1..16) = "-- UMASS CODES :" then
               Umass_Codes := True;
+            elsif Length = 12 and then Text(1..12) = "-- YYERROK :" then
+              Yyerrok_Codes := True;
+              Skip_Line := True;
+            elsif Length = 14 and then Text(1..14) = "-- YYCLEARIN :" then
+              Yyclearin_Codes := True;
+              Skip_Line := True;
+            elsif Length = 20 and then Text(1..20) = "-- END OF YYCLEARIN." then
+              Yyclearin_Codes := False;
+              Skip_Line := True;
+            elsif Length = 18 and then Text(1..18) = "-- END OF YYERROK." then
+              Yyerrok_Codes := False;
+              Skip_Line := True;
+            end if;
+            
+            if Yyclearin_Codes and Options.Skip_Yyclearin then
+              Skip_Line := True;
+            end if;
+
+            if Yyerrok_Codes and Options.Skip_Yyerrok then
+              Skip_Line := True;
             end if;
 
             if Length = 22 and then Text(1..22) = "-- UCI CODES DELETED :" then
@@ -363,12 +455,12 @@ package body Output_File is
 
             if Options.Error_Recovery_Extension then
               -- Do not generate UCI codes which should be deleted.
-              if not UCI_CODES_Deleted then
+              if not UCI_CODES_Deleted and not Skip_Line then
                 PUT_LINE(Outfile,Text(1..Length));
               end if;
             else
               -- Do not generate UMASS codes.
-              if not Umass_Codes then
+              if not Umass_Codes and not Skip_Line then
                 PUT_LINE(Outfile,Text(1..Length));
               end if;
             end if;
