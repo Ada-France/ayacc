@@ -11,6 +11,7 @@ clean:
 	-@rm -f *.ali *.o driver ada.ada ada_lex.ada
 	-@rm -f $(LEX_FILES)
 	-@rm -f $(AYACC_FILES)
+	-@rm -f parse
 
 $(LEX_FILES): ada_lex.l
 	aflex ada_lex.l
