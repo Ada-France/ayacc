@@ -1,12 +1,12 @@
 MODE=distrib
-GNATMAKE=gnatmake
+GNATMAKE=gprbuild
 GNATCLEAN=gnatclean
 GPRPATH=ayacc.gpr
 
 INSTALL = /usr/bin/install -c
 INSTALL_PROGRAM = $(INSTALL) -m 755
 
-MAKE_ARGS=-XMODE=${MODE}
+MAKE_ARGS=-XBUILD=${MODE}
 
 prefix = /usr/local
 bindir = ${prefix}/bin
@@ -25,7 +25,7 @@ autobuild:
 # Clean the root project of all build products.
 clean:
 	-$(GNATCLEAN) -q -P "$(GPRPATH)"
-	-rm -rf tests
+	-@rm -rf tests
 	-make -C examples/ada_parser clean
 	-make -C examples/calc clean
 
