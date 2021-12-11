@@ -14,6 +14,12 @@ ChangeLog
 configure.lineno
 autom4te.cache
 *.txt
+bin/
 lib/
 obj/
-							       
+config/
+alire/
+doc/ayacc_user_man.aux
+doc/ayacc_user_man.lof
+doc/ayacc_user_man.pdf
+doc/ayacc_user_man.toc
