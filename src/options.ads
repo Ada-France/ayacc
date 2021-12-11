@@ -69,8 +69,17 @@ package Options is
     -- be generated.
 -- END OF UMASS CODES.
 
-   function Ayacc_Stack_Size return String;
-   -- Returns the stack size that the parser must use.
+    function Ayacc_Stack_Size return String;
+    -- Returns the stack size that the parser must use.
+
+    function Skip_Yyerrok return Boolean;
+    --  Skip generation of yyerrok
+
+    function Skip_Yyclearin return Boolean;
+    --  Skip generation of yyclearin
+
+    function Keep_Token_Case return Boolean;
+    --  Keep the token case
 
     Illegal_Option: exception;
 
