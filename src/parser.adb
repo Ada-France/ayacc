@@ -49,9 +49,9 @@ with Text_IO;          use Text_IO;
 with Lexical_Analyzer; use Lexical_Analyzer;
 with Symbol_Table;     use Symbol_Table;
 with Rule_Table;       use Rule_Table;
-with Actions_File;     use Actions_File;
+with Actions_File;
 with Tokens_File;      use Tokens_File;
-with Ayacc_File_Names; use Ayacc_File_Names;
+with Ayacc_File_Names;
 with String_Pkg;
 package body Parser is
 
@@ -291,7 +291,8 @@ package body Parser is
 
 	procedure Parse_Token_List(Precedence_Value    : in Precedence;
 				   Associativity_Value : in Associativity) is
-	    Temp_Sym : Grammar_Symbol;
+	   Temp_Sym : Grammar_Symbol;
+           pragma Unreferenced (Temp_Sym);
 	begin
 	    loop
 		if Next_Token /= Identifier and then
@@ -378,7 +379,6 @@ package body Parser is
 	end Parse_Package_Name_List;
 
       procedure Parse_Unit_Clause is
-         use String_Pkg;
       begin
          if Tokens_Package_Header_Has_Been_Generated then
             Fatal_Error ("Unit Clause Specifications May Not " &
