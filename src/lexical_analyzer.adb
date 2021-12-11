@@ -42,7 +42,7 @@
 --
 
 with Actions_File, Source_File, STR_Pack, Tokens_File, Text_IO;
-use  Actions_File, Source_File, STR_Pack, Tokens_File, Text_IO;
+use  Source_File, STR_Pack, Text_IO;
 package body Lexical_Analyzer is
 
   -- SCCS_ID : constant String := "@(#) lexical_analyzer_body.adadisk21~/rschm/hasee/sccs/ayacc, Version 1.2";
@@ -255,11 +255,11 @@ package body Lexical_Analyzer is
 		      end if;
 		    end if;
                 when '$' =>
-                    Actions_File.Writeln;
+                    --  Actions_File.Writeln;
 
                     Get_Char(Char);
                     if Char = '$' then
-                        Actions_File.Write("yyval");
+                        Actions_File.Write("YYVal");
                     elsif Char in '0'..'9' then
                         Base := Character'Pos(Char) - Character'Pos('0');
                         while Peek_Next_Char in '0'..'9' loop
@@ -273,9 +273,9 @@ package body Lexical_Analyzer is
                         end if;
                         Base := Base - Rule_Length;
                         if Base = 0 then
-                            Actions_File.Write("yy.value_stack(yy.tos)");
+                            Actions_File.Write("yy.value_stack (yy.tos)");
                         else
-                            Actions_File.Write("yy.value_stack(yy.tos" &
+                            Actions_File.Write("yy.value_stack (yy.tos" &
                                    Integer'Image(Base) & ")");
                         end if;
                     else
