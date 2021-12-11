@@ -38,8 +38,10 @@ analyze:
 rebuild: clean build
 
 install:
-	$(INSTALL_PROGRAM) bin/ayacc ${bindir}
-	$(INSTALL) doc/ayacc.man $(mandir)/man1/ayacc.1
+	mkdir -p $(DESTDIR)$(prefix)/bin
+	$(INSTALL_PROGRAM) bin/ayacc $(DESTDIR)${bindir}
+	mkdir -p $(DESTDIR)$(mandir)/man1
+	$(INSTALL) doc/ayacc.man $(DESTDIR)$(mandir)/man1/ayacc.1
 
 test:
 	make -C examples/ada_parser AYACC=../../bin/ayacc clean build
