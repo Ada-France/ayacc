@@ -46,7 +46,7 @@ with LALR_Symbol_Info, LR0_Machine, Symbol_Table, Rule_Table,
      Shift_Reduce_File;
 
 use  LALR_Symbol_Info, LR0_Machine, Symbol_Table, Rule_Table,
-     Text_IO, Symbol_Info, Options;
+     Text_IO;
 
 with Ada.Strings.Fixed;                 use Ada.Strings, Ada.Strings.Fixed;
 
@@ -163,40 +163,41 @@ package body Parse_Table is
       entries_in_row: Integer := 0;
     begin
 
-	Goto_Offset(State) := Num_of_Goto_Entries;
+      Goto_Offset(State) := Num_of_Goto_Entries;
       terminate_line:= False;
       first_entry:= True;
 
-	for I in Goto_Table_Row.all'range loop
+      for I in Goto_Table_Row.all'range loop
 
-	    S := Goto_Table_Row(I);
+	 S := Goto_Table_Row(I);
 
-	    if S /= -1 then
+	 if S /= -1 then
 
             if first_entry then
-              Goto_File.Write_Line("-- State " & Parse_State'Image(State));
-              first_entry:= False;
+               Goto_File.Write_Line("      --  State " & Parse_State'Image(State));
+               first_entry:= False;
             end if;
 
-		Goto_File.Write(",");
+	    Goto_File.Write_Indented(",");
 
-		Goto_File.Write("(" & Grammar_Symbol'Image(I) & "," &
-				 Trim( Parse_State'Image(S), left ) & ")" );
+	    Goto_File.Write(" (" & Grammar_Symbol'Image(I) & "," &
+			      Parse_State'Image(S) & ")" );
             terminate_line:= True;
-		Num_of_Goto_Entries := Num_of_Goto_Entries + 1;
+	    Num_of_Goto_Entries := Num_of_Goto_Entries + 1;
             entries_in_row:= entries_in_row + 1;
 
-		if entries_in_row mod 11 = 0 then
-		    Goto_File.Write_Line("");
-                terminate_line:= False;
-		end if;
-
+	    if entries_in_row mod 5 = 0 then
+	       Goto_File.Write_Line("");
+	       Goto_File.Write("      ");
+               terminate_line:= False;
 	    end if;
 
-	end loop;
+	 end if;
 
-	if terminate_line then
-        Goto_File.Write_Line("");
+      end loop;
+
+      if terminate_line then
+         Goto_File.Write_Line("");
       end if;
 
     end Print_Goto_Row;
@@ -209,7 +210,7 @@ package body Parse_Table is
 	Temp    : Action_Table_Entry;
 	X       : Integer;
 	Default : Integer;
-      terminate_line, first_entry: Boolean;
+      first_entry: Boolean;
       entries_in_row: Integer := 0;
 
 	function Get_Default_Entry return Integer is
@@ -224,7 +225,6 @@ package body Parse_Table is
 
     begin
 	Action_Offset(State) := Num_of_Action_Entries;
-      terminate_line:= False;
       first_entry:= True;
 
 	Default := Get_Default_Entry;
@@ -247,22 +247,21 @@ package body Parse_Table is
 	    if X /= Default then
 
             if first_entry then
-              Shift_Reduce_File.Write_Line("-- State " & Parse_State'Image(State));
+              Shift_Reduce_File.Write_Line("      --  State " & Parse_State'Image(State));
               first_entry:= False;
             end if;
 
-		Shift_Reduce_File.Write(",");
+		Shift_Reduce_File.Write_Indented(", ");
 
-		Shift_Reduce_File.Write("(" & Grammar_Symbol'Image(I) & ",");
-		Shift_Reduce_File.Write(Integer'Image(X) & ")" );
+		Shift_Reduce_File.Write("(" & Trim(Grammar_Symbol'Image(I), Left) & ", ");
+		Shift_Reduce_File.Write(Trim(Integer'Image(X), Left) & ")" );
 		Num_of_Action_Entries := Num_of_Action_Entries + 1;
 
-            terminate_line:= True;
             entries_in_row:= entries_in_row + 1;
 
-		if entries_in_row mod 13 = 0 then
+		if entries_in_row mod 7 = 0 then
 		    Shift_Reduce_File.Write_Line("");
-                terminate_line:= False;
+		    Shift_Reduce_File.Write("      ");
 		end if;
 
 		if Show_Verbose then
@@ -298,13 +297,13 @@ package body Parse_Table is
 	end if;
 
       if first_entry then
-        Shift_Reduce_File.Write_Line("-- State " & Parse_State'Image(State));
+        Shift_Reduce_File.Write_Line("      --  State " & Parse_State'Image(State));
         first_entry:= False;
       end if;
-	Shift_Reduce_File.Write(",");
+	Shift_Reduce_File.Write_Indented(", ");
 
-	Shift_Reduce_File.Write("(" & Grammar_Symbol'Image(-1) & ",");
-	Shift_Reduce_File.Write(Integer'Image(Default) & ")" );
+	Shift_Reduce_File.Write("(" & Trim(Grammar_Symbol'Image(-1), Left) & ", ");
+	Shift_Reduce_File.Write(Trim(Integer'Image(Default), Left) & ")" );
 	Num_of_Action_Entries := Num_of_Action_Entries + 1;
 
 	Shift_Reduce_File.Write_Line("");
@@ -331,43 +330,61 @@ package body Parse_Table is
 
     procedure Finish_Table_Files is
     begin
-	Goto_File.Write_Line(");");
-	Goto_File.Write_Line("--  The offset vector");
-	Goto_File.Write("GOTO_OFFSET : array (0..");
+	Goto_File.Write_Indented(");");
+        Goto_File.Write_Line("");
+        Goto_File.Write_Line("");
+	Goto_File.Write_Line("   --  The offset vector");
+	Goto_File.Write("   Goto_Offset : constant array (0 ..");
 	Goto_File.Write(Parse_State'Image(Goto_Offset.all'Last) & ')');
-	Goto_File.Write_Line(" of Integer :=");
-	Goto_File.Write("(");
+	Goto_File.Write_Line(" of Row :=");
+	Goto_File.Write("      (");
 	for I in Goto_Offset.all'First .. Goto_Offset.all'Last-1 loop
 	    Goto_File.Write(Trim(Integer'Image(Goto_Offset(I)),left) & ",");
-	    if I mod 17 = 0 then Goto_File.Write_Line(""); end if;
+	 if I mod 10 = 0 then
+            Goto_File.Write_Line("");
+	    Goto_File.Write("      ");
+         else
+            Goto_File.Write(" ");
+         end if;
 	end loop;
 	Goto_File.Write
-	    (Integer'Image(Goto_Offset(Goto_Offset.all'Last)));
+	    (Trim(Integer'Image(Goto_Offset(Goto_Offset.all'Last)), Left));
 	Goto_File.Write_Line(");");
+        Goto_File.Write_Line("");
         Goto_File.Close_Write;
 
-	Shift_Reduce_File.Write_Line(");");
-	Shift_Reduce_File.Write_Line("--  The offset vector");
-	Shift_Reduce_File.Write("SHIFT_REDUCE_OFFSET : array (0..");
+	Shift_Reduce_File.Write_Indented(");");
+	Shift_Reduce_File.Write_Line("");
+	Shift_Reduce_File.Write_Line("");
+	Shift_Reduce_File.Write_Line("   --  The offset vector");
+	Shift_Reduce_File.Write("   Shift_Reduce_Offset : constant array (0 ..");
 	Shift_Reduce_File.Write
 	     (Parse_State'Image(Action_Offset.all'Last) & ')');
 
-	Shift_Reduce_File.Write_Line(" of Integer :=");
-	Shift_Reduce_File.Write("(");
+	Shift_Reduce_File.Write_Line(" of Row :=");
+	Shift_Reduce_File.Write("      (");
 
 	for I in Action_Offset.all'First..Action_Offset.all'Last-1
 	loop
+            if I = Action_Offset.all'First then
+	       Shift_Reduce_File.Write
+	         (Trim(Integer'Image(Action_Offset(I)), Left) & ",");
+            else
+	       Shift_Reduce_File.Write
+	         (Integer'Image(Action_Offset(I)) & ",");
+            end if;
 
-	    Shift_Reduce_File.Write
-	       (Integer'Image(Action_Offset(I)) & ",");
-
-	    if I mod 16 = 0 then Shift_Reduce_File.Write_Line(""); end if;
+	    if I mod 10 = 0 then
+               Shift_Reduce_File.Write_Line("");
+               Shift_Reduce_File.Write("      ");
+            end if;
 
 	end loop;
 
 	Shift_Reduce_File.Write
 	    (Integer'Image(Action_Offset(Action_Offset.all'Last)));
 	Shift_Reduce_File.Write_Line(");");
+	Shift_Reduce_File.Write_Line("");
 
         Shift_Reduce_File.Close_Write;
 
@@ -377,7 +394,6 @@ package body Parse_Table is
 
     procedure Compute_Parse_Table is
 
-	use Transition_Set_Pack;
 	use Item_Set_Pack;
 	use Grammar_Symbol_Set_Pack;
 
