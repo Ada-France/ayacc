@@ -20,7 +20,7 @@ project ayacc is
 
    package Linker is
 	  for Default_Switches ("Ada") use Config.Linker'Default_Switches
-               ("Ada") & ("-Wl,--gc-sections");
+               ("Ada");
    end Linker;
 
 end ayacc;
