@@ -2,6 +2,7 @@ description = "An Ada LARL(1) parser generator"
 name = "ayacc"
 version = "1.3.0"
 licenses = "Unlicense"
+authors = ["David Taback", "Deepak Tolani"]
 maintainers = ["Stephane.Carrez@gmail.com"]
 maintainers-logins = ["stcarrez"]
 project-files = ["ayacc.gpr"]
