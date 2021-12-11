@@ -8,9 +8,9 @@ build: $(LEX_FILES) $(AYACC_FILES)
 	$(GNATMAKE) parse.adb
 
 clean:
-	rm -f *.ali *.o driver ada.ada ada_lex.ada
-	rm -f $(LEX_FILES)
-	rm -f $(AYACC_FILES)
+	-@rm -f *.ali *.o driver ada.ada ada_lex.ada
+	-@rm -f $(LEX_FILES)
+	-@rm -f $(AYACC_FILES)
 
 $(LEX_FILES): ada_lex.l
 	aflex ada_lex.l
