@@ -60,6 +60,6 @@ package Shift_Reduce_File is
     procedure Write_Line(S: in String);
     procedure Write(C: in Character);
     procedure Close_Write;
-
+    procedure Write_Indented(S: in String);
 
 end Shift_Reduce_File;

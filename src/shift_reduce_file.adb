@@ -14,26 +14,25 @@ package body Shift_Reduce_File is
            return;
         end if;
         Create(The_File, Out_File, Get_Shift_Reduce_File_Name);
-        Write_Line("pragma Style_Checks (Off);");
         Write_Line("package " & Shift_Reduce_Tables_Unit_Name & " is");
         Write_Line("");
-        Write_Line("    type Small_Integer is range -32_000 .. 32_000;");
+        Write_Line("   type Small_Integer is range -32_000 .. 32_000;");
         Write_Line("");
-        Write_Line("    type Shift_Reduce_Entry is record");
-        Write_Line("        T   : Small_Integer;");
-        Write_Line("        Act : Small_Integer;");
-        Write_Line("    end record;");
-        Write_Line("    pragma Pack(Shift_Reduce_Entry);");
+        Write_Line("   type Shift_Reduce_Entry is record");
+        Write_Line("      T   : Small_Integer;");
+        Write_Line("      Act : Small_Integer;");
+        Write_Line("   end record;");
+        Write_Line("   pragma Pack (Shift_Reduce_Entry);");
         Write_Line("");
-        Write_Line("    subtype Row is Integer range -1 .. Integer'Last;");
+        Write_Line("   type Row is new Integer range -1 .. Integer'Last;");
         Write_Line("");
-        Write_Line("  --pragma suppress(index_check);");
+        Write_Line("   --  pragma suppress(index_check);");
         Write_Line("");
-        Write_Line("    type Shift_Reduce_Array is array " &
-                   "(Row  range <>) of Shift_Reduce_Entry;");
+        Write_Line("   type Shift_Reduce_Array is array " &
+                   "(Row range <>) of Shift_Reduce_Entry;");
         Write_Line("");
-        Write_Line("    Shift_Reduce_Matrix : constant Shift_Reduce_Array :=");
-        Write_Line("        ( (-1,-1) -- Dummy Entry");
+        Write_Line("   Shift_Reduce_Matrix : constant Shift_Reduce_Array :=");
+        Write_Line("      ((-1, -1) --  Dummy Entry");
     New_Line(The_File);
     exception
              when Name_Error | Use_Error =>
@@ -66,5 +65,13 @@ package body Shift_Reduce_File is
     begin
         Put(The_File,C);
     end;
+
+   procedure Write_Indented (S : in String) is
+   begin
+      if Col(The_File) = 1 then
+         Put(The_File, "      ");
+      end if;
+      Put(The_File, S);
+   end Write_Indented;
 
 end Shift_Reduce_File;
