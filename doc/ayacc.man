@@ -1,9 +1,11 @@
-.TH AYACC 1 "March 2015" "ayacc 1.2" "User Commands"
+.TH AYACC 1 "Dec 2021" "ayacc 1.3" "User Commands"
 .SH NAME
 ayacc \- An Ada LALR(1) parser generator
 .SH SYNOPSIS
 .B ayacc
-[ -cdrsv ] [ -n
+[ -CEcdkrsv ] [ -D
+.I directory
+] [ -n
 .I size
 ] [ -e
 .I ext
@@ -191,12 +193,34 @@ C
 Lex interface.
 .\"
 .TP 5
+-C
+Disable the generation of the
+.IR yyclearin
+procedure (use it when
+.IR yyclearin
+is not used in the grammar).
+.\"
+.TP 5
+-E
+Disable the generation of the
+.IR yyerrok
+procedure (use it when
+.IR yyerrok
+is not used in the grammar).
+.\"
+.TP 5
 -d
 Specifies the production of debugging output in the generated parser.
 .\"
 .TP 5
 -D
 Write the generated files to the directory specified.
+.\"
+.TP 5
+-k
+Keep the case of symbols found in the grammar for the generation of the
+.I Token
+type.  The default is to convert the symbol using mixed case.
 .\"
 .TP 5
 -r
