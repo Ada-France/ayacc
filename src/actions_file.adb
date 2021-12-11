@@ -60,7 +60,11 @@ package body Actions_File is
     -- The maximum length of the text that an action can expand into. 
     -- Maximum_Action_Length : constant Count  := 1000; 
 
-    The_File : File_Type; 
+   Max_Length : constant := 80;
+
+   The_File : File_Type;
+   Content  : String (1 .. Max_Length);
+   Current  : Natural := 0;
 
     procedure Open(Mode: in File_Mode) is
     begin
@@ -91,21 +95,41 @@ package body Actions_File is
         Get_Line(The_File, S, Last);  
     end; 
 
-    procedure Write(S: in String) is 
-    begin 
-        Put(The_File, S);    
-    end; 
+   procedure Write(S: in String) is
+   begin
+      for I in S'Range loop
+         Write (S (I));
+      end loop;
+   end Write;
 
-    procedure Write(C: in Character) is 
-    begin 
-        Put(The_File, C);    
-    end; 
+   procedure Write(C: in Character) is
+   begin
+      if C = Ascii.Ht then
+         for I in 1 .. 4 loop
+            Write (' ');
+         end loop;
+      else
+         if Current = Max_Length then
+            Put(The_File, Content);
+            Current := 0;
+         end if;
+         Current := Current + 1;
+         Content (Current) := C;
+      end if;
+   end Write;
 
-    procedure Writeln is 
-    begin 
-    	New_Line(The_File); 
-    end; 
-	
+   procedure Writeln is
+      Last : Natural := Current;
+   begin
+      while Last > 0 and then Content (Last) = ' ' loop
+         Last := Last - 1;
+      end loop;
+      if Last > 0 then
+         Put(The_File, Content (Content'First .. Last));
+      end if;
+      Current := 0;
+      New_Line(The_File);
+   end Writeln;
 
     function Is_End_of_File return Boolean is
     begin
