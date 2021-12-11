@@ -1,0 +1,19 @@
+Source: ayacc
+Section: devel
+Priority: extra
+Maintainer: Stephane Carrez <Stephane.Carrez@gmail.com>
+Build-Depends: debhelper (>= 10), autotools-dev, gnat, gnat-8,
+ gprbuild (>= 2015-2),
+Standards-Version: 4.1.4
+Homepage: https://github.com/Ada-France/ayacc
+Vcs-Git: https://github.com/Ada-France/ayacc.git
+Vcs-Browser: https://github.com/Ada-France/ayacc/tree/debian-gnat-8
+
+Package: ayacc
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Ada parser generator in the style of yacc (1).
+ Ayacc reads a grammar file similar to the yacc (1) grammar and
+ generates an Ada program that parses the grammar.
+
+
