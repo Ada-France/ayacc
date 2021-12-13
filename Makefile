@@ -1,12 +1,13 @@
-MODE=distrib
+AYACC_BUILD=distrib
 GNATMAKE=gprbuild
 GNATCLEAN=gnatclean
 GPRPATH=ayacc.gpr
+PROCESSORS=1
 
 INSTALL = /usr/bin/install -c
 INSTALL_PROGRAM = $(INSTALL) -m 755
 
-MAKE_ARGS=-XBUILD=${MODE}
+MAKE_ARGS=-XAYACC_BUILD=${AYACC_BUILD} -XPROCESSORS=$(PROCESSORS)
 
 prefix = /usr/local
 bindir = ${prefix}/bin
