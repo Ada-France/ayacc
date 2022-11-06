@@ -262,6 +262,16 @@ package body Parser is
 	Precedence_Level : Precedence := 0;
         Next_Token       : Ayacc_Token;
 	  -- ID               : Grammar_Symbol;
+        Tokens_File_Opened : Boolean := False;
+
+
+	procedure Open_Tokens_File is
+	begin
+	   if not Tokens_File_Opened then
+	      Open;
+	      Tokens_File_Opened := true;
+	   end if;
+	end Open_Tokens_File;
 
 	procedure Parse_Start_Symbol is
 	    Users_Start_Symbol : Grammar_Symbol;
@@ -432,14 +442,17 @@ package body Parser is
 		when Lexical_Analyzer.Eof_Token =>
 		    Fatal_Error("Unexpected end of file before first %%");
 		when Left_Brace =>
+                    Open_Tokens_File;
                     Start_Tokens_Package;
 		    Dump_Declarations;  -- to the TOKENS file.
                     Next_Token := Get_Token;
                 when With_Clause =>
                     Next_Token := Get_Token;
+                    Open_Tokens_File;
                     Parse_Package_Name_List (With_Clause);
                 when Use_Clause  =>
                     Next_Token := Get_Token;
+                    Open_Tokens_File;
                     Parse_Package_Name_List (Use_Clause);
                 when Unit_Clause  =>
                     Next_Token := Get_Token;
