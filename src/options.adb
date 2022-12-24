@@ -14,7 +14,8 @@ package body Options is
    Verbose_Option          : Boolean := False;
    Debug_Option            : Boolean := False;
    Interface_to_C_Option   : Boolean := False;
-   Summary_Option 	       : Boolean := False;
+   Summary_Option 	      : Boolean := False;
+   Private_Option 	      : Boolean := False;
    Loud_Option		       : Boolean := False;
    -- UMASS CODES :
    Error_Recovery_Extension_Option : Boolean := False;
@@ -32,14 +33,15 @@ package body Options is
 
    procedure Put_Help_Message is
    begin
-      Put_Line (Standard_Error, "ayacc version 1.3.0");
+      Put_Line (Standard_Error, "ayacc version 1.4.0");
       Put_Line (Standard_Error, copyright);
       Put_Line (Standard_Error, copyright2);
       New_Line (Standard_Error);
-      Put_Line (Standard_Error, "Usage: ayacc [-CDcdlrsv] [-D dir] [-e ext] [-n size] grammar");
+      Put_Line (Standard_Error, "Usage: ayacc [-CDPcdlrsv] [-D dir] [-e ext] [-n size] grammar");
       Put_Line (Standard_Error, "-c          Specifies the generation of a 'C' Lex interface.");
       Put_Line (Standard_Error, "-d          Specifies the production of debugging output");
       Put_Line (Standard_Error, "-D dir      Write the generated files to the directory specified");
+      Put_Line (Standard_Error, "-P          Generate private package for the parser");
       Put_Line (Standard_Error, "-l          Loud option to tell what's going on");
       Put_Line (Standard_Error, "-k          Keep the token case as writtne in the grammar");
       Put_Line (Standard_Error, "-n size     Defines the size of the value and state stack (8192)");
@@ -58,7 +60,7 @@ package body Options is
       Directory : String_Type;
    begin
       loop
-         case GNAT.Command_Line.Getopt ("c d C E D: k l s v r e: n:") is
+         case GNAT.Command_Line.Getopt ("c d C E D: k l P s v r e: n:") is
             when ASCII.NUL =>
                exit;
 
@@ -82,6 +84,9 @@ package body Options is
 
             when 'v' =>
                Verbose_Option := True;
+
+            when 'P' =>
+               Private_Option := True;
 
             when 'r' =>
                Error_Recovery_Extension_Option := True;
@@ -150,6 +155,11 @@ package body Options is
    begin
       return Summary_Option;
    end;
+
+   function Package_Private return Boolean is
+   begin
+      return Private_Option;
+   end Package_Private;
 
    function Loud return Boolean is
    begin

@@ -86,9 +86,12 @@ package body Tokens_File is
     procedure Start_Tokens_Package is
     begin
       if not Package_Header_Generated then
-        Writeln("package " & Ayacc_File_Names.Tokens_Unit_Name & " is");
-        Writeln("");
-        Package_Header_Generated := True;
+         if Options.Package_Private then
+            Write ("private ");
+         end if;
+         Writeln("package " & Ayacc_File_Names.Tokens_Unit_Name & " is");
+         Writeln("");
+         Package_Header_Generated := True;
       end if;
     end Start_Tokens_Package;
 

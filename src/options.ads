@@ -57,6 +57,9 @@ package Options is
     -- Returns TRUE if a summary of statistics of the generated
     -- parser should be printed.
 
+    function Package_Private return Boolean;
+    -- Returns TRUE if generated package must be private.
+
     function Interface_to_C return Boolean;
 
     function Loud return Boolean;
