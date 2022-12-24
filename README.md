@@ -15,6 +15,10 @@ This version brings a number of improvements:
   support Ada child packages.
 - The grammar supports the %unit directive to control the Ada child packages
 
+## Version 1.4.0 - Under development
+
+- New option `-P` to generate a private Ada package for the tokens package
+
 ## Version 1.3.0 - Dec 2021
 
 - New option `-C` to disable the generation of `yyclearin` procedure,
