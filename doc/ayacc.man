@@ -1,9 +1,9 @@
-.TH AYACC 1 "Dec 2021" "ayacc 1.3" "User Commands"
+.TH AYACC 1 "Dec 2022" "ayacc 1.4" "User Commands"
 .SH NAME
 ayacc \- An Ada LALR(1) parser generator
 .SH SYNOPSIS
 .B ayacc
-[ -CEcdkrsv ] [ -D
+[ -CEPcdkrsv ] [ -D
 .I directory
 ] [ -n
 .I size
@@ -209,6 +209,20 @@ procedure (use it when
 is not used in the grammar).
 .\"
 .TP 5
+-P
+instructs ayacc to generate a private Ada package for the tokens package.
+This option is useful when the main parser package is also declared as a private Ada package.
+Use of this option implies that the
+.IR yylex
+function is also declared in a private Ada package of the same parent.
+If
+.IR aflex (1)
+is used, the same
+.I -P
+option must be passed to
+.IR aflex .
+.\"
+.TP 5
 -d
 Specifies the production of debugging output in the generated parser.
 .\"
@@ -263,7 +277,8 @@ file.tokens.ads	package
 file.verbose	the verbose output
 .br
 file.c_lex.ada	package
-.IR c_lex for interfacing with lex
+.IR c_lex
+for interfacing with lex
 .br
 file.h	the C include file for interfacing with lex
 .\"
