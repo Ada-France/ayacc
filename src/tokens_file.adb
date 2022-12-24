@@ -209,7 +209,7 @@ package body Tokens_File is
     New_Line(The_Ada_File);
         Put_Line(The_Ada_File, "    type Table is array(0..255) of Token;");
         Put_Line(The_Ada_File, "    Literals : constant Table := Table'(");
-        Put_Line(The_Ada_File, "        0 => End_of_Input,");
+        Put_Line(The_Ada_File, "        0 => END_OF_INPUT,");
 
     Create(The_Define_File, Out_File, Ayacc_File_Names.Get_Include_File_Name);
 
