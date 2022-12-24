@@ -1,3 +1,8 @@
+# Ayacc
+
+[![Build Status](https://img.shields.io/endpoint?url=https://porion.vacs.fr/porion/api/v1/projects/ayacc/badges/build.json)](https://porion.vacs.fr/porion/projects/view/ayacc/summary)
+[![License](http://img.shields.io/badge/license-UCI-blue.svg)](LICENSE)
+
 Ayacc is an Ada parser generator in the style of yacc(1).
 
 The first implementation was written by David Taback and Deepak Tolani
@@ -40,3 +45,10 @@ This version brings a number of improvements:
 ```
   make install prefix=/usr
 ```
+
+# Articles
+
+* [Aflex 1.5 and Ayacc 1.3.0](https://blog.vacs.fr/vacs/blogs/post.html?post=2021/12/18/Aflex-1.5-and-Ayacc-1.3.0)
+  explains how to use Aflex and Ayacc together, 
+  [Aflex 1.5 et Ayacc 1.3.0](https://www.ada-france.org/adafr/blogs/post.html?post=2021/12/19/Aflex-1.5-et-Ayacc-1.3.0)
+  is the French translation.
