@@ -17,7 +17,7 @@ package body Goto_File is
        end if;
        Create(The_File, Out_File, Get_Goto_File_Name);
 
-       Write_Line("package " & Goto_Tables_Unit_Name & " is");
+       Write_Line("private package " & Goto_Tables_Unit_Name & " is");
        Write_Line("");
        Write_Line("");
        Write_Line("   type Rule        is new Natural;");

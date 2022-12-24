@@ -14,7 +14,7 @@ package body Shift_Reduce_File is
            return;
         end if;
         Create(The_File, Out_File, Get_Shift_Reduce_File_Name);
-        Write_Line("package " & Shift_Reduce_Tables_Unit_Name & " is");
+        Write_Line("private package " & Shift_Reduce_Tables_Unit_Name & " is");
         Write_Line("");
         Write_Line("   type Small_Integer is range -32_000 .. 32_000;");
         Write_Line("");
