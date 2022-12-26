@@ -183,6 +183,32 @@ clauses for the
 and
 .I Text_IO
 packages.
+.PP
+By default the
+.I YYParse
+procedure has no argument but it is possible to specify some arguments in order
+to provide some context for the grammar rules which are executed within the
+.I YYParse
+procedure.  To specify a specific signature to
+.I YYParse
+you can define the
+.I YYParse
+procedure arguments by declaring the procedure name followed by its arguments
+and using the
+.B ##%
+prefix.  For example, to provide two parameters to the grammar rules
+.I Arg1
+and
+.I Arg2
+the following key marker could be used:
+.IP
+.sp
+##%procedure YYParse (Arg1 : in out Type1; Arg2 : in out Typ2)
+.PP
+Note that
+.I Ayacc
+will not verify the validity of argument and their types but the
+compilation of the Ada package will.
 .\"
 .SH OPTIONS
 .TP 5
