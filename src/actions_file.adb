@@ -1,5 +1,5 @@
--- $Header: /dc/uc/self/arcadia/ayacc/src/RCS/actions_file_body.a,v 1.2 1993/05/31 22:36:35 self Exp self $ 
--- $Header: /dc/uc/self/arcadia/ayacc/src/RCS/actions_file_body.a,v 1.2 1993/05/31 22:36:35 self Exp self $ 
+-- $Header: /dc/uc/self/arcadia/ayacc/src/RCS/actions_file_body.a,v 1.2 1993/05/31 22:36:35 self Exp self $
+-- $Header: /dc/uc/self/arcadia/ayacc/src/RCS/actions_file_body.a,v 1.2 1993/05/31 22:36:35 self Exp self $
 
 -- Copyright (c) 1990 Regents of the University of California.
 -- All rights reserved.
@@ -28,7 +28,7 @@
 -- Date         : 11/21/86  12:28:04
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxactions_file_body.ada
 
--- $Header: /dc/uc/self/arcadia/ayacc/src/RCS/actions_file_body.a,v 1.2 1993/05/31 22:36:35 self Exp self $ 
+-- $Header: /dc/uc/self/arcadia/ayacc/src/RCS/actions_file_body.a,v 1.2 1993/05/31 22:36:35 self Exp self $
 -- $Log: actions_file_body.a,v $
 -- Revision 1.2  1993/05/31  22:36:35  self
 -- added exception handler when opening files
@@ -43,22 +43,21 @@
 --Initial revision
 
 --Revision 0.1  86/04/01  15:29:59  ada
--- This version fixes some minor bugs with empty grammars 
--- and $$ expansion. It also uses vads5.1b enhancements 
--- such as pragma inline. 
--- 
+-- This version fixes some minor bugs with empty grammars
+-- and $$ expansion. It also uses vads5.1b enhancements
+-- such as pragma inline.
+--
 
-with Ayacc_File_Names;
-use  Ayacc_File_Names;
+with Ayacc_File_Names; use Ayacc_File_Names;
 
-with Text_IO; use  Text_IO;
+with Text_Io; use Text_Io;
 
 package body Actions_File is
 
-  -- SCCS_ID : constant String := "@(#) actions_file_body.ada, Version 1.2";
-    
-    -- The maximum length of the text that an action can expand into. 
-    -- Maximum_Action_Length : constant Count  := 1000; 
+   -- SCCS_ID : constant String := "@(#) actions_file_body.ada, Version 1.2";
+
+   -- The maximum length of the text that an action can expand into.
+   -- Maximum_Action_Length : constant Count  := 1000;
 
    Max_Length : constant := 80;
 
@@ -66,43 +65,43 @@ package body Actions_File is
    Content  : String (1 .. Max_Length);
    Current  : Natural := 0;
 
-    procedure Open(Mode: in File_Mode) is
-    begin
-	if Mode = Read_File then 
-           Open(The_File, In_File, Get_Actions_File_Name);
-        else 
-           Create(The_File, Out_File, Get_Actions_File_Name); 
---RJS           Set_Line_Length(The_File, To => Maximum_Action_Length);  
-        end if; 
-	exception
-           when Name_Error | Use_Error =>
-               Put_Line("Ayacc: Error Opening """ & Get_Actions_File_Name & """.");
-               raise;
-    end Open;
+   procedure Open (Mode : in File_Mode) is
+   begin
+      if Mode = Read_File then
+         Open (The_File, In_File, Get_Actions_File_Name);
+      else
+         Create (The_File, Out_File, Get_Actions_File_Name);
+--RJS           Set_Line_Length(The_File, To => Maximum_Action_Length);
+      end if;
+   exception
+      when Name_Error | Use_Error =>
+         Put_Line ("Ayacc: Error Opening """ & Get_Actions_File_Name & """.");
+         raise;
+   end Open;
 
-    procedure Close is
-    begin
-       Close(The_File);
-    end Close;
+   procedure Close is
+   begin
+      Close (The_File);
+   end Close;
 
-    procedure Delete is 
-    begin 
-        Delete(The_File); 
-    end Delete; 
+   procedure Delete is
+   begin
+      Delete (The_File);
+   end Delete;
 
-    procedure Read_Line(S: out String; Last: out Natural) is 
-    begin
-        Get_Line(The_File, S, Last);  
-    end; 
+   procedure Read_Line (S : out String; Last : out Natural) is
+   begin
+      Get_Line (The_File, S, Last);
+   end Read_Line;
 
-   procedure Write(S: in String) is
+   procedure Write (S : in String) is
    begin
       for I in S'Range loop
          Write (S (I));
       end loop;
    end Write;
 
-   procedure Write(C: in Character) is
+   procedure Write (C : in Character) is
    begin
       if C = Ascii.Ht then
          for I in 1 .. 4 loop
@@ -110,10 +109,10 @@ package body Actions_File is
          end loop;
       else
          if Current = Max_Length then
-            Put(The_File, Content);
+            Put (The_File, Content);
             Current := 0;
          end if;
-         Current := Current + 1;
+         Current           := Current + 1;
          Content (Current) := C;
       end if;
    end Write;
@@ -125,25 +124,25 @@ package body Actions_File is
          Last := Last - 1;
       end loop;
       if Last > 0 then
-         Put(The_File, Content (Content'First .. Last));
+         Put (The_File, Content (Content'First .. Last));
       end if;
       Current := 0;
-      New_Line(The_File);
+      New_Line (The_File);
    end Writeln;
 
-    function Is_End_of_File return Boolean is
-    begin
-	return End_of_File(The_File);
-    end Is_End_of_File;
+   function Is_End_Of_File return Boolean is
+   begin
+      return End_Of_File (The_File);
+   end Is_End_Of_File;
 
-    procedure Initialize is 
-    begin  
-       Open(Write_File); 
-    end Initialize; 
+   procedure Initialize is
+   begin
+      Open (Write_File);
+   end Initialize;
 
-    procedure Finish is 
-    begin 
-       Close;          
-    end Finish; 
+   procedure Finish is
+   begin
+      Close;
+   end Finish;
 
 end Actions_File;

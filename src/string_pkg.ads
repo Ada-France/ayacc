@@ -1,4 +1,3 @@
-
 -- Module       : string_pkg_.ada
 -- Component of : common_library
 -- Version      : 1.2
@@ -11,7 +10,7 @@
 -- $Source: /nosc/work/abstractions/string/RCS/string.spc,v $
 -- $Revision: 1.1 $ -- $Date: 85/01/10 17:51:46 $ -- $Author: ron $
 
-package string_pkg is
+package String_Pkg is
 
 --| Overview:
 --| Package string_pkg exports an abstract data type, string_type.  A
@@ -92,193 +91,177 @@ package string_pkg is
 --| Notes:
 --| Programmer: Ron Kownacki
 
-    type string_type is private;
+   type String_Type is private;
 
-    bounds:          exception;  --| Raised on index out of bounds.
-    any_empty:       exception;  --| Raised on incorrect use of match_any.
-    illegal_alloc:   exception;  --| Raised by value creating operations.
-    illegal_dealloc: exception;  --| Raised by release.
-
+   Bounds          : exception;  --| Raised on index out of bounds.
+   Any_Empty       : exception;  --| Raised on incorrect use of match_any.
+   Illegal_Alloc   : exception;  --| Raised by value creating operations.
+   Illegal_Dealloc : exception;  --| Raised by release.
 
 -- Constructors:
 
-    function Empty_String return String_Type;
-    --| Raises: Illegal_Alloc
-    --| Effects:    returns  String_Pkg.Create ("");
-    pragma Inline (Empty_String);
+   function Empty_String return String_Type;
+   --| Raises: Illegal_Alloc
+   --| Effects:    returns  String_Pkg.Create ("");
+   pragma Inline (Empty_String);
 
+   function Create (S : String) return String_Type;
 
-    function create(s: string)
-        return string_type;
+   --| Raises: illegal_alloc
+   --| Effects:
+   --| Return a value consisting of the sequence of characters in s.
+   --| Sometimes useful for array or record aggregates.
+   --| Raises illegal_alloc if string space has been improperly
+   --| released.  (See procedures mark/release.)
 
-      --| Raises: illegal_alloc
-      --| Effects:
-      --| Return a value consisting of the sequence of characters in s.
-      --| Sometimes useful for array or record aggregates.
-      --| Raises illegal_alloc if string space has been improperly
-      --| released.  (See procedures mark/release.)
+   function "&" (S1, S2 : String_Type) return String_Type;
 
-    function "&"(s1, s2: string_type)
-        return string_type;
+   --| Raises: illegal_alloc
+   --| Effects:
+   --| Return the concatenation of s1 and s2.
+   --| Raises illegal_alloc if string space has been improperly
+   --| released.  (See procedures mark/release.)
 
-      --| Raises: illegal_alloc
-      --| Effects:
-      --| Return the concatenation of s1 and s2.
-      --| Raises illegal_alloc if string space has been improperly
-      --| released.  (See procedures mark/release.)
+   function "&" (S1 : String_Type; S2 : String) return String_Type;
 
-    function "&"(s1: string_type; s2: string)
-        return string_type;
+   --| Raises: illegal_alloc
+   --| Effects:
+   --| Return the concatenation of s1 and create(s2).
+   --| Raises illegal_alloc if string space has been improperly
+   --| released.  (See procedures mark/release.)
 
-      --| Raises: illegal_alloc
-      --| Effects:
-      --| Return the concatenation of s1 and create(s2).
-      --| Raises illegal_alloc if string space has been improperly
-      --| released.  (See procedures mark/release.)
+   function "&" (S1 : String; S2 : String_Type) return String_Type;
 
-    function "&"(s1: string; s2: string_type)
-        return string_type;
+   --| Raises: illegal_alloc
+   --| Effects:
+   --| Return the concatenation of create(s1) and s2.
+   --| Raises illegal_alloc if string space has been improperly
+   --| released.  (See procedures mark/release.)
 
-      --| Raises: illegal_alloc
-      --| Effects:
-      --| Return the concatenation of create(s1) and s2.
-      --| Raises illegal_alloc if string space has been improperly
-      --| released.  (See procedures mark/release.)
+   function Substr
+     (S : String_Type; I : Positive; Len : Natural) return String_Type;
 
-    function substr(s: string_type; i: positive; len: natural)
-    return string_type;
+   --| Raises: bounds, illegal_alloc
+   --| Effects:
+   --| Return the substring, of specified length, that occurs in s at
+   --| position i.  If len = 0, then returns the empty value.
+   --| Otherwise, raises bounds if either i or (i + len - 1)
+   --| is not in 1..length(s).
+   --| Raises illegal_alloc if string space has been improperly
+   --| released.  (See procedures mark/release.)
 
-      --| Raises: bounds, illegal_alloc
-      --| Effects:
-      --| Return the substring, of specified length, that occurs in s at
-      --| position i.  If len = 0, then returns the empty value.
-      --| Otherwise, raises bounds if either i or (i + len - 1)
-      --| is not in 1..length(s).
-      --| Raises illegal_alloc if string space has been improperly
-      --| released.  (See procedures mark/release.)
+   function Splice
+     (S : String_Type; I : Positive; Len : Natural) return String_Type;
 
-    function splice(s: string_type; i: positive; len: natural)
-    return string_type;
+   --| Raises: bounds, illegal_alloc
+   --| Effects:
+   --| Let s be the string, abc, where a, b and c are substrings.  If
+   --| substr(s, i, length(b)) = b, for some i in 1..length(s), then
+   --| splice(s, i, length(b)) = ac.
+   --| Returns a value equal to s if len = 0.  Otherwise, raises bounds if
+   --| either i or (i + len - 1) is not in 1..length(s).
+   --| Raises illegal_alloc if string space has been improperly
+   --| released.  (See procedures mark/release.)
 
-      --| Raises: bounds, illegal_alloc
-      --| Effects:
-      --| Let s be the string, abc, where a, b and c are substrings.  If
-      --| substr(s, i, length(b)) = b, for some i in 1..length(s), then
-      --| splice(s, i, length(b)) = ac.
-      --| Returns a value equal to s if len = 0.  Otherwise, raises bounds if
-      --| either i or (i + len - 1) is not in 1..length(s).
-      --| Raises illegal_alloc if string space has been improperly
-      --| released.  (See procedures mark/release.)
+   function Insert (S1, S2 : String_Type; I : Positive) return String_Type;
 
-    function insert(s1, s2: string_type; i: positive)
-    return string_type;
+   --| Raises: bounds, illegal_alloc
+   --| Effects:
+   --| Return substr(s1, 1, i - 1) & s2 &
+   --|        substr(s1, i, length(s1) - i + 1).
+   --| equal(splice(insert(s1, s2, i), i, length(s2)), s1) holds if no
+   --| exception is raised by insert.
+   --| Raises bounds if is_empty(s1) or else i is not in 1..length(s1).
+   --| Raises illegal_alloc if string space has been improperly
+   --| released.  (See procedures mark/release.)
 
-      --| Raises: bounds, illegal_alloc
-      --| Effects:
-      --| Return substr(s1, 1, i - 1) & s2 &
-      --|        substr(s1, i, length(s1) - i + 1).
-      --| equal(splice(insert(s1, s2, i), i, length(s2)), s1) holds if no
-      --| exception is raised by insert.
-      --| Raises bounds if is_empty(s1) or else i is not in 1..length(s1).
-      --| Raises illegal_alloc if string space has been improperly
-      --| released.  (See procedures mark/release.)
+   function Insert
+     (S1 : String_Type; S2 : String; I : Positive) return String_Type;
 
-    function insert(s1: string_type; s2: string; i: positive)
-    return string_type;
+   --| Raises: bounds, illegal_alloc
+   --| Effects:
+   --| Return substr(s1, 1, i - 1) & s2 &
+   --|        substr(s1, i, length(s1) - i + 1).
+   --| equal(splice(insert(s1, s2, i), i, length(s2)), s1) holds if no
+   --| exception is raised by insert.
+   --| Raises bounds if is_empty(s1) or else i is not in 1..length(s1).
+   --| Raises illegal_alloc if string space has been improperly
+   --| released.  (See procedures mark/release.)
 
-      --| Raises: bounds, illegal_alloc
-      --| Effects:
-      --| Return substr(s1, 1, i - 1) & s2 &
-      --|        substr(s1, i, length(s1) - i + 1).
-      --| equal(splice(insert(s1, s2, i), i, length(s2)), s1) holds if no
-      --| exception is raised by insert.
-      --| Raises bounds if is_empty(s1) or else i is not in 1..length(s1).
-      --| Raises illegal_alloc if string space has been improperly
-      --| released.  (See procedures mark/release.)
+   function Insert
+     (S1 : String; S2 : String_Type; I : Positive) return String_Type;
 
-    function insert(s1: string; s2: string_type; i: positive)
-    return string_type;
+   --| Raises: bounds, illegal_alloc
+   --| Effects:
+   --| Return s1(s1'first..i - 1) & s2 &
+   --|        s1(i..length(s1) - i + 1).
+   --| equal(splice(insert(s1, s2, i), i, length(s2)), s1) holds if no
+   --| exception is raised by insert.
+   --| Raises bounds if i is not in s'range.
+   --| Raises illegal_alloc if string space has been improperly
+   --| released.  (See procedures mark/release.)
 
-      --| Raises: bounds, illegal_alloc
-      --| Effects:
-      --| Return s1(s1'first..i - 1) & s2 &
-      --|        s1(i..length(s1) - i + 1).
-      --| equal(splice(insert(s1, s2, i), i, length(s2)), s1) holds if no
-      --| exception is raised by insert.
-      --| Raises bounds if i is not in s'range.
-      --| Raises illegal_alloc if string space has been improperly
-      --| released.  (See procedures mark/release.)
+   function Lower (S : String) return String_Type;
 
-    function lower(s: string)
-    return string_type;
+   --| Raises: illegal_alloc
+   --| Effects:
+   --| Return a value that contains exactly those characters in s with
+   --| the exception that all upper case characters are replaced by their
+   --| lower case counterparts.
+   --| Raises illegal_alloc if string space has been improperly
+   --| released.  (See procedures mark/release.)
 
-      --| Raises: illegal_alloc
-      --| Effects:
-      --| Return a value that contains exactly those characters in s with
-      --| the exception that all upper case characters are replaced by their
-      --| lower case counterparts.
-      --| Raises illegal_alloc if string space has been improperly
-      --| released.  (See procedures mark/release.)
+   function Lower (S : String_Type) return String_Type;
 
-    function lower(s: string_type)
-    return string_type;
+   --| Raises: illegal_alloc
+   --| Effects:
+   --| Return a value that is a copy of s with the exception that all
+   --| upper case characters are replaced by their lower case counterparts.
+   --| Raises illegal_alloc if string space has been improperly
+   --| released.  (See procedures mark/release.)
 
-      --| Raises: illegal_alloc
-      --| Effects:
-      --| Return a value that is a copy of s with the exception that all
-      --| upper case characters are replaced by their lower case counterparts.
-      --| Raises illegal_alloc if string space has been improperly
-      --| released.  (See procedures mark/release.)
+   function Upper (S : String) return String_Type;
 
-    function upper(s: string)
-    return string_type;
+   --| Raises: illegal_alloc
+   --| Effects:
+   --| Return a value that contains exactly those characters in s with
+   --| the exception that all lower case characters are replaced by their
+   --| upper case counterparts.
+   --| Raises illegal_alloc if string space has been improperly
+   --| released.  (See procedures mark/release.)
 
-      --| Raises: illegal_alloc
-      --| Effects:
-      --| Return a value that contains exactly those characters in s with
-      --| the exception that all lower case characters are replaced by their
-      --| upper case counterparts.
-      --| Raises illegal_alloc if string space has been improperly
-      --| released.  (See procedures mark/release.)
+   function Upper (S : String_Type) return String_Type;
 
-    function upper(s: string_type)
-    return string_type;
+   --| Raises: illegal_alloc
+   --| Effects:
+   --| Return a value that is a copy of s with the exception that all
+   --| lower case characters are replaced by their upper case counterparts.
+   --| Raises illegal_alloc if string space has been improperly
+   --| released.  (See procedures mark/release.)
 
-      --| Raises: illegal_alloc
-      --| Effects:
-      --| Return a value that is a copy of s with the exception that all
-      --| lower case characters are replaced by their upper case counterparts.
-      --| Raises illegal_alloc if string space has been improperly
-      --| released.  (See procedures mark/release.)
+   function Mixed (S : String) return String_Type;
 
+   --| Raises: Illegal_Alloc
+   --| Effects:
+   --| Return a value that contains exactly those characters in s with
+   --| the exception that all upper case characters are replaced by their
+   --| lower case counterparts with the exception of the first character and
+   --| each character following an underscore which are forced to upper case.
+   --| Raises illegal_alloc if string space has been improperly
+   --| released.  (See procedures mark/release.)
 
-    function Mixed (S: String)
-    return String_Type;
+   function To_Package_Name (S : String) return String_Type;
 
-      --| Raises: Illegal_Alloc
-      --| Effects:
-      --| Return a value that contains exactly those characters in s with
-      --| the exception that all upper case characters are replaced by their
-      --| lower case counterparts with the exception of the first character and
-      --| each character following an underscore which are forced to upper case.
-      --| Raises illegal_alloc if string space has been improperly
-      --| released.  (See procedures mark/release.)
+   function Mixed (S : String_Type) return String_Type;
 
-    function To_Package_Name (S: String)
-    return String_Type;
-
-    function Mixed (S: String_Type)
-    return String_Type;
-
-      --| Raises: Illegal_Alloc
-      --| Effects:
-      --| Return a value that contains exactly those characters in s with
-      --| the exception that all upper case characters are replaced by their
-      --| lower case counterparts with the exception of the first character and
-      --| each character following an underscore which are forced to upper case.
-      --| Raises illegal_alloc if string space has been improperly
-      --| released.  (See procedures mark/release.)
-
+   --| Raises: Illegal_Alloc
+   --| Effects:
+   --| Return a value that contains exactly those characters in s with
+   --| the exception that all upper case characters are replaced by their
+   --| lower case counterparts with the exception of the first character and
+   --| each character following an underscore which are forced to upper case.
+   --| Raises illegal_alloc if string space has been improperly
+   --| released.  (See procedures mark/release.)
 
 -- Heap Management (including object/value binding):
 --
@@ -307,294 +290,277 @@ package string_pkg is
 -- management, as described below.  Programs which depend on such sharing are
 -- erroneous.
 
-    function make_persistent(s: string_type)
-    return string_type;
+   function Make_Persistent (S : String_Type) return String_Type;
 
-      --| Effects:
-      --| Returns a persistent value, v, containing exactly those characters in
-      --| value(s).  The value v will not be claimed by any subsequent release.
-      --| Only an invocation of flush will claim v.  After such a claiming
-      --| invocation of flush, the use (other than :=) of any other object to
-      --| which v was bound is erroneous, and program_error may be raised for
-      --| such a use.
+   --| Effects:
+   --| Returns a persistent value, v, containing exactly those characters in
+   --| value(s).  The value v will not be claimed by any subsequent release.
+   --| Only an invocation of flush will claim v.  After such a claiming
+   --| invocation of flush, the use (other than :=) of any other object to
+   --| which v was bound is erroneous, and program_error may be raised for
+   --| such a use.
 
-    function make_persistent(s: string)
-    return string_type;
+   function Make_Persistent (S : String) return String_Type;
 
-      --| Effects:
-      --| Returns a persistent value, v, containing exactly those chars in s.
-      --| The value v will not be claimed by any subsequent release.
-      --| Only an invocation of flush will reclaim v.  After such a claiming
-      --| invocation of flush, the use (other than :=) of any other object to
-      --| which v was bound is erroneous, and program_error may be raised for
-      --| such a use.
+   --| Effects:
+   --| Returns a persistent value, v, containing exactly those chars in s.
+   --| The value v will not be claimed by any subsequent release.
+   --| Only an invocation of flush will reclaim v.  After such a claiming
+   --| invocation of flush, the use (other than :=) of any other object to
+   --| which v was bound is erroneous, and program_error may be raised for
+   --| such a use.
 
-    procedure flush(s: in out string_type);
+   procedure Flush (S : in out String_Type);
 
-      --| Effects:
-      --| Return heap space used by the value associated with s, if any, to
-      --| the heap.  s becomes associated with the empty value.  After an
-      --| invocation of flush claims the value, v, then any use (other than :=)
-      --| of an object to which v was bound is erroneous, and program_error
-      --| may be raised for such a use.
-      --|
-      --| This operation should be used only for persistent values.  The mark
-      --| and release operations are used to deallocate space consumed by other
-      --| values.  For example, flushing a nonpersistent value implies that a
-      --| release that tries to claim this value will be erroneous, and
-      --| program_error may be raised for such a use.
+   --| Effects:
+   --| Return heap space used by the value associated with s, if any, to
+   --| the heap.  s becomes associated with the empty value.  After an
+   --| invocation of flush claims the value, v, then any use (other than :=)
+   --| of an object to which v was bound is erroneous, and program_error
+   --| may be raised for such a use.
+   --|
+   --| This operation should be used only for persistent values.  The mark
+   --| and release operations are used to deallocate space consumed by other
+   --| values.  For example, flushing a nonpersistent value implies that a
+   --| release that tries to claim this value will be erroneous, and
+   --| program_error may be raised for such a use.
 
-    procedure mark;
+   procedure Mark;
 
-      --| Effects:
-      --| Marks the current state of heap usage for use by release.
-      --| An implicit mark is performed at the beginning of program execution.
+   --| Effects:
+   --| Marks the current state of heap usage for use by release.
+   --| An implicit mark is performed at the beginning of program execution.
 
-    procedure release;
+   procedure Release;
 
-      --| Raises: illegal_dealloc
-      --| Effects:
-      --| Releases all heap space used by nonpersistent values that have been
-      --| allocated since the last mark.  The values that are claimed include
-      --| those bound to objects as well as those produced and discarded during
-      --| the course of general "string hacking."  If an invocation of release
-      --| claims a value, v, then any subsequent use (other than :=) of any
-      --| other object to which v is bound is erroneous, and program_error may
-      --| be raised for such a use.
-      --|
-      --| Raises illegal_dealloc if the invocation of release does not balance
-      --| an invocation of mark.  It is permissible to match the implicit
-      --| initial invocation of mark.  However, subsequent invocations of
-      --| constructors will raise the illegal_alloc exception until an
-      --| additional mark is performed.  (Anyway, there is no good reason to
-      --| do this.)  In any case, a number of releases matching the number of
-      --| currently active marks is implicitly performed at the end of program
-      --| execution.
-      --|
-      --| Good citizens generally perform their own marks and releases
-      --| explicitly.  Extensive string hacking without cleaning up will
-      --| cause your program to run very slowly, since the heap manager will
-      --| be forced to look hard for chunks of space to allocate.
+   --| Raises: illegal_dealloc
+   --| Effects:
+   --| Releases all heap space used by nonpersistent values that have been
+   --| allocated since the last mark.  The values that are claimed include
+   --| those bound to objects as well as those produced and discarded during
+   --| the course of general "string hacking."  If an invocation of release
+   --| claims a value, v, then any subsequent use (other than :=) of any
+   --| other object to which v is bound is erroneous, and program_error may
+   --| be raised for such a use.
+   --|
+   --| Raises illegal_dealloc if the invocation of release does not balance
+   --| an invocation of mark.  It is permissible to match the implicit
+   --| initial invocation of mark.  However, subsequent invocations of
+   --| constructors will raise the illegal_alloc exception until an
+   --| additional mark is performed.  (Anyway, there is no good reason to
+   --| do this.)  In any case, a number of releases matching the number of
+   --| currently active marks is implicitly performed at the end of program
+   --| execution.
+   --|
+   --| Good citizens generally perform their own marks and releases
+   --| explicitly.  Extensive string hacking without cleaning up will
+   --| cause your program to run very slowly, since the heap manager will
+   --| be forced to look hard for chunks of space to allocate.
 
 -- Queries:
 
-    function is_empty(s: string_type)
-        return boolean;
+   function Is_Empty (S : String_Type) return Boolean;
 
-      --| Effects:
-      --| Return true iff s is the empty sequence of characters.
+   --| Effects:
+   --| Return true iff s is the empty sequence of characters.
 
-    function length(s: string_type)
-        return natural;
+   function Length (S : String_Type) return Natural;
 
-      --| Effects:
-      --| Return number of characters in s.
+   --| Effects:
+   --| Return number of characters in s.
 
-    function value(s: string_type)
-        return string;
+   function Value (S : String_Type) return String;
 
-      --| Effects:
-      --| Return a string, s2, that contains the same characters that s
-      --| contains.  The properties, s2'first = 1 and s2'last = length(s),
-      --| are satisfied.  This implies that, for a given string, s3,
-      --| value(create(s3))'first may not equal s3'first, even though
-      --| value(create(s3)) = s3 holds.  Thus, "content equality" applies
-      --| although the string objects may be distinguished by the use of
-      --| the array attributes.
+   --| Effects:
+   --| Return a string, s2, that contains the same characters that s
+   --| contains.  The properties, s2'first = 1 and s2'last = length(s),
+   --| are satisfied.  This implies that, for a given string, s3,
+   --| value(create(s3))'first may not equal s3'first, even though
+   --| value(create(s3)) = s3 holds.  Thus, "content equality" applies
+   --| although the string objects may be distinguished by the use of
+   --| the array attributes.
 
-    function fetch(s: string_type; i: positive)
-        return character;
+   function Fetch (S : String_Type; I : Positive) return Character;
 
-      --| Raises: bounds
-      --| Effects:
-      --| Return the ith character in s.  Characters are numbered from
-      --| 1 to length(s).  Raises bounds if i not in 1..length(s).
+   --| Raises: bounds
+   --| Effects:
+   --| Return the ith character in s.  Characters are numbered from
+   --| 1 to length(s).  Raises bounds if i not in 1..length(s).
 
-    function equal(s1, s2: string_type)
-        return boolean;
+   function Equal (S1, S2 : String_Type) return Boolean;
 
-      --| Effects:
-      --| Value equality relation; return true iff length(s1) = length(s2)
-      --| and, for all i in 1..length(s1), fetch(s1, i) = fetch(s2, i).
-      --| The "=" operation is carried over from the representation.
-      --| It allows one to distinguish among the heap addresses of
-      --| string_type values.  Even "equal" values may not be "=", although
-      --| s1 = s2 implies equal(s1, s2).
-      --| There is no reason to use "=".
+   --| Effects:
+   --| Value equality relation; return true iff length(s1) = length(s2)
+   --| and, for all i in 1..length(s1), fetch(s1, i) = fetch(s2, i).
+   --| The "=" operation is carried over from the representation.
+   --| It allows one to distinguish among the heap addresses of
+   --| string_type values.  Even "equal" values may not be "=", although
+   --| s1 = s2 implies equal(s1, s2).
+   --| There is no reason to use "=".
 
-    function equal(s1: string_type; s2: string)
-        return boolean;
+   function Equal (S1 : String_Type; S2 : String) return Boolean;
 
-      --| Effects:
-      --| Return equal(s1, create(s2)).
+   --| Effects:
+   --| Return equal(s1, create(s2)).
 
-    function equal(s1: string; s2: string_type)
-        return boolean;
+   function Equal (S1 : String; S2 : String_Type) return Boolean;
 
-      --| Effects:
-      --| Return equal(create(s1), s2).
+   --| Effects:
+   --| Return equal(create(s1), s2).
 
 --|===========================================================================
 
-  --| Overview: Equivalent is the Case Insensitive version of Equal
+   --| Overview: Equivalent is the Case Insensitive version of Equal
 
-  function Equivalent (Left, Right : in String_Type) return Boolean;
+   function Equivalent (Left, Right : in String_Type) return Boolean;
 
-  function Equivalent (Left  : in String;
-                       Right : in String_Type) return Boolean;
+   function Equivalent
+     (Left : in String; Right : in String_Type) return Boolean;
 
-  function Equivalent (Left  : in String_Type;
-                       Right : in String) return Boolean;
+   function Equivalent
+     (Left : in String_Type; Right : in String) return Boolean;
 
 --|===========================================================================
 
-    function "<"(s1: string_type; s2: string_type)
-        return boolean;
+   function "<" (S1 : String_Type; S2 : String_Type) return Boolean;
 
-      --| Effects:
-      --| Lexicographic comparison; return value(s1) < value(s2).
+   --| Effects:
+   --| Lexicographic comparison; return value(s1) < value(s2).
 
-    function "<"(s1: string_type; s2: string)
-        return boolean;
+   function "<" (S1 : String_Type; S2 : String) return Boolean;
 
-      --| Effects:
-      --| Lexicographic comparison; return value(s1) < s2.
+   --| Effects:
+   --| Lexicographic comparison; return value(s1) < s2.
 
-    function "<"(s1: string; s2: string_type)
-        return boolean;
+   function "<" (S1 : String; S2 : String_Type) return Boolean;
 
-      --| Effects:
-      --| Lexicographic comparison; return s1 < value(s2).
+   --| Effects:
+   --| Lexicographic comparison; return s1 < value(s2).
 
-    function "<="(s1: string_type; s2: string_type)
-        return boolean;
+   function "<=" (S1 : String_Type; S2 : String_Type) return Boolean;
 
-      --| Effects:
-      --| Lexicographic comparison; return value(s1) <= value(s2).
+   --| Effects:
+   --| Lexicographic comparison; return value(s1) <= value(s2).
 
-    function "<="(s1: string_type; s2: string)
-        return boolean;
+   function "<=" (S1 : String_Type; S2 : String) return Boolean;
 
-      --| Effects:
-      --| Lexicographic comparison; return value(s1) <= s2.
+   --| Effects:
+   --| Lexicographic comparison; return value(s1) <= s2.
 
-    function "<="(s1: string; s2: string_type)
-        return boolean;
+   function "<=" (S1 : String; S2 : String_Type) return Boolean;
 
-      --| Effects:
-      --| Lexicographic comparison; return s1 <= value(s2).
+   --| Effects:
+   --| Lexicographic comparison; return s1 <= value(s2).
 
-    function match_c(s: string_type; c: character; start: positive := 1)
-        return natural;
+   function Match_C
+     (S : String_Type; C : Character; Start : Positive := 1) return Natural;
 
-      --| Raises: no_match
-      --| Effects:
-      --| Return the minimum index, i in start..length(s), such that
-      --| fetch(s, i) = c.  Returns 0 if no such i exists,
-      --| including the case where is_empty(s).
+   --| Raises: no_match
+   --| Effects:
+   --| Return the minimum index, i in start..length(s), such that
+   --| fetch(s, i) = c.  Returns 0 if no such i exists,
+   --| including the case where is_empty(s).
 
-    function match_not_c(s: string_type; c: character; start: positive := 1)
-        return natural;
+   function Match_Not_C
+     (S : String_Type; C : Character; Start : Positive := 1) return Natural;
 
-      --| Raises: no_match
-      --| Effects:
-      --| Return the minimum index, i in start..length(s), such that
-      --| fetch(s, i) /= c.  Returns 0 if no such i exists,
-      --| including the case where is_empty(s).
+   --| Raises: no_match
+   --| Effects:
+   --| Return the minimum index, i in start..length(s), such that
+   --| fetch(s, i) /= c.  Returns 0 if no such i exists,
+   --| including the case where is_empty(s).
 
-    function match_s(s1, s2: string_type; start: positive := 1)
-        return natural;
+   function Match_S
+     (S1, S2 : String_Type; Start : Positive := 1) return Natural;
 
-      --| Raises: no_match.
-      --| Effects:
-      --| Return the minimum index, i, in start..length(s1), such that,
-      --| for all j in 1..length(s2), fetch(s2, j) = fetch(s1, i + j - 1).
-      --| This is the position of the substring, s2, in s1.
-      --| Returns 0 if no such i exists, including the cases
-      --| where is_empty(s1) or is_empty(s2).
-      --| Note that equal(substr(s1, match_s(s1, s2, i), length(s2)), s2)
-      --| holds, providing that match_s does not raise an exception.
+   --| Raises: no_match.
+   --| Effects:
+   --| Return the minimum index, i, in start..length(s1), such that,
+   --| for all j in 1..length(s2), fetch(s2, j) = fetch(s1, i + j - 1).
+   --| This is the position of the substring, s2, in s1.
+   --| Returns 0 if no such i exists, including the cases
+   --| where is_empty(s1) or is_empty(s2).
+   --| Note that equal(substr(s1, match_s(s1, s2, i), length(s2)), s2)
+   --| holds, providing that match_s does not raise an exception.
 
-    function match_s(s1: string_type; s2: string; start: positive := 1)
-        return natural;
+   function Match_S
+     (S1 : String_Type; S2 : String; Start : Positive := 1) return Natural;
 
-      --| Raises: no_match.
-      --| Effects:
-      --| Return the minimum index, i, in start..length(s1), such that,
-      --| for all j in s2'range, s2(j) = fetch(s1, i + j - 1).
-      --| This is the position of the substring, s2, in s1.
-      --| Returns 0 if no such i exists, including the cases
-      --| where is_empty(s1) or s2 = "".
-      --| Note that equal(substr(s1, match_s(s1, s2, i), s2'length), s2)
-      --| holds, providing that match_s does not raise an exception.
+   --| Raises: no_match.
+   --| Effects:
+   --| Return the minimum index, i, in start..length(s1), such that,
+   --| for all j in s2'range, s2(j) = fetch(s1, i + j - 1).
+   --| This is the position of the substring, s2, in s1.
+   --| Returns 0 if no such i exists, including the cases
+   --| where is_empty(s1) or s2 = "".
+   --| Note that equal(substr(s1, match_s(s1, s2, i), s2'length), s2)
+   --| holds, providing that match_s does not raise an exception.
 
-    function match_any(s, any: string_type; start: positive := 1)
-        return natural;
+   function Match_Any
+     (S, Any : String_Type; Start : Positive := 1) return Natural;
 
-      --| Raises: no_match, any_empty
-      --| Effects:
-      --| Return the minimum index, i in start..length(s), such that
-      --| fetch(s, i) = fetch(any, j), for some j in 1..length(any).
-      --| Raises any_empty if is_empty(any).
-      --| Otherwise, returns 0 if no such i exists, including the case
-      --| where is_empty(s).
+   --| Raises: no_match, any_empty
+   --| Effects:
+   --| Return the minimum index, i in start..length(s), such that
+   --| fetch(s, i) = fetch(any, j), for some j in 1..length(any).
+   --| Raises any_empty if is_empty(any).
+   --| Otherwise, returns 0 if no such i exists, including the case
+   --| where is_empty(s).
 
+   function Match_Any
+     (S : String_Type; Any : String; Start : Positive := 1) return Natural;
 
-    function match_any(s: string_type; any: string; start: positive := 1)
-        return natural;
+   --| Raises: no_match, any_empty
+   --| Effects:
+   --| Return the minimum index, i, in start..length(s), such that
+   --| fetch(s, i) = any(j), for some j in any'range.
+   --| Raises any_empty if any = "".
+   --| Otherwise, returns 0 if no such i exists, including the case
+   --| where is_empty(s).
 
-      --| Raises: no_match, any_empty
-      --| Effects:
-      --| Return the minimum index, i, in start..length(s), such that
-      --| fetch(s, i) = any(j), for some j in any'range.
-      --| Raises any_empty if any = "".
-      --| Otherwise, returns 0 if no such i exists, including the case
-      --| where is_empty(s).
+   function Match_None
+     (S, None : String_Type; Start : Positive := 1) return Natural;
 
-    function match_none(s, none: string_type; start: positive := 1)
-        return natural;
+   --| Raises: no_match
+   --| Effects:
+   --| Return the minimum index, i in start..length(s), such that
+   --| fetch(s, i) /= fetch(none, j) for each j in 1..length(none).
+   --| If (not is_empty(s)) and is_empty(none), then i is 1.
+   --| Returns 0 if no such i exists, including the case
+   --| where is_empty(s).
 
-      --| Raises: no_match
-      --| Effects:
-      --| Return the minimum index, i in start..length(s), such that
-      --| fetch(s, i) /= fetch(none, j) for each j in 1..length(none).
-      --| If (not is_empty(s)) and is_empty(none), then i is 1.
-      --| Returns 0 if no such i exists, including the case
-      --| where is_empty(s).
+   function Match_None
+     (S : String_Type; None : String; Start : Positive := 1) return Natural;
 
-    function match_none(s: string_type; none: string; start: positive := 1)
-        return natural;
-
-      --| Raises: no_match.
-      --| Effects:
-      --| Return the minimum index, i in start..length(s), such that
-      --| fetch(s, i) /= none(j) for each j in none'range.
-      --| If not is_empty(s) and none = "", then i is 1.
-      --| Returns 0 if no such i exists, including the case
-      --| where is_empty(s).
-
+   --| Raises: no_match.
+   --| Effects:
+   --| Return the minimum index, i in start..length(s), such that
+   --| fetch(s, i) /= none(j) for each j in none'range.
+   --| If not is_empty(s) and none = "", then i is 1.
+   --| Returns 0 if no such i exists, including the case
+   --| where is_empty(s).
 
 private
 
-    type string_type is access string;
+   type String_Type is access String;
 
-      --| Abstract data type, string_type, is a constant sequence of chars
-      --| of arbitrary length.  Representation type is access string.
-      --| It is important to distinguish between an object of the rep type
-      --| and its value; for an object, r, val(r) denotes the value.
-      --|
-      --| Representation Invariant:  I: rep --> boolean
-      --| I(r: rep) = (val(r) = null) or else
-      --|             (val(r).all'first = 1 &
-      --|              val(r).all'last >= 0 &
-      --|              (for all r2, val(r) = val(r2) /= null => r is r2))
-      --|
-      --| Abstraction Function:  A: rep --> string_type
-      --| A(r: rep) = if r = null then
-      --|                 the empty sequence
-      --|             elsif r'last = 0 then
-      --|                 the empty sequence
-      --|             else
-      --|                 the sequence consisting of r(1),...,r(r'last).
+   --| Abstract data type, string_type, is a constant sequence of chars
+   --| of arbitrary length.  Representation type is access string.
+   --| It is important to distinguish between an object of the rep type
+   --| and its value; for an object, r, val(r) denotes the value.
+   --|
+   --| Representation Invariant:  I: rep --> boolean
+   --| I(r: rep) = (val(r) = null) or else
+   --|             (val(r).all'first = 1 &
+   --|              val(r).all'last >= 0 &
+   --|              (for all r2, val(r) = val(r2) /= null => r is r2))
+   --|
+   --| Abstraction Function:  A: rep --> string_type
+   --| A(r: rep) = if r = null then
+   --|                 the empty sequence
+   --|             elsif r'last = 0 then
+   --|                 the empty sequence
+   --|             else
+   --|                 the sequence consisting of r(1),...,r(r'last).
 
-end string_pkg;
+end String_Pkg;

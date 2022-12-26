@@ -25,68 +25,66 @@
 -- Date         : 11/21/86  12:36:24
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxstack.ada
 
--- $Header: stack.a,v 0.1 86/04/01 15:12:46 ada Exp $ 
--- $Log:	stack.a,v $
+-- $Header: stack.a,v 0.1 86/04/01 15:12:46 ada Exp $
+-- $Log:        stack.a,v $
 -- Revision 0.1  86/04/01  15:12:46  ada
---  This version fixes some minor bugs with empty grammars 
---  and $$ expansion. It also uses vads5.1b enhancements 
---  such as pragma inline. 
--- 
--- 
+--  This version fixes some minor bugs with empty grammars
+--  and $$ expansion. It also uses vads5.1b enhancements
+--  such as pragma inline.
+--
+--
 -- Revision 0.0  86/02/19  18:42:12  ada
--- 
+--
 -- These files comprise the initial version of Ayacc
 -- designed and implemented by David Taback and Deepak Tolani.
 -- Ayacc has been compiled and tested under the Verdix Ada compiler
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
---  
-
+--
 
 --                                                                      --
 --  Authors   : David Taback , Deepak Tolani                            --
 --  Copyright : 1987, University of California Irvine                   --
---                                                                      -- 
---  If you    -- 
---  modify the source code or if you have any suggestions or questions  -- 
---  regarding ayacc, we would like to hear from you. Our mailing        -- 
---  addresses are :                                                     -- 
---      taback@icsc.uci.edu                                             -- 
---      tolani@icsc.uci.edu                                             --   
---                                                                      --  
+--                                                                      --
+--  If you    --
+--  modify the source code or if you have any suggestions or questions  --
+--  regarding ayacc, we would like to hear from you. Our mailing        --
+--  addresses are :                                                     --
+--      taback@icsc.uci.edu                                             --
+--      tolani@icsc.uci.edu                                             --
+--                                                                      --
 
-generic 
-    type Element is private; 
+generic
+   type Element is private;
 
-package Stack_Pack is 
+package Stack_Pack is
 
-    type Stack is limited private; 
+   type Stack is limited private;
 
-    Stack_Underflow : exception; 
+   Stack_Underflow : exception;
 
-    function Top_Value (S: in Stack) return Element; 
+   function Top_Value (S : in Stack) return Element;
 
-    function Depth_of_Stack (S: in Stack) return Natural; 
+   function Depth_Of_Stack (S : in Stack) return Natural;
 
-    procedure Make_Stack(S: out Stack); 
+   procedure Make_Stack (S : out Stack);
 
-    procedure Push(S: in out Stack; Value: in Element); 
+   procedure Push (S : in out Stack; Value : in Element);
 
-    procedure Pop (S: in out Stack; Value: out Element); 
+   procedure Pop (S : in out Stack; Value : out Element);
 
-    procedure Free_Stack(S: in out Stack); 
+   procedure Free_Stack (S : in out Stack);
 
-private 
+private
 
-    type Node; 
+   type Node;
 
-    type Link is access Node; 
-    pragma Controlled(Link); 
+   type Link is access Node;
+   pragma Controlled (Link);
 
-    type Stack is 
-        record 
-            Tos    : Natural; 
-            Top    : Link; 
-            Extras : Link; 
-        end record; 
- 
-end Stack_Pack; 
+   type Stack is record
+      Tos    : Natural;
+      Top    : Link;
+      Extras : Link;
+   end record;
+
+end Stack_Pack;

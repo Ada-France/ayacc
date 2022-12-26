@@ -25,61 +25,59 @@
 -- Date         : 11/21/86  12:36:46
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxstr_pack.ada
 
--- $Header: str_pack.a,v 0.1 86/04/01 15:13:01 ada Exp $ 
--- $Log:	str_pack.a,v $
+-- $Header: str_pack.a,v 0.1 86/04/01 15:13:01 ada Exp $
+-- $Log:        str_pack.a,v $
 -- Revision 0.1  86/04/01  15:13:01  ada
---  This version fixes some minor bugs with empty grammars 
---  and $$ expansion. It also uses vads5.1b enhancements 
---  such as pragma inline. 
--- 
--- 
+--  This version fixes some minor bugs with empty grammars
+--  and $$ expansion. It also uses vads5.1b enhancements
+--  such as pragma inline.
+--
+--
 -- Revision 0.0  86/02/19  18:42:23  ada
--- 
+--
 -- These files comprise the initial version of Ayacc
 -- designed and implemented by David Taback and Deepak Tolani.
 -- Ayacc has been compiled and tested under the Verdix Ada compiler
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
---  
+--
 
+package Str_Pack is
+   --  This package contains the type declarations and procedures
+   --  for the minimal string minipulation needed by ayacc.
 
-package STR_Pack is
-    --  This package contains the type declarations and procedures
-    --  for the minimal string minipulation needed by ayacc.
+   Maximum : constant := 1_024;  --RJS 120;
+   subtype Index is Integer range 0 .. Maximum;
 
-    Maximum : constant := 1024;  --RJS 120;
-    subtype Index is Integer range 0 .. Maximum;
+   type Str (Maximum_Length : Index) is limited private;
 
-    type STR(Maximum_Length : Index) is limited private;
+   function Length_Of (S : Str) return Integer;
+   function Value_Of (S : Str) return String;
+   function Is_Empty (S : Str) return Boolean;
 
-    function  Length_of (S: STR)  return Integer;
-    function  Value_of  (S: STR)  return String;
-    function  Is_Empty  (S: STR)  return Boolean;
+   procedure Assign (Value : in Str; To : in out Str);
+   procedure Assign (Value : in String; To : in out Str);
+   procedure Assign (Value : in Character; To : in out Str);
 
-    procedure Assign (Value: in STR;       To: in out STR);
-    procedure Assign (Value: in String;    To: in out STR);
-    procedure Assign (Value: in Character; To: in out STR);
+   procedure Append (Tail : in Character; To : in out Str);
+   procedure Append (Tail : in String; To : in out Str);
+   procedure Append (Tail : in Str; To : in out Str);
 
-    procedure Append (Tail: in Character; To: in out STR);
-    procedure Append (Tail: in String;    To: in out STR);
-    procedure Append (Tail: in STR;       To: in out STR);
+   procedure Upper_Case (S : in out Str);
+   procedure Lower_Case (S : in out Str);
 
-    procedure Upper_Case(S: in out STR);
-    procedure Lower_Case(S: in out STR);
-
-    function  Upper_Case (S : in STR) return STR;
-    function  Lower_Case (S : in STR) return STR;
+   function Upper_Case (S : in Str) return Str;
+   function Lower_Case (S : in Str) return Str;
 
 --RJS
-    pragma inline (length_of, --RJS value_of,
-                   is_empty,
-                   append);
+   pragma Inline
+     (Length_Of, --RJS value_of,
+      Is_Empty, Append);
 
 private
 
-    type STR(Maximum_Length : Index) is
-	record
-	    Name   : String(1..Maximum_Length);
-	    Length : Index := 0;
-	end record;
+   type Str (Maximum_Length : Index) is record
+      Name   : String (1 .. Maximum_Length);
+      Length : Index := 0;
+   end record;
 
-end STR_Pack;
+end Str_Pack;

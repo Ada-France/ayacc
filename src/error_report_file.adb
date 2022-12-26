@@ -1,8 +1,5 @@
-
-
-with Ayacc_File_Names, Text_IO, Source_File, Str_pack;
-use Ayacc_File_Names, Text_IO;
-
+with Ayacc_File_Names, Text_Io, Source_File, Str_Pack;
+use Ayacc_File_Names, Text_Io;
 
 package body Error_Report_File is
 --
@@ -25,24 +22,19 @@ package body Error_Report_File is
 --    generate procedure bodies which will be called from yyparse when
 --    there is an error which has been corrected.  Since the errors get
 --    corrected, yyerror does not get called.
---    
-  
-  max_line_length : constant integer := 370;
+--
 
-  The_File : File_Type;                   -- Where the error report goes
+   Max_Line_Length : constant Integer := 370;
 
-  Text   : String(1..max_line_length);    -- Current line from source file
-  Length : Natural := 1;                  -- and its length
-            
+   The_File : File_Type;                   -- Where the error report goes
 
-  -- types of lines found in the continuable error report section
-  type user_defined_thing is (with_thing,
-			      use_thing, 
-			      init_thing, 
-			      report_thing,
-			      finish_thing,
-			      line_thing,
-			      eof_thing);
+   Text   : String (1 .. Max_Line_Length);    -- Current line from source file
+   Length : Natural := 1;                  -- and its length
+
+   -- types of lines found in the continuable error report section
+   type User_Defined_Thing is
+     (WITH_THING, USE_THING, INIT_THING, REPORT_THING, FINISH_THING,
+      LINE_THING, EOF_THING);
 
 --
 -- TITLE:
@@ -54,103 +46,101 @@ package body Error_Report_File is
 --    In the case of a %use or %with line, set the global variables Text and
 --    Length to the tail of the line after the %use or %with.
 -- ...................................................
-  procedure get_next_thing(thing : in out user_defined_thing) is
-    use str_pack;
-    with_string : constant string := "%WITH";
-    use_string  : constant string := "%USE";
-    init_string : constant string := "%INITIALIZE_ERROR_REPORT";
-    finish_string: constant string:= "%TERMINATE_ERROR_REPORT";
-    report_string: constant string:= "%REPORT_ERROR";
-    temp : STR(max_line_length);
-  begin
-  	if thing = eof_thing or else Source_File.is_end_of_file then
-	  thing := eof_thing;
-	  return;
-	end if;
-	
-	Source_File.Read_Line(Text, Length);
-	if length >= use_string'length then
-	   assign(text(1..use_string'length), temp);
-	   if value_of(upper_case(temp)) = use_string then
-	        thing := use_thing;
-	        length := length - use_string'length;
-	        text(1..length) := text((use_string'length + 1)..
-		                        length + use_string'length);
-		return;
-	   end if;
-	end if;
-	if length >= with_string'length then
-	   assign(text(1..with_string'length), temp);	   
-	   if Value_of(upper_case(temp)) = with_string then
-	        thing := with_thing;
-	        length := length - with_string'length;
-	        text(1..length) := text((with_string'length + 1)..
-		                        length + with_string'length);
-		return;
-	   end if;
-	 end if;
-	if length >= init_string'length then
-	   assign(text(1..init_string'length), temp);	   	  
-	    if Value_of(str_pack.upper_case(temp)) = init_string then
-	      thing := init_thing;
-	      return;
-	    end if;
-        end if;
-	if length >= finish_string'length then
-	   assign(text(1..finish_string'length), temp);	   	  	  
-	   if value_of(str_pack.upper_case(temp)) = finish_string then
-	      thing := finish_thing;
-	      return;
-	   end if;
-	end if;
-	if length >= report_string'length then
-	   assign(text(1..report_string'length), temp);
-	   if value_of(str_pack.upper_case(temp)) = report_string then
-	     thing := report_thing;
-	     return;
-	   end if;
-	end if;
-	thing := line_thing;
-  end get_next_thing;
-			   
+   procedure Get_Next_Thing (Thing : in out User_Defined_Thing) is
+      use Str_Pack;
+      With_String   : constant String := "%WITH";
+      Use_String    : constant String := "%USE";
+      Init_String   : constant String := "%INITIALIZE_ERROR_REPORT";
+      Finish_String : constant String := "%TERMINATE_ERROR_REPORT";
+      Report_String : constant String := "%REPORT_ERROR";
+      Temp          : Str (Max_Line_Length);
+   begin
+      if Thing = Eof_Thing or else Source_File.Is_End_Of_File then
+         Thing := EOF_THING;
+         return;
+      end if;
 
+      Source_File.Read_Line (Text, Length);
+      if Length >= Use_String'Length then
+         Assign (Text (1 .. Use_String'Length), Temp);
+         if Value_Of (Upper_Case (Temp)) = Use_String then
+            Thing              := USE_THING;
+            Length             := Length - Use_String'Length;
+            Text (1 .. Length) :=
+              Text ((Use_String'Length + 1) .. Length + Use_String'Length);
+            return;
+         end if;
+      end if;
+      if Length >= With_String'Length then
+         Assign (Text (1 .. With_String'Length), Temp);
+         if Value_Of (Upper_Case (Temp)) = With_String then
+            Thing              := WITH_THING;
+            Length             := Length - With_String'Length;
+            Text (1 .. Length) :=
+              Text ((With_String'Length + 1) .. Length + With_String'Length);
+            return;
+         end if;
+      end if;
+      if Length >= Init_String'Length then
+         Assign (Text (1 .. Init_String'Length), Temp);
+         if Value_Of (Str_Pack.Upper_Case (Temp)) = Init_String then
+            Thing := INIT_THING;
+            return;
+         end if;
+      end if;
+      if Length >= Finish_String'Length then
+         Assign (Text (1 .. Finish_String'Length), Temp);
+         if Value_Of (Str_Pack.Upper_Case (Temp)) = Finish_String then
+            Thing := FINISH_THING;
+            return;
+         end if;
+      end if;
+      if Length >= Report_String'Length then
+         Assign (Text (1 .. Report_String'Length), Temp);
+         if Value_Of (Str_Pack.Upper_Case (Temp)) = Report_String then
+            Thing := REPORT_THING;
+            return;
+         end if;
+      end if;
+      Thing := LINE_THING;
+   end Get_Next_Thing;
 
 --
 -- TITLE:       procedure Write_Line
 --    Write out a line to the Error Report generated ada file.
 --
 -- OVERVIEW:
---    
+--
 -- ...................................................
-    procedure Write_Line(S: in String) is
-    begin
-        Put_Line(The_File, S);
-    end Write_Line;
+   procedure Write_Line (S : in String) is
+   begin
+      Put_Line (The_File, S);
+   end Write_Line;
 
 --
 -- TITLE:
 --    Write the body of one of the user-defined procedures
 --
 -- OVERVIEW:
---    If User is True it means the user is defining the procedure body.  So 
+--    If User is True it means the user is defining the procedure body.  So
 --    copy it from the source file.  Otherwise provide a null body.
 -- ...................................................
-    procedure write_thing(user : in boolean; 
-      	      	      	  thing : in out user_defined_thing) is
-    begin
-      if user then
-	loop
-	  get_next_thing(thing);
-	  exit when thing /= line_thing;
-	  Write_Line(Text(1..length));
-        end loop;
+   procedure Write_Thing (User : in Boolean; Thing : in out User_Defined_Thing)
+   is
+   begin
+      if User then
+         loop
+            Get_Next_Thing (Thing);
+            exit when Thing /= LINE_THING;
+            Write_Line (Text (1 .. Length));
+         end loop;
       else
-        Write_Line("begin");
-	Write_Line("  null;");
-	Write_Line("end;");
+         Write_Line ("begin");
+         Write_Line ("  null;");
+         Write_Line ("end;");
       end if;
-      Write_Line("");
-    end write_thing;
+      Write_Line ("");
+   end Write_Thing;
 
 --
 -- TITLE:
@@ -159,12 +149,12 @@ package body Error_Report_File is
 -- OVERVIEW:
 --    Write the header & then then body
 -- ...................................................
-    procedure write_init(user : in boolean;
-			 thing : in out user_defined_thing) is
-    begin
-      Write_Line("procedure Initialize_User_Error_Report is");
-      write_thing(user, thing);
-    end write_init;
+   procedure Write_Init (User : in Boolean; Thing : in out User_Defined_Thing)
+   is
+   begin
+      Write_Line ("procedure Initialize_User_Error_Report is");
+      Write_Thing (User, Thing);
+   end Write_Init;
 
 --
 -- TITLE:
@@ -174,12 +164,13 @@ package body Error_Report_File is
 --    Write the header & then then body
 -- ...................................................
 
-    procedure write_finish(user : in boolean; 
-			   thing : in out user_defined_thing) is
-    begin
-      Write_Line("procedure Terminate_User_Error_Report is");
-      write_thing(user, thing);
-    end write_finish;
+   procedure Write_Finish
+     (User : in Boolean; Thing : in out User_Defined_Thing)
+   is
+   begin
+      Write_Line ("procedure Terminate_User_Error_Report is");
+      Write_Thing (User, Thing);
+   end Write_Finish;
 
 --
 -- TITLE:
@@ -188,17 +179,18 @@ package body Error_Report_File is
 -- OVERVIEW:
 --    Write out the header with signature and then the body.
 -- ...................................................
-    procedure write_report(user : in boolean;
-      	      	      	   thing : in out user_defined_thing) is
-    begin
-      Write_Line("procedure Report_Continuable_Error ");
-      Write_Line("    (Line_Number : in Natural;");
-      Write_Line("    Offset      : in Natural;");
-      Write_Line("    Finish      : in Natural;");
-      Write_Line("    Message     : in String;");
-      Write_Line("    Error       : in Boolean)  is");
-      write_thing(user, thing);
-    end write_report;
+   procedure Write_Report
+     (User : in Boolean; Thing : in out User_Defined_Thing)
+   is
+   begin
+      Write_Line ("procedure Report_Continuable_Error ");
+      Write_Line ("    (Line_Number : in Natural;");
+      Write_Line ("    Offset      : in Natural;");
+      Write_Line ("    Finish      : in Natural;");
+      Write_Line ("    Message     : in String;");
+      Write_Line ("    Error       : in Boolean)  is");
+      Write_Thing (User, Thing);
+   end Write_Report;
 
 --
 -- TITLE:       procedure Write_File
@@ -230,119 +222,126 @@ package body Error_Report_File is
 --    This procedure is exported from the package.
 --
 -- SUBPROGRAM BODY:
---    
-  procedure Write_File is
-    current_thing : user_defined_thing := line_thing;
-    wrote_init   : boolean := false;
-    wrote_finish : boolean := false;
-    wrote_report : boolean := false;
-  begin
-    Create(The_File, Out_File, Get_Error_Report_File_Name);
-    Write_Line("package " & Error_Report_Unit_Name & " is"); 
-    Write_Line("");
-    Write_Line("    Syntax_Error : Exception;");
-    Write_Line("    Syntax_Warning : Exception;");
-    Write_Line("    Total_Errors : Natural := 0;   -- number of syntax errors found." );
-    Write_Line("    Total_Warnings : Natural := 0; -- number of syntax warnings found." );						 
-    Write_Line("        ");
-    Write_Line("    procedure Report_Continuable_Error(Line_Number : in Natural;");
-    Write_Line("                                       Offset      : in Natural;");
-    Write_Line("                                       Finish      : in Natural;");
-    Write_Line("                                       Message     : in String;");
-    Write_Line("                                       Error       : in Boolean);");
-    Write_Line("");
-    Write_Line("    procedure Initialize_Output;");
-    Write_Line("");
-    Write_Line("    procedure Finish_Output;");
-    Write_Line("");
-    Write_Line("    procedure Put(S: in String);");
-    Write_Line("");
-    Write_Line("    procedure Put(C: in Character);");
-    Write_Line("");
-    Write_Line("    procedure Put_Line(S: in String);");
-    Write_Line("");
-    Write_Line("end " & Error_Report_Unit_Name & ";");
-    Write_Line(""); 
-    Write_Line(""); 
-    Write_Line("with Text_IO;");
-    -- Get %with's & %use's from source file
-    loop
-      get_next_thing(current_thing);
-      if current_thing = with_thing then
-        Write_Line("With " & text(1..length));
-      elsif current_thing = use_thing then
-        Write_Line("Use " & text(1..length));
-      elsif current_thing = line_thing then
-	null;
-      else
-	exit;
+--
+   procedure Write_File is
+      Current_Thing : User_Defined_Thing := LINE_THING;
+      Wrote_Init    : Boolean            := False;
+      Wrote_Finish  : Boolean            := False;
+      Wrote_Report  : Boolean            := False;
+   begin
+      Create (The_File, Out_File, Get_Error_Report_File_Name);
+      Write_Line ("package " & Error_Report_Unit_Name & " is");
+      Write_Line ("");
+      Write_Line ("    Syntax_Error : Exception;");
+      Write_Line ("    Syntax_Warning : Exception;");
+      Write_Line
+        ("    Total_Errors : Natural := 0;   -- number of syntax errors found.");
+      Write_Line
+        ("    Total_Warnings : Natural := 0; -- number of syntax warnings found.");
+      Write_Line ("        ");
+      Write_Line
+        ("    procedure Report_Continuable_Error(Line_Number : in Natural;");
+      Write_Line
+        ("                                       Offset      : in Natural;");
+      Write_Line
+        ("                                       Finish      : in Natural;");
+      Write_Line
+        ("                                       Message     : in String;");
+      Write_Line
+        ("                                       Error       : in Boolean);");
+      Write_Line ("");
+      Write_Line ("    procedure Initialize_Output;");
+      Write_Line ("");
+      Write_Line ("    procedure Finish_Output;");
+      Write_Line ("");
+      Write_Line ("    procedure Put(S: in String);");
+      Write_Line ("");
+      Write_Line ("    procedure Put(C: in Character);");
+      Write_Line ("");
+      Write_Line ("    procedure Put_Line(S: in String);");
+      Write_Line ("");
+      Write_Line ("end " & Error_Report_Unit_Name & ";");
+      Write_Line ("");
+      Write_Line ("");
+      Write_Line ("with Text_IO;");
+      -- Get %with's & %use's from source file
+      loop
+         Get_Next_Thing (Current_Thing);
+         if Current_Thing = WITH_THING then
+            Write_Line ("With " & Text (1 .. Length));
+         elsif Current_Thing = USE_THING then
+            Write_Line ("Use " & Text (1 .. Length));
+         elsif Current_Thing = LINE_THING then
+            null;
+         else
+            exit;
+         end if;
+      end loop;
+      Write_Line ("");
+      Write_Line ("package body " & Error_Report_Unit_Name & " is");
+      Write_Line ("");
+      Write_Line ("    The_File : Text_io.File_Type;");
+      Write_Line ("");
+      -- Get user declarations of error reporting procedures from source file
+      while (Current_Thing /= EOF_THING) loop
+         if Current_Thing = INIT_THING then
+            Write_Init (True, Current_Thing);
+            Wrote_Init := True;
+         elsif Current_Thing = FINISH_THING then
+            Write_Finish (True, Current_Thing);
+            Wrote_Finish := True;
+         elsif Current_Thing = REPORT_THING then
+            Write_Report (True, Current_Thing);
+            Wrote_Report := True;
+         else
+            Get_Next_Thing (Current_Thing);
+         end if;
+      end loop;
+      if not Wrote_Init then
+         Write_Init (False, Current_Thing);
       end if;
-    end loop;
-    Write_Line("");
-    Write_Line("package body " & Error_Report_Unit_Name & " is");
-    Write_Line("");
-    Write_Line("    The_File : Text_io.File_Type;");
-    Write_Line("");
-    -- Get user declarations of error reporting procedures from source file
-    while(current_thing /= eof_thing) loop
-      if current_thing = init_thing then
-	Write_init(true, current_thing);
-	wrote_init := true;
-      elsif current_thing = finish_thing then
-	Write_finish(true, current_thing);
-	wrote_finish := true;
-      elsif current_thing = report_thing then
-        Write_report(true, current_thing);
-	wrote_report := true;
-      else
-	get_next_thing(current_thing);
+      if not Wrote_Finish then
+         Write_Finish (False, Current_Thing);
       end if;
-    end loop;
-    if not wrote_init then
-      Write_init(false, current_thing);
-    end if;
-    if not wrote_finish then
-      Write_finish(false, current_thing);
-    end if;
-    if not wrote_report then
-      Write_report(false, current_thing);
-    end if;
-    Write_Line("");
-    Write_Line("    procedure Initialize_Output is");
-    Write_Line("      begin");
-    Write_Line("        Text_io.Create(The_File, Text_io.Out_File, " & 
-      '"' & Get_Listing_File_Name & '"' & ");");
-    Write_Line("        initialize_user_error_report;");
-    Write_Line("      end Initialize_Output;");
-    Write_Line("");
-    Write_Line("    procedure Finish_Output is");
-    Write_Line("      begin");
-    Write_Line("        Text_io.Close(The_File);");
-    Write_Line("        terminate_user_error_report;");
-    Write_Line("      end Finish_Output;");
-    Write_Line("");
-    Write_Line("    procedure Put(S: in String) is");
-    Write_Line("    begin");
-    Write_Line("      Text_io.put(The_File, S);");
-    Write_Line("    end Put;");
-    Write_Line("");
-    Write_Line("    procedure Put(C: in Character) is");
-    Write_Line("    begin");
-    Write_Line("      Text_io.put(The_File, C);");
-    Write_Line("    end Put;");
-    Write_Line("");
-    Write_Line("    procedure Put_Line(S: in String) is");
-    Write_Line("    begin");
-    Write_Line("      Text_io.put_Line(The_File, S);");
-    Write_Line("    end Put_Line;");
-    Write_Line("");
-    Write_Line("");
-    Write_Line("end " & Error_Report_Unit_Name & ";");
-    Close(The_File);
-  end Write_File;
+      if not Wrote_Report then
+         Write_Report (False, Current_Thing);
+      end if;
+      Write_Line ("");
+      Write_Line ("    procedure Initialize_Output is");
+      Write_Line ("      begin");
+      Write_Line
+        ("        Text_io.Create(The_File, Text_io.Out_File, " & '"' &
+         Get_Listing_File_Name & '"' & ");");
+      Write_Line ("        initialize_user_error_report;");
+      Write_Line ("      end Initialize_Output;");
+      Write_Line ("");
+      Write_Line ("    procedure Finish_Output is");
+      Write_Line ("      begin");
+      Write_Line ("        Text_io.Close(The_File);");
+      Write_Line ("        terminate_user_error_report;");
+      Write_Line ("      end Finish_Output;");
+      Write_Line ("");
+      Write_Line ("    procedure Put(S: in String) is");
+      Write_Line ("    begin");
+      Write_Line ("      Text_io.put(The_File, S);");
+      Write_Line ("    end Put;");
+      Write_Line ("");
+      Write_Line ("    procedure Put(C: in Character) is");
+      Write_Line ("    begin");
+      Write_Line ("      Text_io.put(The_File, C);");
+      Write_Line ("    end Put;");
+      Write_Line ("");
+      Write_Line ("    procedure Put_Line(S: in String) is");
+      Write_Line ("    begin");
+      Write_Line ("      Text_io.put_Line(The_File, S);");
+      Write_Line ("    end Put_Line;");
+      Write_Line ("");
+      Write_Line ("");
+      Write_Line ("end " & Error_Report_Unit_Name & ";");
+      Close (The_File);
+   end Write_File;
 -- ...................................................
 
-
 begin
-  null;
+   null;
 end Error_Report_File;

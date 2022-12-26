@@ -25,24 +25,24 @@
 -- Date         : 11/21/86  12:31:54
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxoutput_file.ada
 
--- $Header: output_file.a,v 0.1 86/04/01 15:08:21 ada Exp $ 
--- $Log:	output_file.a,v $
+-- $Header: output_file.a,v 0.1 86/04/01 15:08:21 ada Exp $
+-- $Log:        output_file.a,v $
 -- Revision 0.1  86/04/01  15:08:21  ada
---  This version fixes some minor bugs with empty grammars 
---  and $$ expansion. It also uses vads5.1b enhancements 
---  such as pragma inline. 
--- 
--- 
+--  This version fixes some minor bugs with empty grammars
+--  and $$ expansion. It also uses vads5.1b enhancements
+--  such as pragma inline.
+--
+--
 -- Revision 0.0  86/02/19  18:37:42  ada
--- 
+--
 -- These files comprise the initial version of Ayacc
 -- designed and implemented by David Taback and Deepak Tolani.
 -- Ayacc has been compiled and tested under the Verdix Ada compiler
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
---  
+--
 -- Creates the parser
-package Output_File is 
- 
-   procedure Make_Output_File; 
+package Output_File is
 
-end Output_File; 
+   procedure Make_Output_File;
+
+end Output_File;

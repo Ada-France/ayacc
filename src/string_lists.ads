@@ -1,5 +1,3 @@
-
-
 -- Module       : string_lists.ada
 -- Component of : common_library
 -- Version      : 1.2
@@ -8,6 +6,6 @@
 
 with String_Pkg;
 with Lists;
-pragma Elaborate_All(Lists);
+pragma Elaborate_All (Lists);
 
-package String_Lists is new Lists(String_Pkg.String_Type, String_Pkg.Equal);
+package String_Lists is new Lists (String_Pkg.String_Type, String_Pkg.Equal);

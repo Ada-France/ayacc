@@ -1,7 +1,7 @@
 -- $Header:$
 --
 
--- 
+--
 -- NOTES
 --   This file is added by Umass for the purpose of adding more error recovery
 --   power to Ayacc.
@@ -9,7 +9,7 @@
 
 package Error_Report_File is
 --
--- TITLE:	package Error_Report_File
+-- TITLE:       package Error_Report_File
 --    Output the code which allows users to see what the error token was.
 --
 -- LANGUAGE:
@@ -26,6 +26,6 @@ package Error_Report_File is
 -- UPDATES:
 --
 
-	procedure Write_File;
+   procedure Write_File;
 
 end Error_Report_File;

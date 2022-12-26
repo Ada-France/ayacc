@@ -28,7 +28,7 @@
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxfile_names.ada
 
 -- $Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/file_names.a,v 1.2 88/11/28 13:38:59 arcadia Exp $
--- $Log:	file_names.a,v $
+-- $Log:        file_names.a,v $
 --Revision 1.2  88/11/28  13:38:59  arcadia
 --Modified Get_Unit_Name function to accept legal Ada identifiers.
 --
@@ -53,44 +53,43 @@
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
 --
 
-    -- The collection of all file names used by Ayacc --
+-- The collection of all file names used by Ayacc --
 
 package Ayacc_File_Names is
 
-    procedure Set_File_Names(Input_File, Extension, Output_Directory: in String);
-    -- Sets the initial value of the file names
-    -- according to the INPUT_FILE.
+   procedure Set_File_Names
+     (Input_File, Extension, Output_Directory : in String);
+   -- Sets the initial value of the file names
+   -- according to the INPUT_FILE.
 
-    function  Get_Source_File_Name        return String;
-    function  Get_Out_File_Name           return String;
-    function  Get_Verbose_File_Name       return String;
-    function  Get_Template_File_Name      return String;
-    function  Get_Actions_File_Name       return String;
-    function  Get_Shift_Reduce_File_Name  return String;
-    function  Get_Goto_File_Name          return String;
-    function  Get_Tokens_File_Name        return String;
+   function Get_Source_File_Name return String;
+   function Get_Out_File_Name return String;
+   function Get_Verbose_File_Name return String;
+   function Get_Template_File_Name return String;
+   function Get_Actions_File_Name return String;
+   function Get_Shift_Reduce_File_Name return String;
+   function Get_Goto_File_Name return String;
+   function Get_Tokens_File_Name return String;
 -- UMASS CODES :
-    function  Get_Error_Report_File_Name  return String;
-    function  Get_Listing_File_Name       return String;
+   function Get_Error_Report_File_Name return String;
+   function Get_Listing_File_Name return String;
 -- END OF UMASS CODES.
-    function  Get_C_Lex_File_Name	  return String;
-    function  Get_Include_File_Name	  return String;
-
+   function Get_C_Lex_File_Name return String;
+   function Get_Include_File_Name return String;
 
 --RJS ==========================================
 
    procedure Set_Unit_Name (Name : in String);
-  function C_Lex_Unit_Name               return String;
-  function Goto_Tables_Unit_Name         return String;
-  function Shift_Reduce_Tables_Unit_Name return String;
-  function Tokens_Unit_Name              return String;
+   function C_Lex_Unit_Name return String;
+   function Goto_Tables_Unit_Name return String;
+   function Shift_Reduce_Tables_Unit_Name return String;
+   function Tokens_Unit_Name return String;
 -- UMASS CODES :
-  function Error_Report_Unit_Name        return String;
+   function Error_Report_Unit_Name return String;
 -- END OF UMASS CODES.
 --RJS ==========================================
 
-
-    Illegal_File_Name: exception;
-    -- Raised if the file name does not end with ".y"
+   Illegal_File_Name : exception;
+   -- Raised if the file name does not end with ".y"
 
 end Ayacc_File_Names;

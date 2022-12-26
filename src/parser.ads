@@ -25,35 +25,35 @@
 -- Date         : 11/21/86  12:32:26
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxparser.ada
 
--- $Header: parser.a,v 0.1 86/04/01 15:10:10 ada Exp $ 
--- $Log:	parser.a,v $
+-- $Header: parser.a,v 0.1 86/04/01 15:10:10 ada Exp $
+-- $Log:        parser.a,v $
 -- Revision 0.1  86/04/01  15:10:10  ada
---  This version fixes some minor bugs with empty grammars 
---  and $$ expansion. It also uses vads5.1b enhancements 
---  such as pragma inline. 
--- 
--- 
+--  This version fixes some minor bugs with empty grammars
+--  and $$ expansion. It also uses vads5.1b enhancements
+--  such as pragma inline.
+--
+--
 -- Revision 0.0  86/02/19  18:40:20  ada
--- 
+--
 -- These files comprise the initial version of Ayacc
 -- designed and implemented by David Taback and Deepak Tolani.
 -- Ayacc has been compiled and tested under the Verdix Ada compiler
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
---  
+--
 
---  					--
+--                                      --
 -- The parser for the user source file  --
--- 					-- 
+--                                      --
 
-package Parser is 
- 
-  -- Parse the declarations section  
-  procedure Parse_Declarations; 
-  
-  -- Parse the rules section 
-  procedure Parse_Rules; 
+package Parser is
 
-  -- Self-explanatory
-  Syntax_Error : exception; 
+   -- Parse the declarations section
+   procedure Parse_Declarations;
 
-end; 
+   -- Parse the rules section
+   procedure Parse_Rules;
+
+   -- Self-explanatory
+   Syntax_Error : exception;
+
+end Parser;

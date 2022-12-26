@@ -26,7 +26,7 @@
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxlexical_analyzer.ada
 
 -- $Header: lexical_analyzer.a,v 0.1 86/04/01 15:05:14 ada Exp $
--- $Log:	lexical_analyzer.a,v $
+-- $Log:        lexical_analyzer.a,v $
 -- Revision 0.1  86/04/01  15:05:14  ada
 --  This version fixes some minor bugs with empty grammars
 --  and $$ expansion. It also uses vads5.1b enhancements
@@ -44,37 +44,26 @@
 with Source_File;
 package Lexical_Analyzer is
 
-
-    function Get_Lexeme_Text return String;   -- Scanned text.
+   function Get_Lexeme_Text return String;   -- Scanned text.
 
    --  The scanned text as found in the grammar (ie, no upper case).
    function Get_Original_Text return String;
 
-    type Ayacc_Token is
-	(Token, Start,
-	 Left, Right, Nonassoc, Prec,
-         With_Clause, Use_Clause, Unit_Clause,
-	 Identifier, Character_Literal,
-         Comma, Colon, Semicolon, Vertical_Bar, Left_Brace,
-	 Mark, Eof_Token);
+   type Ayacc_Token is
+     (TOKEN, START, LEFT, RIGHT, NONASSOC, PREC, WITH_CLAUSE, USE_CLAUSE,
+      UNIT_CLAUSE, IDENTIFIER, CHARACTER_LITERAL, COMMA, COLON, SEMICOLON,
+      VERTICAL_BAR, LEFT_BRACE, MARK, EOF_TOKEN);
 
+   function Get_Token return Ayacc_Token;
 
-    function Get_Token return Ayacc_Token;
+   function Line_Number return Natural;  -- Current line of source file
 
+   procedure Handle_Action (Rule, Rule_Length : Integer);
 
-    function Line_Number return Natural;  -- Current line of source file
+   procedure Print_Context_Lines renames Source_File.Print_Context_Lines;
 
+   procedure Dump_Declarations;
 
-    procedure Handle_Action(Rule, Rule_Length : Integer);
-
-
-    procedure Print_Context_Lines renames Source_File.Print_Context_Lines;
-
-
-    procedure Dump_Declarations;
-
-
-    Illegal_Token         : exception;
-
+   Illegal_Token : exception;
 
 end Lexical_Analyzer;

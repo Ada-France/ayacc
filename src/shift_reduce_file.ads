@@ -19,7 +19,7 @@
 -- IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 -- WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
--- $Header: /dc/uc/self/arcadia/ayacc/src/RCS/shift_reduce_file.a,v 1.2 1993/05/31 22:36:35 self Exp self $ 
+-- $Header: /dc/uc/self/arcadia/ayacc/src/RCS/shift_reduce_file.a,v 1.2 1993/05/31 22:36:35 self Exp self $
 
 -- Module       : shift_reduce_file.ada
 -- Component of : ayacc
@@ -27,7 +27,7 @@
 -- Date         : 11/21/86  12:35:35
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxshift_reduce_file.ada
 
--- $Header: /dc/uc/self/arcadia/ayacc/src/RCS/shift_reduce_file.a,v 1.2 1993/05/31 22:36:35 self Exp self $ 
+-- $Header: /dc/uc/self/arcadia/ayacc/src/RCS/shift_reduce_file.a,v 1.2 1993/05/31 22:36:35 self Exp self $
 -- $Log: shift_reduce_file.a,v $
 -- Revision 1.2  1993/05/31  22:36:35  self
 -- added exception handler when opening files
@@ -39,27 +39,26 @@
 --Initial revision
 --
 -- Revision 0.1  86/04/01  15:12:13  ada
---  This version fixes some minor bugs with empty grammars 
---  and $$ expansion. It also uses vads5.1b enhancements 
---  such as pragma inline. 
--- 
--- 
+--  This version fixes some minor bugs with empty grammars
+--  and $$ expansion. It also uses vads5.1b enhancements
+--  such as pragma inline.
+--
+--
 -- Revision 0.0  86/02/19  18:41:42  ada
--- 
+--
 -- These files comprise the initial version of Ayacc
 -- designed and implemented by David Taback and Deepak Tolani.
 -- Ayacc has been compiled and tested under the Verdix Ada compiler
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
---  
-
+--
 
 package Shift_Reduce_File is
 
-    procedure Open_Write;
-    procedure Write(S: in String); 
-    procedure Write_Line(S: in String);
-    procedure Write(C: in Character);
-    procedure Close_Write;
-    procedure Write_Indented(S: in String);
+   procedure Open_Write;
+   procedure Write (S : in String);
+   procedure Write_Line (S : in String);
+   procedure Write (C : in Character);
+   procedure Close_Write;
+   procedure Write_Indented (S : in String);
 
 end Shift_Reduce_File;

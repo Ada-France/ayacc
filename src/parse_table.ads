@@ -25,21 +25,21 @@
 -- Date         : 11/21/86  12:32:58
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxparse_table.ada
 
--- $Header: parse_table.a,v 0.1 86/04/01 15:08:33 ada Exp $ 
--- $Log:	parse_table.a,v $
+-- $Header: parse_table.a,v 0.1 86/04/01 15:08:33 ada Exp $
+-- $Log:        parse_table.a,v $
 -- Revision 0.1  86/04/01  15:08:33  ada
---  This version fixes some minor bugs with empty grammars 
---  and $$ expansion. It also uses vads5.1b enhancements 
---  such as pragma inline. 
--- 
--- 
+--  This version fixes some minor bugs with empty grammars
+--  and $$ expansion. It also uses vads5.1b enhancements
+--  such as pragma inline.
+--
+--
 -- Revision 0.0  86/02/19  18:37:58  ada
--- 
+--
 -- These files comprise the initial version of Ayacc
 -- designed and implemented by David Taback and Deepak Tolani.
 -- Ayacc has been compiled and tested under the Verdix Ada compiler
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
---  
+--
 
 --  This package build the shift reduce table and the goto table and
 --  writes it to the shift_reduce_file, and goto_file. If the verbose option
@@ -52,14 +52,14 @@
 
 package Parse_Table is
 
-    procedure Make_Parse_Table;
+   procedure Make_Parse_Table;
 
-    -- These functions must be called AFTER Make_parse_Table
+   -- These functions must be called AFTER Make_parse_Table
 
-    function  Shift_Reduce_Conflicts      return  Natural;
-    function  Reduce_Reduce_Conflicts     return  Natural;
-    function  Number_of_States            return  Natural;
-    function  Size_of_Goto_Table          return  Natural;
-    function  Size_of_Action_Table        return  Natural;
+   function Shift_Reduce_Conflicts return Natural;
+   function Reduce_Reduce_Conflicts return Natural;
+   function Number_Of_States return Natural;
+   function Size_Of_Goto_Table return Natural;
+   function Size_Of_Action_Table return Natural;
 
 end Parse_Table;

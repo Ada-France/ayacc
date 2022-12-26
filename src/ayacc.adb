@@ -39,7 +39,7 @@
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxayacc.ada
 
 -- $Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/ayacc.a,v 1.1 88/08/08 12:07:07 arcadia Exp $
--- $Log:	ayacc.a,v $
+-- $Log:        ayacc.a,v $
 --Revision 1.1  88/08/08  12:07:07  arcadia
 --Initial revision
 --
@@ -57,19 +57,11 @@
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
 --
 
-with Source_File,
-     Ayacc_File_Names,
-     Options,
-     Parser,
-     Parse_Template_File,
-     Tokens_File,
-     Output_File,
-     Parse_Table,
-     Text_IO,
---     u_env,	  -- For getting the command line arguments
+with Source_File, Ayacc_File_Names, Options, Parser, Parse_Template_File, Tokens_File, Output_File, Parse_Table, Text_Io,
+--     u_env,     -- For getting the command line arguments
 
-     Symbol_Table, -- Used for statistics only
-     Rule_Table;   -- Used for statistics only
+Symbol_Table, -- Used for statistics only
+Rule_Table;   -- Used for statistics only
 
 -- UMASS CODES :
 with Error_Report_File;
@@ -77,56 +69,55 @@ with Error_Report_File;
 
 procedure Ayacc is
 
-    --  Rcs_ID : constant String := "$Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/ayacc.a,v 1.1 88/08/08 12:07:07 arcadia Exp $";
+   --  Rcs_ID : constant String := "$Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/ayacc.a,v 1.1 88/08/08 12:07:07 arcadia Exp $";
 
-    use Text_IO;
-    procedure Print_Statistics is separate;
+   use Text_Io;
+   procedure Print_Statistics is separate;
 
 begin
 
    Options.Get_Arguments;
    Parse_Template_File.Initialize;
 
-    Source_File.Open;
+   Source_File.Open;
 
-    Parser.Parse_Declarations;
-    Parser.Parse_Rules;
-    Parse_Table.Make_Parse_Table;
-    Output_File.Make_Output_File;
-    Tokens_File.Complete_Tokens_Package;
+   Parser.Parse_Declarations;
+   Parser.Parse_Rules;
+   Parse_Table.Make_Parse_Table;
+   Output_File.Make_Output_File;
+   Tokens_File.Complete_Tokens_Package;
 
 -- UMASS CODES :
 --  Generate the error report file if the codes
 --  of error recovery extension should be generated.
-    if Options.Error_Recovery_Extension then
+   if Options.Error_Recovery_Extension then
       Error_Report_File.Write_File;
-    end if;
+   end if;
 -- END OF UMASS CODES.
 
-    Source_File.Close;
-    Tokens_File.Close;
+   Source_File.Close;
+   Tokens_File.Close;
 
-    if Options.Interface_to_C then
-	Tokens_File.Make_C_Lex_Package;
-    end if;
+   if Options.Interface_To_C then
+      Tokens_File.Make_C_Lex_Package;
+   end if;
 
-    Print_Statistics;
+   Print_Statistics;
 
 exception
 
+   when Ayacc_File_Names.Illegal_File_Name =>
+      Put_Line ("Ayacc: Illegal Filename.");
 
-    when Ayacc_File_Names.Illegal_File_Name =>
-	Put_Line("Ayacc: Illegal Filename.");
+   when Options.Illegal_Option =>
+      null;
 
-    when Options.Illegal_Option =>
-        null;
+   when Parser.Syntax_Error =>   -- Error has already been reported.
+      Source_File.Close;
 
-    when Parser.Syntax_Error =>   -- Error has already been reported.
-	Source_File.Close;
+   when Text_Io.Name_Error | Text_Io.Use_Error =>
+      null;  -- Error has already been reported.
 
-    when Text_IO.Name_Error | Text_IO.Use_Error =>
-        null;  -- Error has already been reported.
-
-    when others =>
-        Put_Line ("Ayacc: Internal Error, Please Submit an LCR.");
+   when others =>
+      Put_Line ("Ayacc: Internal Error, Please Submit an LCR.");
 end Ayacc;

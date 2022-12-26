@@ -1,5 +1,3 @@
-
-
 -- Module       : stack_pkg.ada
 -- Component of : common_library
 -- Version      : 1.2
@@ -12,11 +10,11 @@
 -- $Source: /nosc/work/abstractions/stack/RCS/stack.bdy,v $
 -- $Revision: 1.3 $ -- $Date: 85/02/01 10:19:36 $ -- $Author: ron $
 
-with unchecked_deallocation;
+with Unchecked_Deallocation;
 
-package body stack_pkg is
+package body Stack_Pkg is
 
-  -- SCCS_ID : constant String := "@(#) stack_pkg.ada, Version 1.2";
+   -- SCCS_ID : constant String := "@(#) stack_pkg.ada, Version 1.2";
 
 --| Overview:
 --| Implementation scheme is totally described by the statements of the
@@ -24,104 +22,94 @@ package body stack_pkg is
 --| the package specification.  The implementation is so trivial that
 --| further documentation is unnecessary.
 
-    use elem_list_pkg;
-    
-    
-  -- Constructors:
-    
-    function create
-        return stack is
-    begin
-	return new stack_rec'(size => 0, elts => create);
-    end create;
-    
-    procedure push(s: in out stack;
-                   e:        elem_type) is
-    begin
-        s.size := s.size + 1;
-        s.elts := attach(e, s.elts);
-    exception
-        when constraint_error =>
-            raise uninitialized_stack;
-    end push;
+   use Elem_List_Pkg;
 
-    procedure pop(s: in out stack) is
-    begin
-        DeleteHead(s.elts);
-        s.size := s.size - 1;
-    exception
-        when EmptyList =>
-            raise empty_stack;
-	when constraint_error =>
-	    raise uninitialized_stack;
-    end pop;
+   -- Constructors:
 
-    procedure pop(s: in out stack;
-                  e: out    elem_type) is
-    begin
-        e := FirstValue(s.elts);
-        DeleteHead(s.elts);
-        s.size := s.size - 1;
-    exception
-        when EmptyList =>
-            raise empty_stack;
-	when constraint_error =>
-	    raise uninitialized_stack;
-    end pop;
-    
-    function copy(s: stack)
-        return stack is
-    begin
-	if s = null then raise uninitialized_stack; end if;
-	
-	return new stack_rec'(size => s.size,
-			      elts => copy(s.elts));
-    end;
+   function Create return Stack is
+   begin
+      return new Stack_Rec'(Size => 0, Elts => Create);
+   end Create;
 
-    
-  -- Queries:
+   procedure Push (S : in out Stack; E : Elem_Type) is
+   begin
+      S.Size := S.Size + 1;
+      S.Elts := Attach (E, S.Elts);
+   exception
+      when Constraint_Error =>
+         raise Uninitialized_Stack;
+   end Push;
 
-    function top(s: stack)
-        return elem_type is
-    begin
-        return FirstValue(s.elts);
-    exception
-        when EmptyList =>
-	    raise empty_stack;
-	when constraint_error =>
-	    raise uninitialized_stack;
-    end top;
+   procedure Pop (S : in out Stack) is
+   begin
+      Deletehead (S.Elts);
+      S.Size := S.Size - 1;
+   exception
+      when Emptylist =>
+         raise Empty_Stack;
+      when Constraint_Error =>
+         raise Uninitialized_Stack;
+   end Pop;
 
-    function size(s: stack)
-        return natural is
-    begin
-        return s.size;
-    exception
-        when constraint_error =>
-	    raise uninitialized_stack;
-    end size;
+   procedure Pop (S : in out Stack; E : out Elem_Type) is
+   begin
+      E := Firstvalue (S.Elts);
+      Deletehead (S.Elts);
+      S.Size := S.Size - 1;
+   exception
+      when Emptylist =>
+         raise Empty_Stack;
+      when Constraint_Error =>
+         raise Uninitialized_Stack;
+   end Pop;
 
-    function is_empty(s: stack)
-        return boolean is
-    begin
-        return s.size = 0;
-    exception
-        when constraint_error =>
-	    raise uninitialized_stack;
-    end is_empty;
+   function Copy (S : Stack) return Stack is
+   begin
+      if S = null then
+         raise Uninitialized_Stack;
+      end if;
 
+      return new Stack_Rec'(Size => S.Size, Elts => Copy (S.Elts));
+   end Copy;
 
-  -- Heap Management:
-    
-    procedure destroy(s: in out stack) is
-        procedure free_stack is
-	    new unchecked_deallocation(stack_rec, stack);
-    begin
-	destroy(s.elts);
-	free_stack(s);
-    exception
-        when constraint_error =>    -- stack is null
-            return; 
-    end destroy;
-   
-end stack_pkg;
+   -- Queries:
+
+   function Top (S : Stack) return Elem_Type is
+   begin
+      return Firstvalue (S.Elts);
+   exception
+      when Emptylist =>
+         raise Empty_Stack;
+      when Constraint_Error =>
+         raise Uninitialized_Stack;
+   end Top;
+
+   function Size (S : Stack) return Natural is
+   begin
+      return S.Size;
+   exception
+      when Constraint_Error =>
+         raise Uninitialized_Stack;
+   end Size;
+
+   function Is_Empty (S : Stack) return Boolean is
+   begin
+      return S.Size = 0;
+   exception
+      when Constraint_Error =>
+         raise Uninitialized_Stack;
+   end Is_Empty;
+
+   -- Heap Management:
+
+   procedure Destroy (S : in out Stack) is
+      procedure Free_Stack is new Unchecked_Deallocation (Stack_Rec, Stack);
+   begin
+      Destroy (S.Elts);
+      Free_Stack (S);
+   exception
+      when Constraint_Error =>    -- stack is null
+         return;
+   end Destroy;
+
+end Stack_Pkg;

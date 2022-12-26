@@ -26,7 +26,7 @@
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxoptions.ada
 
 -- $Header: options.a,v 0.1 86/04/01 15:08:15 ada Exp $
--- $Log:	options.a,v $
+-- $Log:        options.a,v $
 -- Revision 0.1  86/04/01  15:08:15  ada
 --  This version fixes some minor bugs with empty grammars
 --  and $$ expansion. It also uses vads5.1b enhancements
@@ -46,44 +46,44 @@ package Options is
    procedure Get_Arguments;
    -- Get the program arguments and setup the options.
 
-    function Verbose return Boolean;
-    -- Returns TRUE if the verbose file is to be created.
+   function Verbose return Boolean;
+   -- Returns TRUE if the verbose file is to be created.
 
-    function Debug return Boolean;
-    -- Returns TRUE if the YYPARSE procedure should generate
-    -- debugging output.
+   function Debug return Boolean;
+   -- Returns TRUE if the YYPARSE procedure should generate
+   -- debugging output.
 
-    function Summary return Boolean;
-    -- Returns TRUE if a summary of statistics of the generated
-    -- parser should be printed.
+   function Summary return Boolean;
+   -- Returns TRUE if a summary of statistics of the generated
+   -- parser should be printed.
 
-    function Package_Private return Boolean;
-    -- Returns TRUE if generated package must be private.
+   function Package_Private return Boolean;
+   -- Returns TRUE if generated package must be private.
 
-    function Interface_to_C return Boolean;
+   function Interface_To_C return Boolean;
 
-    function Loud return Boolean;
-    -- Returns TRUE if Ayacc should output useless and annoying information
-    -- while it is running.
+   function Loud return Boolean;
+   -- Returns TRUE if Ayacc should output useless and annoying information
+   -- while it is running.
 
 -- UMASS CODES :
-    function Error_Recovery_Extension return Boolean;
-    -- Returns TRUE if the codes of error recovery extension should
-    -- be generated.
+   function Error_Recovery_Extension return Boolean;
+   -- Returns TRUE if the codes of error recovery extension should
+   -- be generated.
 -- END OF UMASS CODES.
 
-    function Ayacc_Stack_Size return String;
-    -- Returns the stack size that the parser must use.
+   function Ayacc_Stack_Size return String;
+   -- Returns the stack size that the parser must use.
 
-    function Skip_Yyerrok return Boolean;
-    --  Skip generation of yyerrok
+   function Skip_Yyerrok return Boolean;
+   --  Skip generation of yyerrok
 
-    function Skip_Yyclearin return Boolean;
-    --  Skip generation of yyclearin
+   function Skip_Yyclearin return Boolean;
+   --  Skip generation of yyclearin
 
-    function Keep_Token_Case return Boolean;
-    --  Keep the token case
+   function Keep_Token_Case return Boolean;
+   --  Keep the token case
 
-    Illegal_Option: exception;
+   Illegal_Option : exception;
 
 end Options;

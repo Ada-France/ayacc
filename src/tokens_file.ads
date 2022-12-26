@@ -25,38 +25,37 @@
 -- Date         : 11/21/86  12:38:10
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxtokens_file.ada
 
--- $Header: tokens_file.a,v 0.1 86/04/01 15:14:22 ada Exp $ 
--- $Log:	tokens_file.a,v $
+-- $Header: tokens_file.a,v 0.1 86/04/01 15:14:22 ada Exp $
+-- $Log:        tokens_file.a,v $
 -- Revision 0.1  86/04/01  15:14:22  ada
---  This version fixes some minor bugs with empty grammars 
---  and $$ expansion. It also uses vads5.1b enhancements 
---  such as pragma inline. 
--- 
--- 
+--  This version fixes some minor bugs with empty grammars
+--  and $$ expansion. It also uses vads5.1b enhancements
+--  such as pragma inline.
+--
+--
 -- Revision 0.0  86/02/19  18:54:11  ada
--- 
+--
 -- These files comprise the initial version of Ayacc
 -- designed and implemented by David Taback and Deepak Tolani.
 -- Ayacc has been compiled and tested under the Verdix Ada compiler
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
---  
-
+--
 
 package Tokens_File is
 
-    procedure Open;
+   procedure Open;
 
-    procedure Start_Tokens_Package;
-    function Tokens_Package_Header_Has_Been_Generated return Boolean;
-    --| Returns:  True iff Start_Tokens_Package has been called.
+   procedure Start_Tokens_Package;
+   function Tokens_Package_Header_Has_Been_Generated return Boolean;
+   --| Returns:  True iff Start_Tokens_Package has been called.
 
-    procedure Complete_Tokens_Package;
+   procedure Complete_Tokens_Package;
 
-    procedure Make_C_Lex_Package;  -- yylex that interfaces to C!!!
-				   -- Creates the #define also!!
-    procedure Close;
+   procedure Make_C_Lex_Package;  -- yylex that interfaces to C!!!
+   -- Creates the #define also!!
+   procedure Close;
 
-    procedure Write (S : in String);
-    procedure Writeln(S: in String); 
+   procedure Write (S : in String);
+   procedure Writeln (S : in String);
 
 end Tokens_File;

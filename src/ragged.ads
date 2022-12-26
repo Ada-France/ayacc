@@ -25,83 +25,76 @@
 -- Date         : 11/21/86  12:34:00
 -- SCCS File    : disk21~/rschm/hasee/sccs/ayacc/sccs/sxragged.ada
 
--- $Header: ragged.a,v 0.1 86/04/01 15:11:22 ada Exp $ 
--- $Log:	ragged.a,v $
+-- $Header: ragged.a,v 0.1 86/04/01 15:11:22 ada Exp $
+-- $Log:        ragged.a,v $
 -- Revision 0.1  86/04/01  15:11:22  ada
---  This version fixes some minor bugs with empty grammars 
---  and $$ expansion. It also uses vads5.1b enhancements 
---  such as pragma inline. 
--- 
--- 
+--  This version fixes some minor bugs with empty grammars
+--  and $$ expansion. It also uses vads5.1b enhancements
+--  such as pragma inline.
+--
+--
 -- Revision 0.0  86/02/19  18:40:45  ada
--- 
+--
 -- These files comprise the initial version of Ayacc
 -- designed and implemented by David Taback and Deepak Tolani.
 -- Ayacc has been compiled and tested under the Verdix Ada compiler
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
---  
+--
 
--- Remeber to get rid of rval as soon as all bugs have been eliminated 
+-- Remeber to get rid of rval as soon as all bugs have been eliminated
 -- from routines that use this package.
 
-generic 
-    type Row_Index is (<>); 
-    type Col_Index is (<>); 
-    type Item is limited private;  
-    with procedure Null_Value(Value : in out Item); 
+generic
+   type Row_Index is (<>);
+   type Col_Index is (<>);
+   type Item is limited private;
+   with procedure Null_Value (Value : in out Item);
 
-package Ragged is 
+package Ragged is
 
-    -- Cell and index should be private but for efficency and for subtle 
-    -- problems that arise when type item is implemeted as a limited private 
-    -- in an external package, cell and index are kept visible.
+   -- Cell and index should be private but for efficency and for subtle
+   -- problems that arise when type item is implemeted as a limited private
+   -- in an external package, cell and index are kept visible.
 
-    type Cell; 
-    type Index       is access Cell;
-    pragma Controlled(Index); 
+   type Cell;
+   type Index is access Cell;
+   pragma Controlled (Index);
 
-    type Hidden_Type is limited private;
+   type Hidden_Type is limited private;
 
-    type Cell is   
-        record 
-            Value  : Item; 
-            Hidden : Hidden_Type; 
-        end record; 
+   type Cell is record
+      Value  : Item;
+      Hidden : Hidden_Type;
+   end record;
 
-    -- Use for retrieving the value of array(x,y). Raises value range 
-    -- error if no such location has been allocated yet.
-    -- eg: value := rval(x,y).value; 
+   -- Use for retrieving the value of array(x,y). Raises value range
+   -- error if no such location has been allocated yet.
+   -- eg: value := rval(x,y).value;
 
-    function  Rval(X: Row_Index; Y: Col_Index) return Index; 
+   function Rval (X : Row_Index; Y : Col_Index) return Index;
 
+   -- Use for setting a value in array(x,y). Allocates new storage
+   -- if the location does not exist yet. Can also use it if you
+   -- require a preinitialization value
+   -- eg: lval(x,y).value := value;
+   --     if lval(x,y).value = 0 then ...
 
-    -- Use for setting a value in array(x,y). Allocates new storage 
-    -- if the location does not exist yet. Can also use it if you 
-    -- require a preinitialization value
-    -- eg: lval(x,y).value := value; 
-    --     if lval(x,y).value = 0 then ... 
+   function Lval (X : Row_Index; Y : Col_Index) return Index;
 
-    function  Lval(X: Row_Index; Y: Col_Index) return Index; 
-    
+   procedure Make_Array (Lower, Upper : Row_Index);
 
-    procedure Make_Array(Lower, Upper: Row_Index); 
+   procedure Initialize (Iterator : out Index; Row : Row_Index);
 
+   procedure Next (Iterator : in out Index);
 
-    procedure Initialize(Iterator : out Index; Row : Row_Index); 
+   procedure Free_Array;
 
+   Value_Range_Error : exception;
 
-    procedure Next(Iterator : in out Index);  
+private
+   type Hidden_Type is record
+      Column : Col_Index;
+      Next   : Index;
+   end record;
 
-
-    procedure Free_Array; 
-
-    Value_Range_Error : exception; 
-
-private 
-    type Hidden_Type is 
-        record 
-           Column : Col_Index; 
-           Next   : Index;
-        end record;
-
-end Ragged;  
+end Ragged;
