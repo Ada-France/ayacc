@@ -98,6 +98,8 @@ package body Output_File is
       Yyclearin_Codes : Boolean := False;
       Yyerrok_Codes   : Boolean := False;
       Skip_Line       : Boolean := False;
+      Proc_Decl : String (1 .. 260);
+      Decl_Len  : Natural := 0;
    begin
       Open; -- Open the output file.
 
@@ -110,6 +112,13 @@ package body Output_File is
             while (I < Length - 1 and then Text (I) = ' ') loop
                I := I + 1;
             end loop;
+            if I + Length >= 21
+              and then Text (I .. I + 21) = "##%procedure YYParse ("
+            then
+               Decl_Len := Length - I - 2;
+               Proc_Decl (1 .. Decl_Len) := Text (I + 3 .. Length);
+               exit;
+            end if;
             if Text (I .. I + 1) = "##" then
                exit;
             end if;
@@ -178,7 +187,12 @@ package body Output_File is
                -- the comment "-- END OF UCI CODES DELETED :" anyway.
             end if;
 
-            if Options.Error_Recovery_Extension then
+            if Decl_Len > 0 and then Length = 23
+              and then Text (1 .. 23) = "   procedure YYParse is"
+            then
+               Put_Line (Outfile, "   " & Proc_Decl (1 .. Decl_Len) & " is");
+
+            elsif Options.Error_Recovery_Extension then
                -- Do not generate UCI codes which should be deleted.
                if not Uci_Codes_Deleted and not Skip_Line then
                   Put_Line (Outfile, Text (1 .. Length));
