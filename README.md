@@ -19,10 +19,13 @@ This version brings a number of improvements:
 - The parser was improved to configure the parser stack size and
   support Ada child packages.
 - The grammar supports the %unit directive to control the Ada child packages
+- It is possible to customize the `YYParse` procedure and pass some context
+  arguments that are available to the grammar rules
 
 ## Version 1.4.0 - Under development
 
 - New option `-P` to generate a private Ada package for the tokens package
+- Improvement to allow passing parameters to `YYParse` for the grammar rules
 
 ## Version 1.3.0 - Dec 2021
 
