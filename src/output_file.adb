@@ -56,6 +56,7 @@
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
 --
 
+with Ada.Strings.Fixed;
 with Actions_File, Ayacc_File_Names, Options, Parse_Template_File, Source_File, Text_Io;
 
 use Actions_File, Ayacc_File_Names, Text_Io;
@@ -79,6 +80,21 @@ package body Output_File is
    begin
       Close (Outfile);
    end Close;
+
+   procedure Write_Update_YYLex (Text : in String) is
+      Pos : constant Natural := Ada.Strings.Fixed.Index (Text, "YYLex");
+   begin
+      if Pos = 0 then
+         Put_Line (Outfile, Text);
+      else
+         declare
+            Name : constant String := Ayacc_File_Names.Lex_Function_Name;
+         begin
+            Put_Line (Outfile, Text (Text'First .. Pos - 1) & Name
+                        & Text (Pos + 5 .. Text'Last));
+         end;
+      end if;
+   end Write_Update_YYLex;
 
    -- Make the parser body section by reading the source --
    -- and template files and merging them appropriately  --
@@ -399,12 +415,12 @@ package body Output_File is
             if Options.Error_Recovery_Extension then
                -- Do not generate UCI codes which should be deleted.
                if not Uci_Codes_Deleted and not Skip_Line then
-                  Put_Line (Outfile, Text (1 .. Length));
+                  Write_Update_YYLex (Text (1 .. Length));
                end if;
             else
                -- Do not generate UMASS codes.
                if not Umass_Codes and not Skip_Line then
-                  Put_Line (Outfile, Text (1 .. Length));
+                  Write_Update_YYLex (Text (1 .. Length));
                end if;
             end if;
 

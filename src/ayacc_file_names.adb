@@ -1,3 +1,4 @@
+with Ada.Strings.Fixed;
 with Str_Pack; use Str_Pack;
 
 with String_Pkg;
@@ -23,6 +24,7 @@ package body Ayacc_File_Names is
    C_Lex_File_Name   : Str (Max_Name_Length);
    Include_File_Name : Str (Max_Name_Length);
    Unit_Name         : Str (Max_Name_Length);
+   Lex_Func_Name          : Str (Max_Name_Length);
 
 --RJS ==========================================
 
@@ -132,7 +134,21 @@ package body Ayacc_File_Names is
       end if;
    end Tokens_Unit_Name;
 
--- UMASS CODES :
+   function Lex_Function_Name return String is
+   begin
+      if Is_Empty (Lex_Func_Name) then
+         return "YYLex";
+      else
+         return Value_Of (Lex_Func_Name);
+      end if;
+   end Lex_Function_Name;
+
+   procedure Set_Lex_Function_Name (Name : in String) is
+   begin
+      Assign (Ada.Strings.Fixed.Trim (Name, Ada.Strings.Both), Lex_Func_Name);
+   end Set_Lex_Function_Name;
+
+   -- UMASS CODES :
    function Error_Report_Unit_Name return String is
       Filename : constant String :=
         Value_Of (Upper_Case (Error_Report_File_Name));

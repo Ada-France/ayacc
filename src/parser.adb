@@ -412,6 +412,18 @@ package body Parser is
          end if;
       end Parse_Unit_Clause;
 
+      procedure Parse_Lex_Clause is
+      begin
+         if Tokens_Package_Header_Has_Been_Generated then
+            Fatal_Error
+              ("Lex clause specifications may not " &
+               "appear after Ada declarations.");
+         else
+            Ayacc_File_Names.Set_Lex_Function_Name (Get_Original_Text);
+         end if;
+         Next_Token := Get_Token;
+      end Parse_Lex_Clause;
+
    begin
 
       Next_Token := Get_Token;
@@ -459,6 +471,8 @@ package body Parser is
             when Unit_Clause =>
                Next_Token := Get_Token;
                Parse_Unit_Clause;
+            when Lex_Clause =>
+               Parse_Lex_Clause;
             when others =>
                Fatal_Error ("Unexpected symbol");
          end case;

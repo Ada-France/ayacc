@@ -84,6 +84,8 @@ package Ayacc_File_Names is
    function Goto_Tables_Unit_Name return String;
    function Shift_Reduce_Tables_Unit_Name return String;
    function Tokens_Unit_Name return String;
+   function Lex_Function_Name return String;
+   procedure Set_Lex_Function_Name (Name : in String);
 -- UMASS CODES :
    function Error_Report_Unit_Name return String;
 -- END OF UMASS CODES.

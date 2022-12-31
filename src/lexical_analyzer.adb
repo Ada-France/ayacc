@@ -150,6 +150,20 @@ package body Lexical_Analyzer is
                      return Use_Clause;
                   elsif Value_Of (Lexeme_Text) = "%UNIT" then
                      return Unit_Clause;
+                  elsif Value_Of (Lexeme_Text) = "%LEX" then
+                     --  Get the %lex content option up to end of line.
+                     --  It can contain '(' and ')' or other character
+                     --  not recognized by default by the lexical analyzer.
+                     Assign ("", To => Original_Lexeme_Text);
+                     loop
+                        Get_Char (Ch);
+                        if Ch = Eoln then
+                           Unget_Char; -- (Ch);
+                           exit;
+                        end if;
+                        Append (Ch, To => Original_Lexeme_Text);
+                     end loop;
+                     return Lex_Clause;
                   else
                      raise Illegal_Token;
                   end if;
