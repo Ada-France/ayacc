@@ -49,13 +49,17 @@ This version brings a number of improvements:
 ```
 
 # Install
+
 ```
   make install prefix=/usr
 ```
 
-# Articles
+# Articles and Documentation
+
+* Man page: [ayacc (1)](https://github.com/Ada-France/ayacc/blob/master/doc/ayacc.md)
 
 * [Aflex 1.5 and Ayacc 1.3.0](https://blog.vacs.fr/vacs/blogs/post.html?post=2021/12/18/Aflex-1.5-and-Ayacc-1.3.0)
   explains how to use Aflex and Ayacc together, 
   [Aflex 1.5 et Ayacc 1.3.0](https://www.ada-france.org/adafr/blogs/post.html?post=2021/12/19/Aflex-1.5-et-Ayacc-1.3.0)
   is the French translation.
+
