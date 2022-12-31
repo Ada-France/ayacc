@@ -79,7 +79,30 @@ The
 .I declarations section 
 is used to specify the generated
 .I tokens 
-package.
+package.  It can contain a series of the following
+.BR yacc (1)
+directives:
+.IP
+.nf
+%left
+%nonassoc
+%prec
+%right
+%start
+%token
+.fi
+.PP
+and specific
+.I ayacc
+directives
+.IP
+.nf
+%lex
+%unit
+%use
+%with
+.fi
+.PP
 A token declaration consists of the keyword 
 .I %token
 followed by a list of token names that may optionally be separated 
@@ -108,6 +131,36 @@ and
 These keywords must be located before the 
 .I YYStype 
 declaration.
+.\"
+.PP
+The
+.I %unit
+keyword can be used to control the name of the Ada package that
+contains the generated parser.
+.\"
+.PP
+The
+.I %lex
+option instructs the generator to use the specified instruction to call
+the
+.I YYLex
+operation.  By default, the
+.I YYLex
+function is called without arguments as follows:
+.IP ""
+\fByy.input_symbol := YYLex;
+.PP
+By using the
+.I %lex
+option, it is possible to give some arguments to the lexer and
+indicate another way to call it.  For example,
+.IP
+\fB%lex Get_Token (Context)
+.\"
+.PP
+instructs the generator to emit calls such as:
+.IP ""
+\fByy.input_symbol := Get_Token (Context);
 .\"
 .PP
 The 
@@ -184,7 +237,7 @@ and
 .I Text_IO
 packages.
 .PP
-By default the
+The
 .I YYParse
 procedure has no argument but it is possible to specify some arguments in order
 to provide some context for the grammar rules which are executed within the
