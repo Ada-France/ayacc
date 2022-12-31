@@ -1,5 +1,6 @@
 # Ayacc
 
+[![Alire](https://img.shields.io/endpoint?url=https://alire.ada.dev/badges/ayacc.json)](https://alire.ada.dev/crates/ayacc)
 [![Build Status](https://img.shields.io/endpoint?url=https://porion.vacs.fr/porion/api/v1/projects/ayacc/badges/build.json)](https://porion.vacs.fr/porion/projects/view/ayacc/summary)
 [![License](http://img.shields.io/badge/license-UCI-blue.svg)](LICENSE)
 
