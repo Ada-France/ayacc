@@ -267,8 +267,7 @@ compilation of the Ada package will.
 .TP 5
 -c
 Specifies the generation of a
-.I
-C
+.IR C
 Lex interface.
 .\"
 .TP 5
