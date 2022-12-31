@@ -148,19 +148,19 @@ operation.  By default, the
 .I YYLex
 function is called without arguments as follows:
 .IP ""
-\fByy.input_symbol := YYLex;
+yy.input_symbol := YYLex;
 .PP
 By using the
 .I %lex
 option, it is possible to give some arguments to the lexer and
 indicate another way to call it.  For example,
 .IP
-\fB%lex Get_Token (Context)
+\fB%lex\fR Get_Token (Context)
 .\"
 .PP
 instructs the generator to emit calls such as:
 .IP ""
-\fByy.input_symbol := Get_Token (Context);
+yy.input_symbol := Get_Token (Context);
 .\"
 .PP
 The 
@@ -295,7 +295,7 @@ Use of this option implies that the
 .IR yylex
 function is also declared in a private Ada package of the same parent.
 If
-.IR aflex (1)
+.BR aflex (1)
 is used, the same
 .I -P
 option must be passed to
