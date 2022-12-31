@@ -18,14 +18,17 @@ This version brings a number of improvements:
 - Ayacc now uses more standard options to configure the code generation
 - The parser was improved to configure the parser stack size and
   support Ada child packages.
-- The grammar supports the %unit directive to control the Ada child packages
+- The grammar supports the `%unit` directive to control the Ada child packages
 - It is possible to customize the `YYParse` procedure and pass some context
   arguments that are available to the grammar rules
+- The call to `YYLex` can be customized with the `%lex` directive allowing to
+  give some context arguments when calling the lexer.
 
 ## Version 1.4.0 - Under development
 
 - New option `-P` to generate a private Ada package for the tokens package
 - Improvement to allow passing parameters to `YYParse` for the grammar rules
+- New `%lex` directive to control the call of `YYLex` function
 
 ## Version 1.3.0 - Dec 2021
 
