@@ -30,6 +30,7 @@ This version brings a number of improvements:
 - New option `-P` to generate a private Ada package for the tokens package
 - Improvement to allow passing parameters to `YYParse` for the grammar rules
 - New `%lex` directive to control the call of `YYLex` function
+- Fix #6: ayacc gets stuck creating an infinitely large file after encountering a comment in an action
 
 ## Version 1.3.0 - Dec 2021
 
