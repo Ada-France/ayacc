@@ -478,6 +478,10 @@ package body Parser is
          end case;
       end loop;
 
+      if not Tokens_File_Opened then
+         Fatal_Error ("Missing declaration or import of YYSType declaration");
+      end if;
+
    exception
       when Illegal_Token =>
          Fatal_Error ("Bad symbol");

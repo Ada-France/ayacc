@@ -214,6 +214,7 @@ package body Lexical_Analyzer is
    procedure Handle_Action (Rule, Rule_Length : Integer) is
       Char : Character;
       Base : Integer;
+      End_In_Comment : Boolean := False;
    begin
       Actions_File.Writeln;
       Actions_File.Write
@@ -226,6 +227,9 @@ package body Lexical_Analyzer is
             loop
                Actions_File.Write (Char);
                Get_Char (Char);
+               if Char = '}' then
+                  End_In_Comment := True;
+               end if;
                exit when Char = Eoln;
             end loop;
          end if;
@@ -288,6 +292,13 @@ package body Lexical_Analyzer is
 
             when '}' =>
                exit;
+
+            when Eof =>
+               Put_Line ("Ayacc: missing end of action token '}'");
+               if End_In_Comment then
+                  Put_Line ("Ayacc: there is a '}' in an Ada comment but it is ignored");
+               end if;
+               raise Illegal_Token;
 
             when others =>
                Actions_File.Write (Char);
