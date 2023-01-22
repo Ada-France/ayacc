@@ -28,7 +28,7 @@ This version brings a number of improvements:
 ## Version 1.4.0 - Under development
 
 - Support the Bison `%define variable value` option to configure the parser generator
-- Recognize some Bison variables `api.pure`, `api.private`, `parse.error`, `parse.stacksize,
+- Recognize some Bison variables `api.pure`, `api.private`, `parse.error`, `parse.stacksize`,
   `parse.name`, `parse.params`, `parse.yyclearin`, `parse.yyerrok`, `parse.error`
 - New option `-S skeleton` to allow using an external skeleton file for the parser generator
 - Ayacc templates provide more control for tuning the code generation and
