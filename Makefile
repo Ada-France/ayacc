@@ -48,3 +48,13 @@ test:
 	make -C examples/ada_parser AYACC=../../bin/ayacc clean build
 	make -C examples/calc AYACC=../../bin/ayacc clean build
 
+# Used for Ayacc development only: rebuild the embedded templates from `templates/*.ad[bs]` files.
+generate:
+	@ERRORS=`sed -f templates/check.sed templates/*.adb` ; \
+	if test "T$$ERRORS" = "T"; then \
+	   are -o src --rule=are-package.xml --no-type-declaration --var-access --content-only . ; \
+	else \
+	   echo "Invalid %if <option>, %else or %end option in template:"; \
+	   echo $$ERRORS; \
+           exit 1 ; \
+	fi

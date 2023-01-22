@@ -1,0 +1,17 @@
+<package>
+
+  <!-- See [Advanced Resource Embedder](https://gitlab.com/stcarrez/resource-embedder)
+       Rule to embedd the Ayacc templates and generate the 'src/parse_template_file-templates.ads` file -->
+  <resource name='Parse_Template_File.Templates'
+            format='lines' keep-empty-lines='yes'>
+    <line-separator>\n</line-separator>
+
+    <install mode='copy' strip-extension='yes'>
+      <fileset dir="templates">
+        <include name="*.ads"/>
+        <include name="*.adb"/>
+      </fileset>
+    </install>
+  </resource>
+
+</package>
