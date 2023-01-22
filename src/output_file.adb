@@ -56,20 +56,37 @@
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
 --
 
-with Ada.Strings.Fixed;
-with Actions_File, Ayacc_File_Names, Options, Parse_Template_File, Source_File, Text_Io;
-
-use Actions_File, Ayacc_File_Names, Text_Io;
+with Ada.Text_IO;
+with Actions_File, Ayacc_File_Names, Options, Parse_Template_File, Source_File;
+with Parse_Template_File.Templates;
+use Actions_File, Ayacc_File_Names;
 
 package body Output_File is
 
+   use Ada;
+   use Ada.Text_IO;
+
    -- SCCS_ID : constant String := "@(#) output_file_body.ada, Version 1.2";
 
-   Outfile : File_Type;
+   Outfile  : File_Type;
+   Skelfile : File_Type;
+   Use_External_Skeleton : Boolean := False;
+   Body_Current_Line : Positive := 1;
+
+   procedure Open_Skeleton (Path : in String) is
+   begin
+      if Is_Open (Skelfile) then
+         raise Skeleton_Already_Defined;
+      end if;
+      Open (Skelfile, In_File, Path);
+
+      Use_External_Skeleton := True;
+   end Open_Skeleton;
 
    procedure Open is
    begin
       Create (Outfile, Out_File, Get_Out_File_Name);
+
    exception
       when Name_Error | Use_Error =>
          Put_Line ("Ayacc: Error Opening """ & Get_Out_File_Name & """.");
@@ -81,20 +98,42 @@ package body Output_File is
       Close (Outfile);
    end Close;
 
-   procedure Write_Update_YYLex (Text : in String) is
-      Pos : constant Natural := Ada.Strings.Fixed.Index (Text, "YYLex");
+   procedure Write_Template (Outfile  : in Ada.Text_IO.File_Type) is
+      function Has_Line return Boolean is
+      begin
+         return not Ada.Text_IO.End_Of_File (Skelfile);
+      end Has_Line;
+
+      function Get_Line return String is
+      begin
+         return Ada.Text_IO.Get_Line (Skelfile);
+      end Get_Line;
+
+      procedure Write is new Parse_Template_File.Template_Writer (Has_Line, Get_Line);
+
    begin
-      if Pos = 0 then
-         Put_Line (Outfile, Text);
+      Write (Outfile);
+    end Write_Template;
+
+   -- skelout - write out one section of the skeleton file
+   --
+   -- DESCRIPTION
+   --    Either outputs internal skeleton, or from a file with "%%" dividers
+   --    if a skeleton file is specified by the user.
+   --    Copies from skelfile to stdout until a line beginning with "%%" or
+   --    EOF is found.
+
+   procedure Skelout is
+      use Parse_Template_File;
+   begin
+      if Use_External_Skeleton then
+         Write_Template (Outfile);
       else
-         declare
-            Name : constant String := Ayacc_File_Names.Lex_Function_Name;
-         begin
-            Put_Line (Outfile, Text (Text'First .. Pos - 1) & Name
-                        & Text (Pos + 5 .. Text'Last));
-         end;
+         Write_Template (Outfile,
+                         Parse_Template_File.Templates.body_ayacc,
+                         Body_Current_Line);
       end if;
-   end Write_Update_YYLex;
+   end Skelout;
 
    -- Make the parser body section by reading the source --
    -- and template files and merging them appropriately  --
@@ -103,21 +142,11 @@ package body Output_File is
       Text   : String (1 .. 260);
       Length : Natural;
       I      : Integer;
--- UMASS CODES :
-      Umass_Codes : Boolean := False;
-      -- Indicates whether or not current line of the template
-      -- is the Umass codes.
-      Uci_Codes_Deleted : Boolean := False;
-      -- Indicates whether or not current line of the template
-      -- is UCI codes which should be deleted in Ayacc-extension.
--- END OF UMASS CODES.
-      Yyclearin_Codes : Boolean := False;
-      Yyerrok_Codes   : Boolean := False;
-      Skip_Line       : Boolean := False;
       Proc_Decl : String (1 .. 260);
       Decl_Len  : Natural := 0;
    begin
       Open; -- Open the output file.
+      Skelout;
 
       -- Read the first part of the source file up to '##'
       -- or to end of file.
@@ -144,95 +173,7 @@ package body Output_File is
 
       Parse_Template_File.Open;
 
-      -- Copy the header from the parse template
-      loop
-         Parse_Template_File.Read (Text, Length);
-         if Length > 1 and then Text (1 .. 2) = "%%" then
-            exit;
-         else
-
-            Skip_Line := False;
--- UMASS CODES :
---   In the template, the codes between "-- UMASS CODES : " and
---   "-- END OF UMASS CODES." are specific to be used by Ayacc-extension.
---   Also the codes between "-- UCI CODES DELETED : " and
---   "-- END OF UCI CODES DELETED." should only be generated in
---   Ayacc and should be deleted in Ayacc-extension.
---   Ayacc-extension has more power in error recovery. So we
---   generate Umass codes only when Error_Recovery_Extension is True.
---   And we delete the necessary UCI codes when Error_Recovery_
---   Extension is True.
-            if Length = 16 and then Text (1 .. 16) = "-- UMASS CODES :" then
-               Umass_Codes := True;
-            elsif Length = 12 and then Text (1 .. 12) = "-- YYERROK :" then
-               Yyerrok_Codes := True;
-               Skip_Line     := True;
-            elsif Length = 14 and then Text (1 .. 14) = "-- YYCLEARIN :" then
-               Yyclearin_Codes := True;
-               Skip_Line       := True;
-            elsif Length = 20 and then Text (1 .. 20) = "-- END OF YYCLEARIN."
-            then
-               Yyclearin_Codes := False;
-               Skip_Line       := True;
-            elsif Length = 18 and then Text (1 .. 18) = "-- END OF YYERROK."
-            then
-               Yyerrok_Codes := False;
-               Skip_Line     := True;
-            end if;
-
-            if Yyclearin_Codes and Options.Skip_Yyclearin then
-               Skip_Line := True;
-            end if;
-
-            if Yyerrok_Codes and Options.Skip_Yyerrok then
-               Skip_Line := True;
-            end if;
-
-            if Length = 22 and then Text (1 .. 22) = "-- UCI CODES DELETED :"
-            then
-               Uci_Codes_Deleted := True;
-               Parse_Template_File.Read (Text, Length);
-               -- We read next line because we do not want to generate
-               -- the comment "-- UCI CODES DELETED :" anyway.
-            elsif Length = 28
-              and then Text (1 .. 28) = "-- END OF UCI CODES DELETED."
-            then
-               Uci_Codes_Deleted := False;
-               Parse_Template_File.Read (Text, Length);
-               -- We read next line because we do not want to generate
-               -- the comment "-- END OF UCI CODES DELETED :" anyway.
-            end if;
-
-            if Decl_Len > 0 and then Length = 23
-              and then Text (1 .. 23) = "   procedure YYParse is"
-            then
-               Put_Line (Outfile, "   " & Proc_Decl (1 .. Decl_Len) & " is");
-
-            elsif Options.Error_Recovery_Extension then
-               -- Do not generate UCI codes which should be deleted.
-               if not Uci_Codes_Deleted and not Skip_Line then
-                  Put_Line (Outfile, Text (1 .. Length));
-               end if;
-            else
-               -- Do not generate UMASS codes.
-               if not Umass_Codes and not Skip_Line then
-                  Put_Line (Outfile, Text (1 .. Length));
-               end if;
-            end if;
-
-            if Length = 22 and then Text (1 .. 22) = "-- END OF UMASS CODES."
-            then
-               Umass_Codes := False;
-            end if;
-
--- END OF UMASS CODES.
-
--- UCI CODES commented out :
---   The following line is commented out because it is done in Umass codes.
---              Put_Line(Outfile, Text(1..Length));
-
-         end if;
-      end loop;
+      Skelout;
 
       Put_Line (Outfile, "      package yy_goto_tables renames");
       Put_Line (Outfile, "         " & Goto_Tables_Unit_Name & ';');
@@ -259,184 +200,8 @@ package body Output_File is
       end if;
 -- END OF UMASS CODES.
 
-      -- Copy the first half of the parse template
-      loop
-         Parse_Template_File.Read (Text, Length);
-         if Length > 1 and then Text (1 .. 2) = "%%" then
-            exit;
-         else
-
-            Skip_Line := False;
-
--- UMASS CODES :
---   In the template, the codes between "-- UMASS CODES : " and
---   "-- END OF UMASS CODES." are specific to be used by Ayacc-extension.
---   Also the codes between "-- UCI CODES DELETED : " and
---   "-- END OF UCI CODES DELETED." should only be generated in
---   Ayacc and should be deleted in Ayacc-extension.
---   Ayacc-extension has more power in error recovery. So we
---   generate Umass codes only when Error_Recovery_Extension is True.
---   And we delete the necessary UCI codes when Error_Recovery_
---   Extension is True.
-            if Length = 16 and then Text (1 .. 16) = "-- UMASS CODES :" then
-               Umass_Codes := True;
-            elsif Length = 12 and then Text (1 .. 12) = "-- YYERROK :" then
-               Yyerrok_Codes := True;
-               Skip_Line     := True;
-            elsif Length = 14 and then Text (1 .. 14) = "-- YYCLEARIN :" then
-               Yyclearin_Codes := True;
-               Skip_Line       := True;
-            elsif Length = 20 and then Text (1 .. 20) = "-- END OF YYCLEARIN."
-            then
-               Yyclearin_Codes := False;
-               Skip_Line       := True;
-            elsif Length = 18 and then Text (1 .. 18) = "-- END OF YYERROK."
-            then
-               Yyerrok_Codes := False;
-               Skip_Line     := True;
-            end if;
-
-            if Yyclearin_Codes and Options.Skip_Yyclearin then
-               Skip_Line := True;
-            end if;
-
-            if Yyerrok_Codes and Options.Skip_Yyerrok then
-               Skip_Line := True;
-            end if;
-
-            if Length = 22 and then Text (1 .. 22) = "-- UCI CODES DELETED :"
-            then
-               Uci_Codes_Deleted := True;
-               Parse_Template_File.Read (Text, Length);
-               -- We read next line because we do not want to generate
-               -- the comment "-- UCI CODES DELETED :" anyway.
-            elsif Length = 28
-              and then Text (1 .. 28) = "-- END OF UCI CODES DELETED."
-            then
-               Uci_Codes_Deleted := False;
-               Parse_Template_File.Read (Text, Length);
-               -- We read next line because we do not want to generate
-               -- the comment "-- END OF UCI CODES DELETED :" anyway.
-            end if;
-
-            if Options.Error_Recovery_Extension then
-               -- Do not generate UCI codes which should be deleted.
-               if not Uci_Codes_Deleted and not Skip_Line then
-                  Put_Line (Outfile, Text (1 .. Length));
-               end if;
-            else
-               -- Do not generate UMASS codes.
-               if not Umass_Codes and not Skip_Line then
-                  Put_Line (Outfile, Text (1 .. Length));
-               end if;
-            end if;
-
-            if Length = 22 and then Text (1 .. 22) = "-- END OF UMASS CODES."
-            then
-               Umass_Codes := False;
-            end if;
-
--- END OF UMASS CODES.
-
--- UCI CODES commented out :
---   The following line is commented out because it is done in Umass codes.
---              Put_Line(Outfile, Text(1..Length));
-
-         end if;
-      end loop;
-
-      -- Copy declarations and procedures needed in the parse template
-      if (Options.Debug) then
-         Put_Line (Outfile, "         debug : constant Boolean := True;");
-      else
-         Put_Line (Outfile, "         debug : constant Boolean := False;");
-      end if;
-
       -- Consume Template Up To User Action Routines.
-      loop
-         Parse_Template_File.Read (Text, Length);
-         if Length > 1 and then Text (1 .. 2) = "%%" then
-            exit;
-         else
-
-            Skip_Line := False;
-
--- UMASS CODES :
---   In the template, the codes between "-- UMASS CODES : " and
---   "-- END OF UMASS CODES." are specific to be used by Ayacc-extension.
---   Also the codes between "-- UCI CODES DELETED : " and
---   "-- END OF UCI CODES DELETED." should only be generated in
---   Ayacc and should be deleted in Ayacc-extension.
---   Ayacc-extension has more power in error recovery. So we
---   generate Umass codes only when Error_Recovery_Extension is True.
---   And we delete the necessary UCI codes when Error_Recovery_
---   Extension is True.
-            if Length = 16 and then Text (1 .. 16) = "-- UMASS CODES :" then
-               Umass_Codes := True;
-            elsif Length = 12 and then Text (1 .. 12) = "-- YYERROK :" then
-               Yyerrok_Codes := True;
-               Skip_Line     := True;
-            elsif Length = 14 and then Text (1 .. 14) = "-- YYCLEARIN :" then
-               Yyclearin_Codes := True;
-               Skip_Line       := True;
-            elsif Length = 20 and then Text (1 .. 20) = "-- END OF YYCLEARIN."
-            then
-               Yyclearin_Codes := False;
-               Skip_Line       := True;
-            elsif Length = 18 and then Text (1 .. 18) = "-- END OF YYERROK."
-            then
-               Yyerrok_Codes := False;
-               Skip_Line     := True;
-            end if;
-
-            if Yyclearin_Codes and Options.Skip_Yyclearin then
-               Skip_Line := True;
-            end if;
-
-            if Yyerrok_Codes and Options.Skip_Yyerrok then
-               Skip_Line := True;
-            end if;
-
-            if Length = 22 and then Text (1 .. 22) = "-- UCI CODES DELETED :"
-            then
-               Uci_Codes_Deleted := True;
-               Parse_Template_File.Read (Text, Length);
-               -- We read next line because we do not want to generate
-               -- the comment "-- UCI CODES DELETED :" anyway.
-            elsif Length = 28
-              and then Text (1 .. 28) = "-- END OF UCI CODES DELETED."
-            then
-               Uci_Codes_Deleted := False;
-               Parse_Template_File.Read (Text, Length);
-               -- We read next line because we do not want to generate
-               -- the comment "-- END OF UCI CODES DELETED :" anyway.
-            end if;
-
-            if Options.Error_Recovery_Extension then
-               -- Do not generate UCI codes which should be deleted.
-               if not Uci_Codes_Deleted and not Skip_Line then
-                  Write_Update_YYLex (Text (1 .. Length));
-               end if;
-            else
-               -- Do not generate UMASS codes.
-               if not Umass_Codes and not Skip_Line then
-                  Write_Update_YYLex (Text (1 .. Length));
-               end if;
-            end if;
-
-            if Length = 22 and then Text (1 .. 22) = "-- END OF UMASS CODES."
-            then
-               Umass_Codes := False;
-            end if;
-
--- END OF UMASS CODES.
-
--- UCI CODES commented out :
---   The following line is commented out because it is done in Umass codes.
---              Put_Line(Outfile, Text(1..Length));
-
-         end if;
-      end loop;
+      Skelout;
 
       Actions_File.Open (Actions_File.Read_File);
       loop
@@ -447,84 +212,7 @@ package body Output_File is
       Actions_File.Delete;
 
       -- Finish writing the template file
-      loop
-         exit when Parse_Template_File.Is_End_Of_File;
-         Parse_Template_File.Read (Text, Length);
-
-         Skip_Line := False;
-
--- UMASS CODES :
---   In the template, the codes between "-- UMASS CODES : " and
---   "-- END OF UMASS CODES." are specific to be used by Ayacc-extension.
---   Also the codes between "-- UCI CODES DELETED : " and
---   "-- END OF UCI CODES DELETED." should only be generated in
---   Ayacc and should be deleted in Ayacc-extension.
---   Ayacc-extension has more power in error recovery. So we
---   generate Umass codes only when Error_Recovery_Extension is True.
---   And we delete the necessary UCI codes when Error_Recovery_
---   Extension is True.
-         if Length = 16 and then Text (1 .. 16) = "-- UMASS CODES :" then
-            Umass_Codes := True;
-         elsif Length = 12 and then Text (1 .. 12) = "-- YYERROK :" then
-            Yyerrok_Codes := True;
-            Skip_Line     := True;
-         elsif Length = 14 and then Text (1 .. 14) = "-- YYCLEARIN :" then
-            Yyclearin_Codes := True;
-            Skip_Line       := True;
-         elsif Length = 20 and then Text (1 .. 20) = "-- END OF YYCLEARIN."
-         then
-            Yyclearin_Codes := False;
-            Skip_Line       := True;
-         elsif Length = 18 and then Text (1 .. 18) = "-- END OF YYERROK." then
-            Yyerrok_Codes := False;
-            Skip_Line     := True;
-         end if;
-
-         if Yyclearin_Codes and Options.Skip_Yyclearin then
-            Skip_Line := True;
-         end if;
-
-         if Yyerrok_Codes and Options.Skip_Yyerrok then
-            Skip_Line := True;
-         end if;
-
-         if Length = 22 and then Text (1 .. 22) = "-- UCI CODES DELETED :" then
-            Uci_Codes_Deleted := True;
-            Parse_Template_File.Read (Text, Length);
-            -- We read next line because we do not want to generate
-            -- the comment "-- UCI CODES DELETED :" anyway.
-         elsif Length = 28
-           and then Text (1 .. 28) = "-- END OF UCI CODES DELETED."
-         then
-            Uci_Codes_Deleted := False;
-            Parse_Template_File.Read (Text, Length);
-            -- We read next line because we do not want to generate
-            -- the comment "-- END OF UCI CODES DELETED :" anyway.
-         end if;
-
-         if Options.Error_Recovery_Extension then
-            -- Do not generate UCI codes which should be deleted.
-            if not Uci_Codes_Deleted and not Skip_Line then
-               Put_Line (Outfile, Text (1 .. Length));
-            end if;
-         else
-            -- Do not generate UMASS codes.
-            if not Umass_Codes and not Skip_Line then
-               Put_Line (Outfile, Text (1 .. Length));
-            end if;
-         end if;
-
-         if Length = 22 and then Text (1 .. 22) = "-- END OF UMASS CODES." then
-            Umass_Codes := False;
-         end if;
-
--- END OF UMASS CODES.
-
--- UCI CODES commented out :
---   The following line is commented out because it is done in Umass codes.
---          Put_Line(Outfile, Text(1..Length));
-
-      end loop;
+      Skelout;
       Parse_Template_File.Close;
 
       -- Copy rest of input file after ##
@@ -545,4 +233,5 @@ package body Output_File is
 
       Close;
    end Make_Output_File;
+
 end Output_File;

@@ -86,4 +86,16 @@ package Options is
 
    Illegal_Option : exception;
 
+   Reentrant              : Boolean := False;
+
+   Default_Stack_Size     : Natural := 8_192;
+   Disable_Yyerrok        : Boolean := False;
+   Disable_Yyclearin      : Boolean := False;
+   Keep_Token_Case_Option : Boolean := False;
+   Private_Option         : Boolean := False;
+   Debug_Option           : Boolean := False;
+   -- UMASS CODES :
+   Error_Recovery_Extension_Option : Boolean := False;
+   -- END OF UMASS CODES.
+
 end Options;

@@ -40,10 +40,22 @@
 -- Ayacc has been compiled and tested under the Verdix Ada compiler
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
 --
-
+with Ada.Text_IO;
 package Parse_Template_File is
 
+   type Content_Array is array (Positive range <>) of access constant String;
+   type Content_Access is access constant Content_Array;
+
    Eof : constant Character := ASCII.NUL;
+
+   generic
+      with function Has_Line return Boolean;
+      with function Get_Line return String;
+   procedure Template_Writer (Outfile  : in Ada.Text_IO.File_Type);
+
+   procedure Write_Template (Outfile  : in Ada.Text_IO.File_Type;
+                             Lines    : in Content_Array;
+                             Position : in out Positive);
 
    procedure Initialize;
    procedure Open;

@@ -45,6 +45,7 @@
 -- The body of the parser for the specification file    --
 --                                                      --
 
+with Ada.Exceptions;
 with Text_Io;          use Text_Io;
 with Lexical_Analyzer; use Lexical_Analyzer;
 with Symbol_Table;     use Symbol_Table;
@@ -53,6 +54,7 @@ with Actions_File;
 with Tokens_File;      use Tokens_File;
 with Ayacc_File_Names;
 with String_Pkg;
+with Options;
 package body Parser is
 
    -- SCCS_ID : constant String := "@(#) parser_body.ada, Version 1.2";
@@ -424,6 +426,95 @@ package body Parser is
          Next_Token := Get_Token;
       end Parse_Lex_Clause;
 
+      --  %define variable value
+      --  %define variable "value"
+      procedure Parse_Define_Clause is
+
+         function Get_Boolean (For_Define : in String) return Boolean is
+            Value : constant String := Get_Original_Text;
+         begin
+            if Next_Token /= Identifier then
+               Fatal_Error ("expecting a boolean value for define '" & For_Define & "'");
+            end if;
+            if Value = "true" then
+               return True;
+            elsif Value = "false" then
+               return False;
+            else
+               Fatal_Error ("wrong value for define '" & For_Define & "'");
+               return False;
+            end if;
+         end Get_Boolean;
+
+         function Get_Number (For_Define : in String) return Natural is
+            Value : constant String := Get_Original_Text;
+         begin
+            if Next_Token /= Number then
+               Fatal_Error ("expecting a number for define '" & For_Define & "'");
+            end if;
+            return Natural'Value (Value);
+         end Get_Number;
+
+         function Get_String (For_Define : in String) return String is
+            Value : constant String := Get_Original_Text;
+         begin
+            if Next_Token /= STRING_LITERAL then
+               Fatal_Error ("expecting a string for define '" & For_Define & "'");
+            end if;
+            return Value;
+         end Get_String;
+
+         function Get_Name (For_Define : in String) return String is
+            Value : constant String := Get_Original_Text;
+         begin
+            if Next_Token /= IDENTIFIER then
+               Fatal_Error ("expecting an identifier for define '" & For_Define & "'");
+            end if;
+            return Value;
+         end Get_Name;
+
+      begin
+         if Tokens_Package_Header_Has_Been_Generated then
+            Fatal_Error
+              ("Lex clause specifications may not " &
+               "appear after Ada declarations.");
+         else
+            Next_Token := Get_Token;
+            if Next_Token /= Identifier then
+               Fatal_Error ("Expecting define Name");
+            end if;
+            declare
+               Name : constant String := Get_Original_Text;
+            begin
+               Next_Token := Get_Token;
+               if Name = "api.pure" then
+                  Options.Reentrant := Get_Boolean (Name);
+               elsif Name = "api.private" then
+                  Options.Private_Option := Get_Boolean (Name);
+               elsif Name = "parse.yyclearin" then
+                  Options.Disable_Yyclearin := not Get_Boolean (Name);
+               elsif Name = "parse.yyerrok" then
+                  Options.Disable_Yyerrok := not Get_Boolean (Name);
+               elsif Name = "parse.error" then
+                  Options.Error_Recovery_Extension_Option := Get_Boolean (Name);
+               elsif Name = "parse.stacksize" then
+                  Options.Default_Stack_Size := Get_Number (Name);
+               elsif Name = "parse.name" then
+                  Ayacc_File_Names.Set_Parse_Name (Get_Name (Name));
+               elsif Name = "parse.params" then
+                  Ayacc_File_Names.Set_Parse_Params (Get_String (Name));
+               else
+                  Fatal_Error ("Unknown define name '" & Name & "'");
+               end if;
+               Next_Token := Get_Token;
+
+            exception
+               when Constraint_Error =>
+                  Fatal_Error ("value for '" & Name & "' is too long");
+            end;
+         end if;
+      end Parse_Define_Clause;
+
    begin
 
       Next_Token := Get_Token;
@@ -473,6 +564,8 @@ package body Parser is
                Parse_Unit_Clause;
             when Lex_Clause =>
                Parse_Lex_Clause;
+            when Define_Clause =>
+               Parse_Define_Clause;
             when others =>
                Fatal_Error ("Unexpected symbol");
          end case;
@@ -483,8 +576,8 @@ package body Parser is
       end if;
 
    exception
-      when Illegal_Token =>
-         Fatal_Error ("Bad symbol");
+      when E : Illegal_Token =>
+         Fatal_Error ("bad symbol: " & Ada.Exceptions.Exception_Message (E));
       when Redefined_Precedence_Error =>
          Fatal_Error ("Attempt to redefine precedence");
    end Parse_Declarations;

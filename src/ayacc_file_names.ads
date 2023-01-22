@@ -86,6 +86,10 @@ package Ayacc_File_Names is
    function Tokens_Unit_Name return String;
    function Lex_Function_Name return String;
    procedure Set_Lex_Function_Name (Name : in String);
+   procedure Set_Parse_Name (Name : in String);
+   function Get_Parse_Name return String;
+   procedure Set_Parse_Params (Params : in String);
+   function Get_Parse_Params return String;
 -- UMASS CODES :
    function Error_Report_Unit_Name return String;
 -- END OF UMASS CODES.

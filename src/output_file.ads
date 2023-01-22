@@ -43,6 +43,10 @@
 -- Creates the parser
 package Output_File is
 
+   Skeleton_Already_Defined : exception;
+
+   procedure Open_Skeleton (Path : in String);
+
    procedure Make_Output_File;
 
 end Output_File;

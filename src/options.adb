@@ -3,6 +3,7 @@ with Ada.Exceptions;
 with GNAT.Command_Line;
 with String_Pkg;
 with Ayacc_File_Names;
+with Output_File;
 package body Options is
 
    use String_Pkg;
@@ -12,19 +13,9 @@ package body Options is
    -- Rcs_ID : constant String := "$Header: options.a,v 0.1 86/04/01 15:08:15 ada Exp $";
 
    Verbose_Option        : Boolean := False;
-   Debug_Option          : Boolean := False;
    Interface_To_C_Option : Boolean := False;
    Summary_Option        : Boolean := False;
-   Private_Option        : Boolean := False;
    Loud_Option           : Boolean := False;
-   -- UMASS CODES :
-   Error_Recovery_Extension_Option : Boolean := False;
-   -- END OF UMASS CODES.
-
-   Default_Stack_Size     : Natural := 8_192;
-   Disable_Yyerrok        : Boolean := False;
-   Disable_Yyclearin      : Boolean := False;
-   Keep_Token_Case_Option : Boolean := False;
 
    Copyright : constant String :=
      "@(#) Copyright (c) 1990 Regents of the University of California.";
@@ -38,7 +29,7 @@ package body Options is
       New_Line (Standard_Error);
       Put_Line
         (Standard_Error,
-         "Usage: ayacc [-CDPcdlrsv] [-D dir] [-e ext] [-n size] grammar");
+         "Usage: ayacc [-CDPcdlrsv] [-D dir] [-e ext] [-n size] [-S skeleton] grammar");
       Put_Line
         (Standard_Error,
          "-c          Specifies the generation of a 'C' Lex interface.");
@@ -55,7 +46,7 @@ package body Options is
         (Standard_Error, "-l          Loud option to tell what's going on");
       Put_Line
         (Standard_Error,
-         "-k          Keep the token case as writtne in the grammar");
+         "-k          Keep the token case as written in the grammar");
       Put_Line
         (Standard_Error,
          "-n size     Defines the size of the value and state stack (8192)");
@@ -75,6 +66,9 @@ package body Options is
       Put_Line
         (Standard_Error,
          "-E          Disable generation of yyerrok procedure");
+      Put_Line
+        (Standard_Error,
+         "-S skeleton Specifies the skeleton to use");
       New_Line (Standard_Error);
    end Put_Help_Message;
 
@@ -84,7 +78,7 @@ package body Options is
       Directory : String_Type;
    begin
       loop
-         case Gnat.Command_Line.Getopt ("c d C E D: k l P s v r e: n:") is
+         case Gnat.Command_Line.Getopt ("c d C E D: k l P s v r e: n: S:") is
             when Ascii.Nul =>
                exit;
 
@@ -135,6 +129,19 @@ package body Options is
                      Put_Line
                        (Standard_Error,
                         "Invalid size: " & Gnat.Command_Line.Parameter);
+                     raise Illegal_Option;
+               end;
+
+            when 'S' =>
+               begin
+                  Output_file.Open_Skeleton (Gnat.Command_Line.Parameter);
+
+               exception
+                  when others =>
+                     Put_Help_Message;
+                     Put_Line
+                       (Standard_Error,
+                        "Invalid skeleton: " & Gnat.Command_Line.Parameter);
                      raise Illegal_Option;
                end;
 

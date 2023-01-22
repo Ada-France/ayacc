@@ -7,7 +7,8 @@ package body Ayacc_File_Names is
    -- SCCS_ID : constant String := "@(#) file_names.ada, Version 1.2";
    -- Rcs_ID : constant String := "$Header: /cf/ua/arcadia/alex-ayacc/ayacc/src/RCS/file_names.a,v 1.2 88/11/28 13:38:59 arcadia Exp $";
 
-   Max_Name_Length : constant := 50;
+   Max_Name_Length  : constant := 50;
+   Max_Param_Length : constant := 250;
 
    Source_File_Name       : Str (Max_Name_Length);
    Out_File_Name          : Str (Max_Name_Length);
@@ -25,6 +26,8 @@ package body Ayacc_File_Names is
    Include_File_Name : Str (Max_Name_Length);
    Unit_Name         : Str (Max_Name_Length);
    Lex_Func_Name          : Str (Max_Name_Length);
+   Parse_Name             : Str (Max_Name_Length);
+   Parse_Params           : Str (Max_Param_Length);
 
 --RJS ==========================================
 
@@ -147,6 +150,44 @@ package body Ayacc_File_Names is
    begin
       Assign (Ada.Strings.Fixed.Trim (Name, Ada.Strings.Both), Lex_Func_Name);
    end Set_Lex_Function_Name;
+
+   procedure Set_Parse_Name (Name : in String) is
+   begin
+      Assign (Name, Parse_Name);
+   end Set_Parse_Name;
+
+   function Get_Parse_Name return String is
+   begin
+      if Is_Empty (Parse_Name) then
+         return "YYParse";
+      else
+         return Value_Of (Parse_Name);
+      end if;
+   end Get_Parse_Name;
+
+   procedure Set_Parse_Params (Params : in String) is
+      Trimed_Param : constant String := Ada.Strings.Fixed.Trim (Params, Ada.Strings.Both);
+      First : Natural := Trimed_Param'First;
+      Last  : Natural := Trimed_Param'Last;
+   begin
+      --  Drop () arround param declaration since we insert our own.
+      if Trimed_Param'Length > 0 and then Trimed_Param (First) = '(' then
+         First := First + 1;
+      end if;
+      if Trimed_Param'Length > 0 and then Trimed_Param (Last) = ')' then
+         Last := Last - 1;
+      end if;
+      Assign (Ada.Strings.Fixed.Trim (Trimed_Param (First .. Last), Ada.Strings.Both), Parse_Params);
+   end Set_Parse_Params;
+
+   function Get_Parse_Params return String is
+   begin
+      if Is_Empty (Parse_Params) then
+         return "";
+      else
+         return " (" & Value_Of (Parse_Params) & ")";
+      end if;
+   end Get_Parse_Params;
 
    -- UMASS CODES :
    function Error_Report_Unit_Name return String is

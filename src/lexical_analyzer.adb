@@ -48,7 +48,7 @@ package body Lexical_Analyzer is
    -- SCCS_ID : constant String := "@(#) lexical_analyzer_body.adadisk21~/rschm/hasee/sccs/ayacc, Version 1.2";
    -- Rcs_ID : constant String := "$Header: lexical_analyzer_body.a,v 0.1 86/04/01 15:05:27 ada Exp $";
 
-   Max_Lexeme_Length : constant := 80;
+   Max_Lexeme_Length : constant := 260; --  Increased length to hold long strings for parse.params define.
 
    Current_Line_Number : Natural := 1;
 
@@ -105,7 +105,7 @@ package body Lexical_Analyzer is
                if Ch = '-' then
                   Skip_Comment;
                else
-                  raise Illegal_Token;
+                  raise Illegal_Token with "missing '-' for Ada comment declaration";
                end if;
             when ':' =>
                Append (Ch, To => Lexeme_Text);
@@ -150,6 +150,8 @@ package body Lexical_Analyzer is
                      return Use_Clause;
                   elsif Value_Of (Lexeme_Text) = "%UNIT" then
                      return Unit_Clause;
+                  elsif Value_Of (Lexeme_Text) = "%DEFINE" then
+                     return DEFINE_CLAUSE;
                   elsif Value_Of (Lexeme_Text) = "%LEX" then
                      --  Get the %lex content option up to end of line.
                      --  It can contain '(' and ')' or other character
@@ -164,8 +166,6 @@ package body Lexical_Analyzer is
                         Append (Ch, To => Original_Lexeme_Text);
                      end loop;
                      return Lex_Clause;
-                  else
-                     raise Illegal_Token;
                   end if;
                end if;
             when '|' =>
@@ -183,7 +183,7 @@ package body Lexical_Analyzer is
                   Append (Ch, To => Lexeme_Text);
                   Get_Char (Ch);
                   if Ch /= ''' then
-                     raise Illegal_Token;
+                     raise Illegal_Token with "missing ""'"" to terminate character literal";
                   else
                      Append (Ch, To => Lexeme_Text);
                   end if;
@@ -205,8 +205,33 @@ package body Lexical_Analyzer is
                Assign (Value_Of (Lexeme_Text), Original_Lexeme_Text);
                Upper_Case (Lexeme_Text);
                return Identifier;
+            when '0' .. '9' =>
+               Append (Ch, To => Lexeme_Text);
+               loop
+                  Get_Char (Ch);
+                  if Ch in '0' .. '9' then
+                     Append (Ch, To => Lexeme_Text);
+                  else
+                     Unget_Char; -- (Ch);
+                     exit;
+                  end if;
+               end loop;
+               Assign (Value_Of (Lexeme_Text), Original_Lexeme_Text);
+               return Number;
+            when '"' =>
+               loop
+                  Get_Char (Ch);
+                  if Ch = '"' then
+                     exit;
+                  elsif Ch = Eof then
+                     raise Illegal_Token with "string literal is not terminated by '""'";
+                  end if;
+                  Append (Ch, To => Lexeme_Text);
+               end loop;
+               Assign (Value_Of (Lexeme_Text), Original_Lexeme_Text);
+               return String_Literal;
             when others =>
-               raise Illegal_Token;
+               raise Illegal_Token with "unkown character";
          end case;
       end loop;
    end Get_Token;
@@ -270,9 +295,7 @@ package body Lexical_Analyzer is
                        Base * 10 + Character'Pos (Char) - Character'Pos ('0');
                   end loop;
                   if Base > Rule_Length then
-                     Put_Line
-                       ("Ayacc: Illegal use of $" & Integer'Image (Base));
-                     raise Illegal_Token;
+                     raise Illegal_Token with "illegal use of $" & Integer'Image (Base);
                   end if;
                   Base := Base - Rule_Length;
                   if Base = 0 then
@@ -282,8 +305,7 @@ package body Lexical_Analyzer is
                        ("yy.value_stack (yy.tos" & Integer'Image (Base) & ")");
                   end if;
                else
-                  Put_Line ("Ayacc: Illegal symbol following $");
-                  raise Illegal_Token;
+                  raise Illegal_Token with "illegal symbol following $";
                end if;
 
             when Eoln =>
@@ -294,11 +316,10 @@ package body Lexical_Analyzer is
                exit;
 
             when Eof =>
-               Put_Line ("Ayacc: missing end of action token '}'");
                if End_In_Comment then
                   Put_Line ("Ayacc: there is a '}' in an Ada comment but it is ignored");
                end if;
-               raise Illegal_Token;
+               raise Illegal_Token with "missing end of action token '}'";
 
             when others =>
                Actions_File.Write (Char);
@@ -332,7 +353,7 @@ package body Lexical_Analyzer is
                loop
                   Get_Char (Ch);
                   if Ch = Eoln or Ch = Eof then
-                     raise Illegal_Token;
+                     raise Illegal_Token with "missing '""' to terminate string";
                   end if;
                   Append (Ch, To => Text);
                   exit when Ch = '"';
