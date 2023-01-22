@@ -37,6 +37,7 @@ This version brings a number of improvements:
 - Improvement to allow passing parameters to `YYParse` for the grammar rules
 - New `%lex` directive to control the call of `YYLex` function
 - Fix #6: ayacc gets stuck creating an infinitely large file after encountering a comment in an action
+- Reformat code using gnatpp
 
 ## Version 1.3.0 - Dec 2021
 
