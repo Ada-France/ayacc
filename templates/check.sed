@@ -8,6 +8,7 @@
 /^%if yyerrok$/d
 /^%if yyclearin$/d
 /^%if private$/d
+/^%if reentrant$/d
 /^%if error$/d
 /^%if debug$/d
 /^%else$/d

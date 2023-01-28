@@ -125,7 +125,9 @@ package body Tokens_File is
          Start_Tokens_Package;
       end if;
 
-      Writeln ("   YYLVal, YYVal : YYSType;");
+      if not Options.Reentrant then
+         Writeln ("   YYLVal, YYVal : YYSType;");
+      end if;
       Writeln ("   type Token is");
       Write ("        (");
 

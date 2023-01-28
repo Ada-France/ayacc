@@ -135,6 +135,7 @@ package body Parse_Template_File is
                             S_IF_DEBUG,
                             S_IF_ERROR,
                             S_IF_PRIVATE,
+                            S_IF_REENTRANT,
                             S_IF_YYERROK,
                             S_IF_YYCLEARIN);
       Current    : Section_Type := S_COMMON;
@@ -157,6 +158,8 @@ package body Parse_Template_File is
                   Current := S_IF_ERROR;
                elsif Line = "%if private" then
                   Current := S_IF_PRIVATE;
+               elsif Line = "%if reentrant" then
+                  Current := S_IF_REENTRANT;
                elsif Line = "%if yyerrok" then
                   Current := S_IF_YYERROK;
                elsif Line = "%if yyclearin" then
@@ -178,6 +181,7 @@ package body Parse_Template_File is
                Is_Visible := (Current = S_COMMON)
                  or else (Current = S_IF_DEBUG and then Options.Debug)
                  or else (Current = S_IF_PRIVATE and then Options.Package_Private)
+                 or else (Current = S_IF_REENTRANT and then Options.Reentrant)
                  or else (Current = S_IF_YYERROK and then not Options.Skip_Yyerrok)
                  or else (Current = S_IF_YYCLEARIN and then not Options.Skip_Yyclearin)
                  or else (Current = S_IF_ERROR and then Options.Error_Recovery_Extension);
