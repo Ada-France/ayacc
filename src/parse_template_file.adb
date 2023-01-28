@@ -56,6 +56,7 @@
 --
 
 with Ada.Strings.Fixed;
+with Ada.Directories;
 
 with Options;
 with Ayacc_File_Names;
@@ -74,6 +75,33 @@ package body Parse_Template_File is
    type File_Access is access File_Data;
 
    Yyparse_Template_File : File_Access; -- access File_Data;
+   DECL_CODE_FILENAME    : constant String := "code.miq";
+
+   Has_Code : array (Code_Filename) of Boolean := (others => False);
+
+   function Get_Filename (Code : in Code_Filename) return String is
+   begin
+      Has_Code (Code) := True;
+      case Code is
+         when DECL_CODE =>
+            return DECL_CODE_FILENAME;
+
+      end case;
+   end Get_Filename;
+
+   procedure Include_File (Outfile : in File_Type;
+                           Filename : in String) is
+      Input : File_Type;
+   begin
+      if not Ada.Directories.Exists (Filename) then
+         return;
+      end if;
+      Open (Input, Ada.Text_IO.In_File, Filename);
+      while not End_Of_File (Input) loop
+         Put_Line (Outfile, Get_Line (Input));
+      end loop;
+      Close (Input);
+   end Include_File;
 
    procedure Write_Line (Outfile : in File_Type;
                          Line    : in String) is
@@ -172,6 +200,10 @@ package body Parse_Template_File is
                elsif Line'Length > 3 and then Line (Line'First + 1) = '%' then
                   Continue := False;
                   return;
+               elsif Line = "%yydecl" then
+                  if Is_Visible then
+                     Include_File (Outfile, DECL_CODE_FILENAME);
+                  end if;
                else
                   --  Very crude error report when the template % line is invalid.
                   --  This could happen only during development when templates
@@ -1594,5 +1626,12 @@ package body Parse_Template_File is
    begin
       return File_Pointer = (Yyparse_Template_File'Last + 1);
    end Is_End_Of_File;
+
+   procedure Cleanup is
+   begin
+      if Ada.Directories.Exists (DECL_CODE_FILENAME) then
+         Ada.Directories.Delete_File (DECL_CODE_FILENAME);
+      end if;
+   end Cleanup;
 
 end Parse_Template_File;

@@ -12,7 +12,7 @@ private
    L_3   : aliased constant String := "%%1 user";
    L_4   : aliased constant String := "";
    L_5   : aliased constant String := "   procedure ${YYPARSE}${YYPARSEPARAM} is";
-   L_6   : aliased constant String := "";
+   L_6   : aliased constant String := "%yydecl";
    L_7   : aliased constant String := "      --  Rename User Defined Packages to"
        & " Internal Names.";
    L_8   : aliased constant String := "%%2 renames";

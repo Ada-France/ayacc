@@ -41,8 +41,8 @@
 -- version 4.06 on a vax 11/750 running Unix 4.2BSD.
 --
 
-with Actions_File, Source_File, Str_Pack, Tokens_File, Text_Io;
-use Source_File, Str_Pack, Text_Io;
+with Actions_File, Source_File, Str_Pack, Ada.Text_Io;
+use Source_File, Str_Pack, Ada.Text_Io;
 package body Lexical_Analyzer is
 
    -- SCCS_ID : constant String := "@(#) lexical_analyzer_body.adadisk21~/rschm/hasee/sccs/ayacc, Version 1.2";
@@ -152,6 +152,8 @@ package body Lexical_Analyzer is
                      return Unit_Clause;
                   elsif Value_Of (Lexeme_Text) = "%DEFINE" then
                      return DEFINE_CLAUSE;
+                  elsif Value_Of (Lexeme_Text) = "%CODE" then
+                     return CODE_CLAUSE;
                   elsif Value_Of (Lexeme_Text) = "%LEX" then
                      --  Get the %lex content option up to end of line.
                      --  It can contain '(' and ')' or other character
@@ -329,7 +331,7 @@ package body Lexical_Analyzer is
       Actions_File.Writeln;
    end Handle_Action;
 
-   procedure Dump_Declarations is
+   procedure Parse_Code_Block is
       Ch   : Character;
       Text : Str (Source_File.Maximum_Line_Length);
    begin
@@ -359,7 +361,7 @@ package body Lexical_Analyzer is
                   exit when Ch = '"';
                end loop;
             when Eoln =>
-               Tokens_File.Writeln (Value_Of (Text));
+               Put_Line (Value_Of (Text));
                Assign ("", To => Text);
                Current_Line_Number := Current_Line_Number + 1;
             when Eof =>
@@ -368,7 +370,29 @@ package body Lexical_Analyzer is
                Append (Ch, To => Text);
          end case;
       end loop;
-      Tokens_File.Writeln (Value_Of (Text));
-   end Dump_Declarations;
+      Put_Line (Value_Of (Text));
+   end Parse_Code_Block;
+
+   procedure Save_Code_Block (Path : in String) is
+      File : Ada.Text_IO.File_Type;
+
+      procedure Put_Line (Line : in String) is
+      begin
+         Ada.Text_IO.Put_Line (File, Line);
+      end Put_Line;
+
+      procedure Parse_Code is new Parse_Code_Block (Put_Line);
+
+   begin
+      begin
+         Ada.Text_IO.Open (File, Ada.Text_IO.Append_File, Path);
+
+      exception
+         when Name_Error =>
+            Ada.Text_IO.Create (File, Ada.Text_IO.Append_File, Path);
+      end;
+      Parse_Code;
+      Ada.Text_IO.Close (File);
+   end Save_Code_Block;
 
 end Lexical_Analyzer;

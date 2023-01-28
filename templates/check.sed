@@ -13,4 +13,5 @@
 /^%if debug$/d
 /^%else$/d
 /^%end$/d
+/^%yydecl$/d
 /^%%[12345678] [a-z]*$/d

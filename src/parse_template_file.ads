@@ -48,6 +48,10 @@ package Parse_Template_File is
 
    Eof : constant Character := ASCII.NUL;
 
+   type Code_Filename is (DECL_CODE);
+
+   function Get_Filename (Code : in Code_Filename) return String;
+
    generic
       with function Has_Line return Boolean;
       with function Get_Line return String;
@@ -62,5 +66,6 @@ package Parse_Template_File is
    procedure Read (S : out String; Length : out Integer);
    procedure Close;
    function Is_End_Of_File return Boolean;
+   procedure Cleanup;
 
 end Parse_Template_File;

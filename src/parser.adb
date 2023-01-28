@@ -55,6 +55,7 @@ with Tokens_File;      use Tokens_File;
 with Ayacc_File_Names;
 with String_Pkg;
 with Options;
+with Parse_Template_File;
 package body Parser is
 
    -- SCCS_ID : constant String := "@(#) parser_body.ada, Version 1.2";
@@ -515,6 +516,27 @@ package body Parser is
          end if;
       end Parse_Define_Clause;
 
+      procedure Parse_Code_Clause is
+         use Parse_Template_File;
+
+         Name : constant String := Get_Original_Text;
+      begin
+         if Next_Token /= Identifier then
+            Fatal_Error ("Expecting code Name");
+         end if;
+         Next_Token := Get_Token;
+         if Next_Token /= Left_Brace then
+            Fatal_Error ("Missing '{' to start the code block");
+         end if;
+         if Name = "decl" then
+            Save_Code_Block (Get_Filename (DECL_CODE));
+         else
+            Fatal_Error ("Code name '" & Name & "' is not recognized");
+         end if;
+      end Parse_Code_Clause;
+
+      procedure Dump_Declarations is new Parse_Code_Block (Tokens_File.Writeln);
+
    begin
 
       Next_Token := Get_Token;
@@ -566,6 +588,10 @@ package body Parser is
                Parse_Lex_Clause;
             when Define_Clause =>
                Parse_Define_Clause;
+            when Code_Clause =>
+               Next_Token       := Get_Token;
+               Parse_Code_Clause;
+               Next_Token := Get_Token;
             when others =>
                Fatal_Error ("Unexpected symbol");
          end case;

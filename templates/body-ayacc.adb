@@ -3,7 +3,7 @@
 %%1 user
 
    procedure ${YYPARSE}${YYPARSEPARAM} is
-
+%yydecl
       --  Rename User Defined Packages to Internal Names.
 %%2 renames
 
@@ -187,10 +187,7 @@
          debug : constant Boolean := False;
 %end
       end yy;
-%if reentrant
-      YYLVal : YYSType;
-      YYVal  : YYSType;
-%end
+
       procedure shift_debug (state_id : yy.parse_state; lexeme : yy_tokens.Token);
       procedure reduce_debug (rule_id : Rule; state_id : yy.parse_state);
 

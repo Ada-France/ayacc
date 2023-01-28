@@ -78,6 +78,7 @@ begin
 
    Options.Get_Arguments;
    Parse_Template_File.Initialize;
+   Parse_Template_File.Cleanup;
 
    Source_File.Open;
 
@@ -103,6 +104,7 @@ begin
    end if;
 
    Print_Statistics;
+   Parse_Template_File.Cleanup;
 
 exception
 
@@ -114,6 +116,7 @@ exception
 
    when Parser.Syntax_Error =>   -- Error has already been reported.
       Source_File.Close;
+      Parse_Template_File.Cleanup;
 
    when Text_Io.Name_Error | Text_Io.Use_Error =>
       null;  -- Error has already been reported.

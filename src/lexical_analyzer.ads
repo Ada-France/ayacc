@@ -51,7 +51,8 @@ package Lexical_Analyzer is
 
    type Ayacc_Token is
      (TOKEN, START, LEFT, RIGHT, NONASSOC, PREC, WITH_CLAUSE, USE_CLAUSE,
-      UNIT_CLAUSE, LEX_CLAUSE, DEFINE_CLAUSE, PARSE_PARAM_CLAUSE, IDENTIFIER, NUMBER,
+      UNIT_CLAUSE, LEX_CLAUSE, DEFINE_CLAUSE, PARSE_PARAM_CLAUSE, CODE_CLAUSE,
+      IDENTIFIER, NUMBER,
       CHARACTER_LITERAL, STRING_LITERAL, COMMA, COLON, SEMICOLON,
       VERTICAL_BAR, LEFT_BRACE, MARK, EOF_TOKEN);
 
@@ -63,7 +64,11 @@ package Lexical_Analyzer is
 
    procedure Print_Context_Lines renames Source_File.Print_Context_Lines;
 
-   procedure Dump_Declarations;
+   generic
+      with procedure Put_Line (Text : in String);
+   procedure Parse_Code_Block;
+
+   procedure Save_Code_Block (Path : in String);
 
    Illegal_Token : exception;
 
