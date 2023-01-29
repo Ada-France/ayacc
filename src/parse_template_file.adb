@@ -103,6 +103,26 @@ package body Parse_Template_File is
       Close (Input);
    end Include_File;
 
+   procedure Write_Indented (Outfile : in Ada.Text_IO.File_Type;
+                             Line    : in String) is
+      First : constant Positive_Count := Ada.Text_IO.Col (Outfile);
+      Start : constant Natural := Ada.Strings.Fixed.Index (Line, "(");
+      Pos   : Natural := Line'First;
+      Sep   : Natural;
+   begin
+      while Pos <= Line'Last loop
+         Sep := Ada.Strings.Fixed.Index (Line, ";", Pos);
+         if Sep > 0 then
+            Put_Line (Outfile, Line (Pos .. Sep));
+            Pos := Sep + 1;
+            Set_Col (Outfile, First + Positive_Count (Start - Line'First));
+         else
+            Put (Outfile, Line (Pos .. Line'Last));
+            return;
+         end if;
+      end loop;
+   end Write_Indented;
+
    procedure Write_Line (Outfile : in File_Type;
                          Line    : in String) is
       Start : Natural := Line'First;
@@ -138,7 +158,7 @@ package body Parse_Template_File is
 
          elsif Line (Pos .. Pos + 14) = "${YYPARSEPARAM}" then
             Put (Outfile, Line (Start .. Pos - 1));
-            Put (Outfile, Ayacc_File_Names.get_Parse_Params);
+            Write_Indented (Outfile, Ayacc_File_Names.get_Parse_Params);
             Start := Pos + 15;
 
          elsif Line (Pos .. Pos + 13) = "${YYSTACKSIZE}" then

@@ -142,8 +142,6 @@ package body Output_File is
       Text   : String (1 .. 260);
       Length : Natural;
       I      : Integer;
-      Proc_Decl : String (1 .. 260);
-      Decl_Len  : Natural := 0;
    begin
       Open; -- Open the output file.
       Skelout;
@@ -157,13 +155,6 @@ package body Output_File is
             while (I < Length - 1 and then Text (I) = ' ') loop
                I := I + 1;
             end loop;
-            if I + Length >= 21
-              and then Text (I .. I + 21) = "##%procedure YYParse ("
-            then
-               Decl_Len := Length - I - 2;
-               Proc_Decl (1 .. Decl_Len) := Text (I + 3 .. Length);
-               exit;
-            end if;
             if Text (I .. I + 1) = "##" then
                exit;
             end if;
