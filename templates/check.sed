@@ -14,4 +14,5 @@
 /^%else$/d
 /^%end$/d
 /^%yydecl$/d
+/^%yyinit$/d
 /^%%[12345678] [a-z]*$/d

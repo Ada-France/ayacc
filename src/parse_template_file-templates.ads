@@ -1554,281 +1554,282 @@ private
    L_1074: aliased constant String := "      --  initialize by pushing state 0 a"
        & "nd getting the first input symbol";
    L_1075: aliased constant String := "      yy.state_stack (yy.tos) := 0;";
-   L_1076: aliased constant String := "%if error";
-   L_1077: aliased constant String := "-- UMASS CODES :";
-   L_1078: aliased constant String := "      yy_error_report.Initialize_Output;";
-   L_1079: aliased constant String := "      --  initialize input token and prev"
+   L_1076: aliased constant String := "%yyinit";
+   L_1077: aliased constant String := "%if error";
+   L_1078: aliased constant String := "-- UMASS CODES :";
+   L_1079: aliased constant String := "      yy_error_report.Initialize_Output;";
+   L_1080: aliased constant String := "      --  initialize input token and prev"
        & "ious token";
-   L_1080: aliased constant String := "      yyparser_input.input_token := new y"
+   L_1081: aliased constant String := "      yyparser_input.input_token := new y"
        & "yparser_input.tokenbox;";
-   L_1081: aliased constant String := "      yyparser_input.input_token.line_num"
+   L_1082: aliased constant String := "      yyparser_input.input_token.line_num"
        & "ber := 0;";
-   L_1082: aliased constant String := "-- END OF UMASS CODES.";
-   L_1083: aliased constant String := "%end";
-   L_1084: aliased constant String := "";
-   L_1085: aliased constant String := "      loop";
-   L_1086: aliased constant String := "         yy.index := Shift_Reduce_Offset "
+   L_1083: aliased constant String := "-- END OF UMASS CODES.";
+   L_1084: aliased constant String := "%end";
+   L_1085: aliased constant String := "";
+   L_1086: aliased constant String := "      loop";
+   L_1087: aliased constant String := "         yy.index := Shift_Reduce_Offset "
        & "(yy.state_stack (yy.tos));";
-   L_1087: aliased constant String := "         if Integer (Shift_Reduce_Matrix "
+   L_1088: aliased constant String := "         if Integer (Shift_Reduce_Matrix "
        & "(yy.index).T) = yy.default then";
-   L_1088: aliased constant String := "            yy.action := Integer (Shift_R"
+   L_1089: aliased constant String := "            yy.action := Integer (Shift_R"
        & "educe_Matrix (yy.index).Act);";
-   L_1089: aliased constant String := "         else";
-   L_1090: aliased constant String := "            if yy.look_ahead then";
-   L_1091: aliased constant String := "               yy.look_ahead := False;";
-   L_1092: aliased constant String := "%if error";
-   L_1093: aliased constant String := "-- UMASS CODES :";
-   L_1094: aliased constant String := "               --  Let Parser get the inp"
+   L_1090: aliased constant String := "         else";
+   L_1091: aliased constant String := "            if yy.look_ahead then";
+   L_1092: aliased constant String := "               yy.look_ahead := False;";
+   L_1093: aliased constant String := "%if error";
+   L_1094: aliased constant String := "-- UMASS CODES :";
+   L_1095: aliased constant String := "               --  Let Parser get the inp"
        & "ut from yyparser_input instead of lexical";
-   L_1095: aliased constant String := "               --  scanner and maintain p"
+   L_1096: aliased constant String := "               --  scanner and maintain p"
        & "revious_token and input_token.";
-   L_1096: aliased constant String := "               yyparser_input.previous_to"
+   L_1097: aliased constant String := "               yyparser_input.previous_to"
        & "ken := yyparser_input.input_token;";
-   L_1097: aliased constant String := "               yyparser_input.input_token"
+   L_1098: aliased constant String := "               yyparser_input.input_token"
        & " := yyparser_input.get;";
-   L_1098: aliased constant String := "               yy.input_symbol := yyparse"
+   L_1099: aliased constant String := "               yy.input_symbol := yyparse"
        & "r_input.input_token.token;";
-   L_1099: aliased constant String := "-- END OF UMASS CODES.";
-   L_1100: aliased constant String := "%else";
-   L_1101: aliased constant String := "               yy.input_symbol := ${YYLEX"
+   L_1100: aliased constant String := "-- END OF UMASS CODES.";
+   L_1101: aliased constant String := "%else";
+   L_1102: aliased constant String := "               yy.input_symbol := ${YYLEX"
        & "};";
-   L_1102: aliased constant String := "%end";
-   L_1103: aliased constant String := "            end if;";
-   L_1104: aliased constant String := "            yy.action := parse_action (yy"
+   L_1103: aliased constant String := "%end";
+   L_1104: aliased constant String := "            end if;";
+   L_1105: aliased constant String := "            yy.action := parse_action (yy"
        & ".state_stack (yy.tos), yy.input_symbol);";
-   L_1105: aliased constant String := "         end if;";
-   L_1106: aliased constant String := "";
-   L_1107: aliased constant String := "%if error";
-   L_1108: aliased constant String := "-- UMASS CODES :";
-   L_1109: aliased constant String := "         --   If input_token is not on th"
+   L_1106: aliased constant String := "         end if;";
+   L_1107: aliased constant String := "";
+   L_1108: aliased constant String := "%if error";
+   L_1109: aliased constant String := "-- UMASS CODES :";
+   L_1110: aliased constant String := "         --   If input_token is not on th"
        & "e line yyerror_recovery.line_number,";
-   L_1110: aliased constant String := "         --   we just get to a new line. "
+   L_1111: aliased constant String := "         --   we just get to a new line. "
        & "So we output the new line to";
-   L_1111: aliased constant String := "         --   file of error report. But i"
+   L_1112: aliased constant String := "         --   file of error report. But i"
        & "f yy.action is error, we";
-   L_1112: aliased constant String := "         --   will not output the new lin"
+   L_1113: aliased constant String := "         --   will not output the new lin"
        & "e because we will do error";
-   L_1113: aliased constant String := "         --   recovery and during error r"
+   L_1114: aliased constant String := "         --   recovery and during error r"
        & "ecovery, we may back up";
-   L_1114: aliased constant String := "         --   which may cause error repor"
+   L_1115: aliased constant String := "         --   which may cause error repor"
        & "ted on previous line.";
-   L_1115: aliased constant String := "         --   So if yy.action is error, w"
+   L_1116: aliased constant String := "         --   So if yy.action is error, w"
        & "e will let error recovery";
-   L_1116: aliased constant String := "         --   to output the new line.";
-   L_1117: aliased constant String := "         if (yyerror_recovery.line_number"
+   L_1117: aliased constant String := "         --   to output the new line.";
+   L_1118: aliased constant String := "         if (yyerror_recovery.line_number"
        & " <";
-   L_1118: aliased constant String := "             yyparser_input.input_token.l"
+   L_1119: aliased constant String := "             yyparser_input.input_token.l"
        & "ine_number ) and then";
-   L_1119: aliased constant String := "            yy.action /= yy.error_code th"
+   L_1120: aliased constant String := "            yy.action /= yy.error_code th"
        & "en";
-   L_1120: aliased constant String := "            put_new_line;";
-   L_1121: aliased constant String := "            yyerror_recovery.line_number "
+   L_1121: aliased constant String := "            put_new_line;";
+   L_1122: aliased constant String := "            yyerror_recovery.line_number "
        & ":= yyparser_input.input_token.line_number;";
-   L_1122: aliased constant String := "         end if;";
-   L_1123: aliased constant String := "-- END OF UMASS CODES.";
-   L_1124: aliased constant String := "%end";
-   L_1125: aliased constant String := "";
-   L_1126: aliased constant String := "         if yy.action >= yy.first_shift_e"
+   L_1123: aliased constant String := "         end if;";
+   L_1124: aliased constant String := "-- END OF UMASS CODES.";
+   L_1125: aliased constant String := "%end";
+   L_1126: aliased constant String := "";
+   L_1127: aliased constant String := "         if yy.action >= yy.first_shift_e"
        & "ntry then  --  SHIFT";
-   L_1127: aliased constant String := "";
-   L_1128: aliased constant String := "            if yy.debug then";
-   L_1129: aliased constant String := "               shift_debug (yy.action, yy"
+   L_1128: aliased constant String := "";
+   L_1129: aliased constant String := "            if yy.debug then";
+   L_1130: aliased constant String := "               shift_debug (yy.action, yy"
        & ".input_symbol);";
-   L_1130: aliased constant String := "            end if;";
-   L_1131: aliased constant String := "";
-   L_1132: aliased constant String := "            --  Enter new state";
-   L_1133: aliased constant String := "            if yy.tos = yy.stack_size the"
+   L_1131: aliased constant String := "            end if;";
+   L_1132: aliased constant String := "";
+   L_1133: aliased constant String := "            --  Enter new state";
+   L_1134: aliased constant String := "            if yy.tos = yy.stack_size the"
        & "n";
-   L_1134: aliased constant String := "               Text_IO.Put_Line ("" Stack"
+   L_1135: aliased constant String := "               Text_IO.Put_Line ("" Stack"
        & " size exceeded on state_stack"");";
-   L_1135: aliased constant String := "               raise yy_tokens.Syntax_Err"
+   L_1136: aliased constant String := "               raise yy_tokens.Syntax_Err"
        & "or;";
-   L_1136: aliased constant String := "            end if;";
-   L_1137: aliased constant String := "            yy.tos                  := yy"
+   L_1137: aliased constant String := "            end if;";
+   L_1138: aliased constant String := "            yy.tos                  := yy"
        & ".tos + 1;";
-   L_1138: aliased constant String := "            yy.state_stack (yy.tos) := yy"
+   L_1139: aliased constant String := "            yy.state_stack (yy.tos) := yy"
        & ".action;";
-   L_1139: aliased constant String := "%if error";
-   L_1140: aliased constant String := "-- UMASS CODES :";
-   L_1141: aliased constant String := "            --   Set value stack only if "
+   L_1140: aliased constant String := "%if error";
+   L_1141: aliased constant String := "-- UMASS CODES :";
+   L_1142: aliased constant String := "            --   Set value stack only if "
        & "valuing is True.";
-   L_1142: aliased constant String := "            if yyerror_recovery.valuing t"
+   L_1143: aliased constant String := "            if yyerror_recovery.valuing t"
        & "hen";
-   L_1143: aliased constant String := "-- END OF UMASS CODES.";
-   L_1144: aliased constant String := "%end";
-   L_1145: aliased constant String := "            yy.value_stack (yy.tos) := YY"
+   L_1144: aliased constant String := "-- END OF UMASS CODES.";
+   L_1145: aliased constant String := "%end";
+   L_1146: aliased constant String := "            yy.value_stack (yy.tos) := YY"
        & "LVal;";
-   L_1146: aliased constant String := "%if error";
-   L_1147: aliased constant String := "-- UMASS CODES :";
-   L_1148: aliased constant String := "            end if;";
-   L_1149: aliased constant String := "-- END OF UMASS CODES.";
-   L_1150: aliased constant String := "%end";
-   L_1151: aliased constant String := "";
-   L_1152: aliased constant String := "            if yy.error_flag > 0 then  --"
+   L_1147: aliased constant String := "%if error";
+   L_1148: aliased constant String := "-- UMASS CODES :";
+   L_1149: aliased constant String := "            end if;";
+   L_1150: aliased constant String := "-- END OF UMASS CODES.";
+   L_1151: aliased constant String := "%end";
+   L_1152: aliased constant String := "";
+   L_1153: aliased constant String := "            if yy.error_flag > 0 then  --"
        & "  indicate a valid shift";
-   L_1153: aliased constant String := "               yy.error_flag := yy.error_"
+   L_1154: aliased constant String := "               yy.error_flag := yy.error_"
        & "flag - 1;";
-   L_1154: aliased constant String := "            end if;";
-   L_1155: aliased constant String := "";
-   L_1156: aliased constant String := "            --  Advance lookahead";
-   L_1157: aliased constant String := "            yy.look_ahead := True;";
-   L_1158: aliased constant String := "";
-   L_1159: aliased constant String := "         elsif yy.action = yy.error_code "
+   L_1155: aliased constant String := "            end if;";
+   L_1156: aliased constant String := "";
+   L_1157: aliased constant String := "            --  Advance lookahead";
+   L_1158: aliased constant String := "            yy.look_ahead := True;";
+   L_1159: aliased constant String := "";
+   L_1160: aliased constant String := "         elsif yy.action = yy.error_code "
        & "then       -- ERROR";
-   L_1160: aliased constant String := "%if error";
-   L_1161: aliased constant String := "-- UMASS CODES :";
-   L_1162: aliased constant String := "            try_recovery;";
-   L_1163: aliased constant String := "-- END OF UMASS CODES.";
-   L_1164: aliased constant String := "%else";
-   L_1165: aliased constant String := "            handle_error;";
-   L_1166: aliased constant String := "%end";
-   L_1167: aliased constant String := "";
-   L_1168: aliased constant String := "         elsif yy.action = yy.accept_code"
+   L_1161: aliased constant String := "%if error";
+   L_1162: aliased constant String := "-- UMASS CODES :";
+   L_1163: aliased constant String := "            try_recovery;";
+   L_1164: aliased constant String := "-- END OF UMASS CODES.";
+   L_1165: aliased constant String := "%else";
+   L_1166: aliased constant String := "            handle_error;";
+   L_1167: aliased constant String := "%end";
+   L_1168: aliased constant String := "";
+   L_1169: aliased constant String := "         elsif yy.action = yy.accept_code"
        & " then";
-   L_1169: aliased constant String := "            if yy.debug then";
-   L_1170: aliased constant String := "               Text_IO.Put_Line (""  --  "
+   L_1170: aliased constant String := "            if yy.debug then";
+   L_1171: aliased constant String := "               Text_IO.Put_Line (""  --  "
        & "Ayacc.YYParse: Accepting Grammar..."");";
-   L_1171: aliased constant String := "%if error";
-   L_1172: aliased constant String := "-- UMASS CODES :";
-   L_1173: aliased constant String := "               yy_error_report.Put_Line ("
+   L_1172: aliased constant String := "%if error";
+   L_1173: aliased constant String := "-- UMASS CODES :";
+   L_1174: aliased constant String := "               yy_error_report.Put_Line ("
        & """Ayacc.YYParse: Accepting Grammar..."");";
-   L_1174: aliased constant String := "-- END OF UMASS CODES.";
-   L_1175: aliased constant String := "%end";
-   L_1176: aliased constant String := "            end if;";
-   L_1177: aliased constant String := "            exit;";
-   L_1178: aliased constant String := "";
-   L_1179: aliased constant String := "         else --  Reduce Action";
-   L_1180: aliased constant String := "";
-   L_1181: aliased constant String := "            --  Convert action into a rul"
+   L_1175: aliased constant String := "-- END OF UMASS CODES.";
+   L_1176: aliased constant String := "%end";
+   L_1177: aliased constant String := "            end if;";
+   L_1178: aliased constant String := "            exit;";
+   L_1179: aliased constant String := "";
+   L_1180: aliased constant String := "         else --  Reduce Action";
+   L_1181: aliased constant String := "";
+   L_1182: aliased constant String := "            --  Convert action into a rul"
        & "e";
-   L_1182: aliased constant String := "            yy.rule_id := Rule (-1 * yy.a"
+   L_1183: aliased constant String := "            yy.rule_id := Rule (-1 * yy.a"
        & "ction);";
-   L_1183: aliased constant String := "";
-   L_1184: aliased constant String := "            --  Execute User Action";
-   L_1185: aliased constant String := "            --  user_action(yy.rule_id);";
-   L_1186: aliased constant String := "%if error";
-   L_1187: aliased constant String := "-- UMASS CODES :";
-   L_1188: aliased constant String := "";
-   L_1189: aliased constant String := "            --   Only invoke semantic act"
+   L_1184: aliased constant String := "";
+   L_1185: aliased constant String := "            --  Execute User Action";
+   L_1186: aliased constant String := "            --  user_action(yy.rule_id);";
+   L_1187: aliased constant String := "%if error";
+   L_1188: aliased constant String := "-- UMASS CODES :";
+   L_1189: aliased constant String := "";
+   L_1190: aliased constant String := "            --   Only invoke semantic act"
        & "ion if valuing is True.";
-   L_1190: aliased constant String := "            --   And if exception is rais"
+   L_1191: aliased constant String := "            --   And if exception is rais"
        & "ed during semantic action";
-   L_1191: aliased constant String := "            --   and total_errors is not "
+   L_1192: aliased constant String := "            --   and total_errors is not "
        & "zero, we set valuing to False";
-   L_1192: aliased constant String := "            --   because we assume that e"
+   L_1193: aliased constant String := "            --   because we assume that e"
        & "rror recovery causes the exception";
-   L_1193: aliased constant String := "            --   and we no longer want to"
+   L_1194: aliased constant String := "            --   and we no longer want to"
        & " invoke any semantic action.";
-   L_1194: aliased constant String := "            if yyerror_recovery.valuing t"
+   L_1195: aliased constant String := "            if yyerror_recovery.valuing t"
        & "hen";
-   L_1195: aliased constant String := "               begin";
-   L_1196: aliased constant String := "-- END OF UMASS CODES.";
-   L_1197: aliased constant String := "%end";
-   L_1198: aliased constant String := "            case yy.rule_id is";
-   L_1199: aliased constant String := "               pragma Style_Checks (Off);";
-   L_1200: aliased constant String := "%%4 rules";
-   L_1201: aliased constant String := "               pragma Style_Checks (On);";
-   L_1202: aliased constant String := "";
-   L_1203: aliased constant String := "               when others => null;";
-   L_1204: aliased constant String := "            end case;";
-   L_1205: aliased constant String := "";
-   L_1206: aliased constant String := "%if error";
-   L_1207: aliased constant String := "-- UMASS CODES :";
-   L_1208: aliased constant String := "            --   Corresponding to the cod"
+   L_1196: aliased constant String := "               begin";
+   L_1197: aliased constant String := "-- END OF UMASS CODES.";
+   L_1198: aliased constant String := "%end";
+   L_1199: aliased constant String := "            case yy.rule_id is";
+   L_1200: aliased constant String := "               pragma Style_Checks (Off);";
+   L_1201: aliased constant String := "%%4 rules";
+   L_1202: aliased constant String := "               pragma Style_Checks (On);";
+   L_1203: aliased constant String := "";
+   L_1204: aliased constant String := "               when others => null;";
+   L_1205: aliased constant String := "            end case;";
+   L_1206: aliased constant String := "";
+   L_1207: aliased constant String := "%if error";
+   L_1208: aliased constant String := "-- UMASS CODES :";
+   L_1209: aliased constant String := "            --   Corresponding to the cod"
        & "es above.";
-   L_1209: aliased constant String := "            exception";
-   L_1210: aliased constant String := "               when others =>";
-   L_1211: aliased constant String := "                  if yy_error_report.tota"
+   L_1210: aliased constant String := "            exception";
+   L_1211: aliased constant String := "               when others =>";
+   L_1212: aliased constant String := "                  if yy_error_report.tota"
        & "l_errors > 0 then";
-   L_1212: aliased constant String := "                     yyerror_recovery.val"
+   L_1213: aliased constant String := "                     yyerror_recovery.val"
        & "uing := False;";
-   L_1213: aliased constant String := "                     --  We no longer wan"
+   L_1214: aliased constant String := "                     --  We no longer wan"
        & "t to invoke any semantic action.";
-   L_1214: aliased constant String := "                  else";
-   L_1215: aliased constant String := "                     --  this exception i"
+   L_1215: aliased constant String := "                  else";
+   L_1216: aliased constant String := "                     --  this exception i"
        & "s not caused by syntax error,";
-   L_1216: aliased constant String := "                     --  so we reraise an"
+   L_1217: aliased constant String := "                     --  so we reraise an"
        & "yway.";
-   L_1217: aliased constant String := "                     yy_error_report.Fini"
+   L_1218: aliased constant String := "                     yy_error_report.Fini"
        & "sh_Output;";
-   L_1218: aliased constant String := "                     raise;";
-   L_1219: aliased constant String := "                  end if;";
-   L_1220: aliased constant String := "            end;";
-   L_1221: aliased constant String := "            end if;";
-   L_1222: aliased constant String := "";
-   L_1223: aliased constant String := "-- END OF UMASS CODES.";
-   L_1224: aliased constant String := "%end";
-   L_1225: aliased constant String := "            --  Pop RHS states and goto n"
+   L_1219: aliased constant String := "                     raise;";
+   L_1220: aliased constant String := "                  end if;";
+   L_1221: aliased constant String := "            end;";
+   L_1222: aliased constant String := "            end if;";
+   L_1223: aliased constant String := "";
+   L_1224: aliased constant String := "-- END OF UMASS CODES.";
+   L_1225: aliased constant String := "%end";
+   L_1226: aliased constant String := "            --  Pop RHS states and goto n"
        & "ext state";
-   L_1226: aliased constant String := "            yy.tos := yy.tos - Rule_Lengt"
+   L_1227: aliased constant String := "            yy.tos := yy.tos - Rule_Lengt"
        & "h (yy.rule_id) + 1;";
-   L_1227: aliased constant String := "            if yy.tos > yy.stack_size the"
+   L_1228: aliased constant String := "            if yy.tos > yy.stack_size the"
        & "n";
-   L_1228: aliased constant String := "               Text_IO.Put_Line ("" Stack"
+   L_1229: aliased constant String := "               Text_IO.Put_Line ("" Stack"
        & " size exceeded on state_stack"");";
-   L_1229: aliased constant String := "%if error";
-   L_1230: aliased constant String := "-- UMASS CODES :";
-   L_1231: aliased constant String := "               yy_error_report.Put_Line ("
+   L_1230: aliased constant String := "%if error";
+   L_1231: aliased constant String := "-- UMASS CODES :";
+   L_1232: aliased constant String := "               yy_error_report.Put_Line ("
        & """ Stack size exceeded on state_stack"");";
-   L_1232: aliased constant String := "               yyerror_recovery.finale;";
-   L_1233: aliased constant String := "-- END OF UMASS CODES.";
-   L_1234: aliased constant String := "%end";
-   L_1235: aliased constant String := "               raise yy_tokens.Syntax_Err"
+   L_1233: aliased constant String := "               yyerror_recovery.finale;";
+   L_1234: aliased constant String := "-- END OF UMASS CODES.";
+   L_1235: aliased constant String := "%end";
+   L_1236: aliased constant String := "               raise yy_tokens.Syntax_Err"
        & "or;";
-   L_1236: aliased constant String := "            end if;";
-   L_1237: aliased constant String := "            yy.state_stack (yy.tos) := go"
+   L_1237: aliased constant String := "            end if;";
+   L_1238: aliased constant String := "            yy.state_stack (yy.tos) := go"
        & "to_state (yy.state_stack (yy.tos - 1),";
-   L_1238: aliased constant String := "                                         "
+   L_1239: aliased constant String := "                                         "
        & "          Get_LHS_Rule (yy.rule_id));";
-   L_1239: aliased constant String := "%if error";
-   L_1240: aliased constant String := "-- UMASS CODES :";
-   L_1241: aliased constant String := "            --   Set value stack only if "
+   L_1240: aliased constant String := "%if error";
+   L_1241: aliased constant String := "-- UMASS CODES :";
+   L_1242: aliased constant String := "            --   Set value stack only if "
        & "valuing is True.";
-   L_1242: aliased constant String := "            if yyerror_recovery.valuing t"
+   L_1243: aliased constant String := "            if yyerror_recovery.valuing t"
        & "hen";
-   L_1243: aliased constant String := "-- END OF UMASS CODES.";
-   L_1244: aliased constant String := "%end";
-   L_1245: aliased constant String := "";
-   L_1246: aliased constant String := "            yy.value_stack (yy.tos) := YY"
+   L_1244: aliased constant String := "-- END OF UMASS CODES.";
+   L_1245: aliased constant String := "%end";
+   L_1246: aliased constant String := "";
+   L_1247: aliased constant String := "            yy.value_stack (yy.tos) := YY"
        & "Val;";
-   L_1247: aliased constant String := "%if error";
-   L_1248: aliased constant String := "-- UMASS CODES :";
-   L_1249: aliased constant String := "            end if;";
-   L_1250: aliased constant String := "-- END OF UMASS CODES.";
-   L_1251: aliased constant String := "%end";
-   L_1252: aliased constant String := "            if yy.debug then";
-   L_1253: aliased constant String := "               reduce_debug (yy.rule_id,";
-   L_1254: aliased constant String := "                  goto_state (yy.state_st"
+   L_1248: aliased constant String := "%if error";
+   L_1249: aliased constant String := "-- UMASS CODES :";
+   L_1250: aliased constant String := "            end if;";
+   L_1251: aliased constant String := "-- END OF UMASS CODES.";
+   L_1252: aliased constant String := "%end";
+   L_1253: aliased constant String := "            if yy.debug then";
+   L_1254: aliased constant String := "               reduce_debug (yy.rule_id,";
+   L_1255: aliased constant String := "                  goto_state (yy.state_st"
        & "ack (yy.tos - 1),";
-   L_1255: aliased constant String := "                              Get_LHS_Rul"
+   L_1256: aliased constant String := "                              Get_LHS_Rul"
        & "e (yy.rule_id)));";
-   L_1256: aliased constant String := "            end if;";
-   L_1257: aliased constant String := "";
-   L_1258: aliased constant String := "         end if;";
-   L_1259: aliased constant String := "%if error";
-   L_1260: aliased constant String := "-- UMASS CODES :";
-   L_1261: aliased constant String := "";
-   L_1262: aliased constant String := "        --  If the error flag is set to z"
+   L_1257: aliased constant String := "            end if;";
+   L_1258: aliased constant String := "";
+   L_1259: aliased constant String := "         end if;";
+   L_1260: aliased constant String := "%if error";
+   L_1261: aliased constant String := "-- UMASS CODES :";
+   L_1262: aliased constant String := "";
+   L_1263: aliased constant String := "        --  If the error flag is set to z"
        & "ero at current token,";
-   L_1263: aliased constant String := "        --  we flag current token out.";
-   L_1264: aliased constant String := "        if yyerror_recovery.previous_erro"
+   L_1264: aliased constant String := "        --  we flag current token out.";
+   L_1265: aliased constant String := "        if yyerror_recovery.previous_erro"
        & "r_flag > 0 and then";
-   L_1265: aliased constant String := "           yy.error_flag = 0 then";
-   L_1266: aliased constant String := "           yyerror_recovery.flag_token (e"
+   L_1266: aliased constant String := "           yy.error_flag = 0 then";
+   L_1267: aliased constant String := "           yyerror_recovery.flag_token (e"
        & "rror => False);";
-   L_1267: aliased constant String := "        end if;";
-   L_1268: aliased constant String := "";
-   L_1269: aliased constant String := "        --   save the action made and err"
+   L_1268: aliased constant String := "        end if;";
+   L_1269: aliased constant String := "";
+   L_1270: aliased constant String := "        --   save the action made and err"
        & "or flag.";
-   L_1270: aliased constant String := "        yyerror_recovery.previous_action "
+   L_1271: aliased constant String := "        yyerror_recovery.previous_action "
        & ":= yy.action;";
-   L_1271: aliased constant String := "        yyerror_recovery.previous_error_f"
+   L_1272: aliased constant String := "        yyerror_recovery.previous_error_f"
        & "lag := yy.error_flag;";
-   L_1272: aliased constant String := "-- END OF UMASS CODES.";
-   L_1273: aliased constant String := "%end";
-   L_1274: aliased constant String := "      end loop;";
-   L_1275: aliased constant String := "";
-   L_1276: aliased constant String := "   end ${YYPARSE};";
+   L_1273: aliased constant String := "-- END OF UMASS CODES.";
+   L_1274: aliased constant String := "%end";
+   L_1275: aliased constant String := "      end loop;";
+   L_1276: aliased constant String := "";
+   L_1277: aliased constant String := "   end ${YYPARSE};";
    body_ayacc : aliased constant Content_Array :=
      (L_1'Access,
       L_2'Access,
@@ -3105,6 +3106,7 @@ private
       L_1273'Access,
       L_1274'Access,
       L_1275'Access,
-      L_1276'Access);
+      L_1276'Access,
+      L_1277'Access);
 
 end Parse_Template_File.Templates;

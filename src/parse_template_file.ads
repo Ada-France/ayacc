@@ -48,7 +48,7 @@ package Parse_Template_File is
 
    Eof : constant Character := ASCII.NUL;
 
-   type Code_Filename is (DECL_CODE);
+   type Code_Filename is (DECL_CODE, INIT_CODE);
 
    function Get_Filename (Code : in Code_Filename) return String;
 

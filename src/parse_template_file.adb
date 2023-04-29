@@ -76,6 +76,7 @@ package body Parse_Template_File is
 
    Yyparse_Template_File : File_Access; -- access File_Data;
    DECL_CODE_FILENAME    : constant String := "code.miq";
+   INIT_CODE_FILENAME    : constant String := "init.miq";
 
    Has_Code : array (Code_Filename) of Boolean := (others => False);
 
@@ -85,6 +86,9 @@ package body Parse_Template_File is
       case Code is
          when DECL_CODE =>
             return DECL_CODE_FILENAME;
+
+         when INIT_CODE =>
+            return INIT_CODE_FILENAME;
 
       end case;
    end Get_Filename;
@@ -223,6 +227,10 @@ package body Parse_Template_File is
                elsif Line = "%yydecl" then
                   if Is_Visible then
                      Include_File (Outfile, DECL_CODE_FILENAME);
+                  end if;
+               elsif Line = "%yyinit" then
+                  if Is_Visible then
+                     Include_File (Outfile, INIT_CODE_FILENAME);
                   end if;
                else
                   --  Very crude error report when the template % line is invalid.
@@ -1651,6 +1659,9 @@ package body Parse_Template_File is
    begin
       if Ada.Directories.Exists (DECL_CODE_FILENAME) then
          Ada.Directories.Delete_File (DECL_CODE_FILENAME);
+      end if;
+      if Ada.Directories.Exists (INIT_CODE_FILENAME) then
+         Ada.Directories.Delete_File (INIT_CODE_FILENAME);
       end if;
    end Cleanup;
 

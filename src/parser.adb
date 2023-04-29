@@ -530,6 +530,8 @@ package body Parser is
          end if;
          if Name = "decl" then
             Save_Code_Block (Get_Filename (DECL_CODE));
+         elsif Name = "init" then
+            Save_Code_Block (Get_Filename (INIT_CODE));
          else
             Fatal_Error ("Code name '" & Name & "' is not recognized");
          end if;

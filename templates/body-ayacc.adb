@@ -1073,6 +1073,7 @@ package body yyparser_input is
    begin
       --  initialize by pushing state 0 and getting the first input symbol
       yy.state_stack (yy.tos) := 0;
+%yyinit
 %if error
 -- UMASS CODES :
       yy_error_report.Initialize_Output;
