@@ -1,4 +1,4 @@
-.TH AYACC 1 "Dec 2022" "ayacc 1.4" "User Commands"
+.TH AYACC 1 "Apr 2023" "ayacc 1.4" "User Commands"
 .SH NAME
 ayacc \- An Ada LALR(1) parser generator
 .SH SYNOPSIS
@@ -34,14 +34,14 @@ functional program.
 .PP
 .I Ayacc
 will produce a procedure called
-.IR yyparse
+.IR YYParse
 and three packages:
 .IR Tokens,
 .IR Goto_Table,
 and
 .IR Shift_Reduce_Table.
 All of these packages must be visible to
-.IR yyparse.
+.IR YYParse.
 Package
 .IR Tokens
 contains the enumeration type that is returned by the lexical analyzer.
@@ -50,10 +50,10 @@ Packages
 and
 .IR Shift_Reduce_Table
 contain the parsing tables used by
-.IR yyparse.
+.IR YYParse.
 .PP
 The user must supply
-.IR yyparse
+.IR YYParse
 with 
 a lexical analyzer and an error reporting
 routine.
@@ -104,6 +104,7 @@ directives
 %use
 %with
 %define
+%code
 .fi
 .PP
 A token declaration consists of the keyword 
@@ -140,6 +141,39 @@ The
 .I %unit
 keyword can be used to control the name of the Ada package that
 contains the generated parser.
+.\"
+.PP
+The
+.I %code
+keyword introduces either the
+.I decl
+or
+.I init
+code block.   Such code block contains Ada code that will be inserted
+in specific places in the generated Ada parser body.  Everything enclosed
+in '{' and '}' is written verbatim.
+.IP
+.nf
+%code decl {
+-- Put your Ada code here
+}
+.fi
+.PP
+The
+.I decl
+code block is inserted in the declaration part of the
+.I YYParse
+procedure and can be used to declare types, variables, function and procedures
+accessible from within the
+.I YYParse
+body.
+.PP
+The
+.I init
+code block contains some Ada statements that are executed at the beginning
+of the
+.I YYParse
+procedure.
 .\"
 .PP
 The
