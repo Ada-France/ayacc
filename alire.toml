@@ -27,6 +27,7 @@ This version brings a number of improvements:
   support Ada child packages.
 - The grammar supports the %unit directive to control the Ada child packages.
 - Several options provide a better control of the generated code.
+- Ayacc can generate a reentrant parser.
 
 """
 
@@ -35,3 +36,7 @@ AYACC_BUILD = ["distrib", "debug", "optimize", "profile", "coverage"]
 
 [configuration]
 disabled = true
+
+[environment]
+PATH.prepend = "${CRATE_ROOT}/bin"
+MANPATH.prepend = "${CRATE_ROOT}/man"
