@@ -61,11 +61,6 @@ package Parse_Template_File is
                              Lines    : in Content_Array;
                              Position : in out Positive);
 
-   procedure Initialize;
-   procedure Open;
-   procedure Read (S : out String; Length : out Integer);
-   procedure Close;
-   function Is_End_Of_File return Boolean;
    procedure Cleanup;
 
 end Parse_Template_File;

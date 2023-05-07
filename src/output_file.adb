@@ -162,8 +162,6 @@ package body Output_File is
          Put_Line (Outfile, Text (1 .. Length));
       end loop;
 
-      Parse_Template_File.Open;
-
       Skelout;
 
       Put_Line (Outfile, "      package yy_goto_tables renames");
@@ -204,7 +202,6 @@ package body Output_File is
 
       -- Finish writing the template file
       Skelout;
-      Parse_Template_File.Close;
 
       -- Copy rest of input file after ##
       while not Source_File.Is_End_Of_File loop

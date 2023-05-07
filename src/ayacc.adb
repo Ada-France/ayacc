@@ -77,7 +77,6 @@ procedure Ayacc is
 begin
 
    Options.Get_Arguments;
-   Parse_Template_File.Initialize;
    Parse_Template_File.Cleanup;
 
    Source_File.Open;
