@@ -21,11 +21,12 @@ This version brings a number of improvements:
   support Ada child packages.
 - The grammar supports the `%unit` directive to control the Ada child packages
 - It is possible to customize the `YYParse` procedure and pass some context
-  arguments that are available to the grammar rules
+  arguments that are available to the grammar rules.
 - The call to `YYLex` can be customized with the `%lex` directive allowing to
   give some context arguments when calling the lexer.
+- Ayacc can now generate reentrant parsers.
 
-## Version 1.4.0 - Under development
+## Version 1.4.0 - May 2023
 
 - Support the Bison `%define variable value` option to configure the parser generator
 - Support the Bison `%code name { ... }` directive to insert code verbatim into the output parser
