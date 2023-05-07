@@ -246,13 +246,13 @@ BASED_INTERNALS   {HEX_SEQUENCE}([.]{HEX_SEQUENCE})?
 
 with ada_tokens; 
 use  ada_tokens;
-use text_io;
+use Ada, Ada.text_io;
 
 package ada_lex is
   
   lines      : positive := 1;
   num_errors     : natural := 0;
-  standard_error : text_io.file_type;
+  standard_error : Ada.text_io.file_type;
   Trace          : Boolean := False;
 
   procedure ECHO_L; --local version_of define_string.
