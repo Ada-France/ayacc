@@ -364,11 +364,9 @@ package body String_Pkg is
    end Length;
 
    function Value (S : String_Type) return String is
-      subtype Null_Range is Positive range 1 .. 0;
-      subtype Null_String is String (Null_Range);
    begin
       if S = null then
-         return Null_String'("");
+         return "";
       end if;
       return S.all;
    end Value;
