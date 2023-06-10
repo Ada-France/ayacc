@@ -16,4 +16,13 @@
 
 with calc_tokens; 
 use  calc_tokens;
+
+package calc_lexer is
+  function YYLex return Token;
+end;
+
+package body calc_lexer is
+
 ##
+
+end calc_lexer;
