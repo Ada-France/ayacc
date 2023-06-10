@@ -73,3 +73,12 @@ This version brings a number of improvements:
   [Aflex 1.5 et Ayacc 1.3.0](https://www.ada-france.org/adafr/blogs/post.html?post=2021/12/19/Aflex-1.5-et-Ayacc-1.3.0)
   is the French translation.
 
+# Projects Using Ayacc
+
+* [Pascal to Ada translator](https://github.com/zertovitch/pascal-to-ada)
+* [GWindows: GUI framework for MS Windows](https://github.com/zertovitch/gwindows)
+* [Ada parser for CSS files with CSS Object Model API](https://github.com/stcarrez/ada-css)
+* [Memory Analysis Tool](https://github.com/stcarrez/mat)
+* [Porion Build Manager](https://gitlab.com/stcarrez/porion)
+
+
