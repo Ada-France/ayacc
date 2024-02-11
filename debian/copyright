@@ -3,7 +3,7 @@ Upstream-Name: ayacc
 Source: https://github.com/Ada-France/ayacc
 
 Files: *
-Copyright: 2015 Stephane Carrez <Stephane.Carrez@gmail.com>
+Copyright: 2015-2024 Stephane Carrez <Stephane.Carrez@gmail.com>
 License: GPL-3.0+
 
 Files: src/*
@@ -19,7 +19,7 @@ Copyright: Copyright (c) 1990 Regents of the University of California.
 License: UCI
 
 Files: debian/*
-Copyright: 2015 Stephane Carrez <Stephane.Carrez@gmail.com>
+Copyright: 2015-2024 Stephane Carrez <Stephane.Carrez@gmail.com>
 License: GPL-3.0+
 
 License: GPL-3.0+
