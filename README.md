@@ -26,6 +26,10 @@ This version brings a number of improvements:
   give some context arguments when calling the lexer.
 - Ayacc can now generate reentrant parsers.
 
+## Version 1.4.1 - Feb 2024
+- Fix #7: Update ayacc.gpr: create missing dirs
+- Fix #8: Update clean target in calc example and rename example package
+
 ## Version 1.4.0 - May 2023
 
 - Support the Bison `%define variable value` option to configure the parser generator

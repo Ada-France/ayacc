@@ -23,7 +23,7 @@ package body Options is
 
    procedure Put_Help_Message is
    begin
-      Put_Line (Standard_Error, "ayacc version 1.4.0");
+      Put_Line (Standard_Error, "ayacc version 1.4.1");
       Put_Line (Standard_Error, Copyright);
       Put_Line (Standard_Error, Copyright2);
       New_Line (Standard_Error);
