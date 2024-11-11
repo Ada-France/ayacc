@@ -188,6 +188,15 @@
 %end
       end yy;
 
+      procedure Put_State_Stack is
+         begin
+            Text_IO.Put ("Stack:");
+            for index in 0 .. yy.tos loop
+               Text_IO.Put (yy.state_stack (index)'Image);
+            end loop;
+            Text_IO.New_Line;
+         end;
+
       procedure shift_debug (state_id : yy.parse_state; lexeme : yy_tokens.Token);
       procedure reduce_debug (rule_id : Rule; state_id : yy.parse_state);
 
@@ -1073,6 +1082,9 @@ package body yyparser_input is
    begin
       --  initialize by pushing state 0 and getting the first input symbol
       yy.state_stack (yy.tos) := 0;
+      if yy.debug then
+         Put_State_Stack;
+      end if;
 %yyinit
 %if error
 -- UMASS CODES :
@@ -1149,6 +1161,9 @@ package body yyparser_input is
             end if;
 -- END OF UMASS CODES.
 %end
+            if yy.debug then
+               Put_State_Stack;
+            end if;
 
             if yy.error_flag > 0 then  --  indicate a valid shift
                yy.error_flag := yy.error_flag - 1;
@@ -1254,6 +1269,7 @@ package body yyparser_input is
                reduce_debug (yy.rule_id,
                   goto_state (yy.state_stack (yy.tos - 1),
                               Get_LHS_Rule (yy.rule_id)));
+               Put_State_Stack;
             end if;
 
          end if;
