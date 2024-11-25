@@ -8,6 +8,8 @@
 %%2 renames
 
       use yy_tokens, yy_goto_tables, yy_shift_reduce_tables;
+      
+      use all type Ada.Strings.Unbounded.Unbounded_String;
 
 %if yyerrok
       procedure yyerrok;
@@ -165,6 +167,7 @@
 
          --  stack data used by the parser
          tos                : Natural := 0;
+         input_stack        : array (0 .. stack_size) of Ada.Strings.Unbounded.Unbounded_String;
          value_stack        : array (0 .. stack_size) of yy_tokens.YYSType;
          state_stack        : array (0 .. stack_size) of parse_state;
 
@@ -190,9 +193,18 @@
 
       procedure Put_State_Stack is
          begin
-            Text_IO.Put ("Stack:");
+            Text_IO.Put ("State stack:");
             for index in 0 .. yy.tos loop
                Text_IO.Put (yy.state_stack (index)'Image);
+            end loop;
+            Text_IO.New_Line;
+         end;
+
+      procedure Put_Input_Stack is
+         begin
+            Text_IO.Put ("Input stack:");
+            for index in 1 .. yy.tos loop
+               Text_IO.Put (' ' & To_String (yy.input_stack (index)));
             end loop;
             Text_IO.New_Line;
          end;
@@ -1084,6 +1096,7 @@ package body yyparser_input is
       yy.state_stack (yy.tos) := 0;
       if yy.debug then
          Put_State_Stack;
+         Put_Input_Stack;
       end if;
 %yyinit
 %if error
@@ -1156,6 +1169,7 @@ package body yyparser_input is
 -- END OF UMASS CODES.
 %end
             yy.value_stack (yy.tos) := YYLVal;
+            yy.input_stack (yy.tos) := To_Unbounded_String (yy.input_symbol'image);
 %if error
 -- UMASS CODES :
             end if;
@@ -1163,6 +1177,7 @@ package body yyparser_input is
 %end
             if yy.debug then
                Put_State_Stack;
+               Put_Input_Stack;
             end if;
 
             if yy.error_flag > 0 then  --  indicate a valid shift
@@ -1260,6 +1275,8 @@ package body yyparser_input is
 %end
 
             yy.value_stack (yy.tos) := YYVal;
+            yy.input_stack (yy.tos) := "R_" & Trim (To_Unbounded_String (yy.rule_id'image),
+                                                    Ada.Strings.Left);
 %if error
 -- UMASS CODES :
             end if;
@@ -1270,6 +1287,7 @@ package body yyparser_input is
                   goto_state (yy.state_stack (yy.tos - 1),
                               Get_LHS_Rule (yy.rule_id)));
                Put_State_Stack;
+               Put_Input_Stack;
             end if;
 
          end if;
