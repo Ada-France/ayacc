@@ -193,20 +193,20 @@
 
       procedure Put_State_Stack is
          begin
-            Text_IO.Put ("State stack:");
+            Ada.Text_IO.Put ("State stack:");
             for index in 0 .. yy.tos loop
-               Text_IO.Put (yy.state_stack (index)'Image);
+               Ada.Text_IO.Put (yy.state_stack (index)'Image);
             end loop;
-            Text_IO.New_Line;
+            Ada.Text_IO.New_Line;
          end;
 
       procedure Put_Input_Stack is
          begin
-            Text_IO.Put ("Input stack:");
+            Ada.Text_IO.Put ("Input stack:");
             for index in 1 .. yy.tos loop
-               Text_IO.Put (' ' & To_String (yy.input_stack (index)));
+               Ada.Text_IO.Put (' ' & To_String (yy.input_stack (index)));
             end loop;
-            Text_IO.New_Line;
+            Ada.Text_IO.New_Line;
          end;
 
       procedure shift_debug (state_id : yy.parse_state; lexeme : yy_tokens.Token);
@@ -258,7 +258,7 @@
 
          if yy.error_flag = 3 then --  no shift yet, clobber input.
             if yy.debug then
-               Text_IO.Put_Line ("  -- Ayacc.YYParse: Error Recovery Clobbers "
+               Ada.Text_IO.Put_Line ("  -- Ayacc.YYParse: Error Recovery Clobbers "
                                  & yy_tokens.Token'Image (yy.input_symbol));
 %if error
 -- UMASS CODES :
@@ -269,7 +269,7 @@
             end if;
             if yy.input_symbol = yy_tokens.END_OF_INPUT then  -- don't discard,
                if yy.debug then
-                  Text_IO.Put_Line ("  -- Ayacc.YYParse: Can't discard END_OF_INPUT, quiting...");
+                  Ada.Text_IO.Put_Line ("  -- Ayacc.YYParse: Can't discard END_OF_INPUT, quiting...");
 %if error
 -- UMASS CODES :
                   yy_error_report.Put_Line ("Ayacc.YYParse: Can't discard END_OF_INPUT, quiting...");
@@ -303,7 +303,7 @@
          --  find state on stack where error is a valid shift --
 
          if yy.debug then
-            Text_IO.Put_Line ("  -- Ayacc.YYParse: Looking for state with error as valid shift");
+            Ada.Text_IO.Put_Line ("  -- Ayacc.YYParse: Looking for state with error as valid shift");
 %if error
 -- UMASS CODES :
             yy_error_report.Put_Line("Ayacc.YYParse: Looking for state with error as valid shift");
@@ -313,7 +313,7 @@
 
          loop
             if yy.debug then
-               Text_IO.Put_Line ("  -- Ayacc.YYParse: Examining State "
+               Ada.Text_IO.Put_Line ("  -- Ayacc.YYParse: Examining State "
                                  & yy.parse_state'Image (yy.state_stack (yy.tos)));
 %if error
 -- UMASS CODES :
@@ -326,7 +326,7 @@
 
             if temp_action >= yy.first_shift_entry then
                if yy.tos = yy.stack_size then
-                  Text_IO.Put_Line ("  -- Ayacc.YYParse: Stack size exceeded on state_stack");
+                  Ada.Text_IO.Put_Line ("  -- Ayacc.YYParse: Stack size exceeded on state_stack");
 %if error
 -- UMASS CODES :
                   yy_error_report.Put_Line ("Ayacc.YYParse: Stack size exceeded on state_stack");
@@ -346,7 +346,7 @@
 
             if yy.tos = 0 then
                if yy.debug then
-                  Text_IO.Put_Line
+                  Ada.Text_IO.Put_Line
                      ("  -- Ayacc.YYParse: Error recovery popped entire stack, aborting...");
 %if error
 -- UMASS CODES :
@@ -365,7 +365,7 @@
          end loop;
 
          if yy.debug then
-            Text_IO.Put_Line ("  -- Ayacc.YYParse: Shifted error token in state "
+            Ada.Text_IO.Put_Line ("  -- Ayacc.YYParse: Shifted error token in state "
                               & yy.parse_state'Image (yy.state_stack (yy.tos)));
 %if error
 -- UMASS CODES :
@@ -380,7 +380,7 @@
       --  print debugging information for a shift operation
       procedure shift_debug (state_id : yy.parse_state; lexeme : yy_tokens.Token) is
       begin
-         Text_IO.Put_Line ("  -- Ayacc.YYParse: Shift "
+         Ada.Text_IO.Put_Line ("  -- Ayacc.YYParse: Shift "
                            & yy.parse_state'Image (state_id) & " on input symbol "
                            & yy_tokens.Token'Image (lexeme));
 %if error
@@ -394,7 +394,7 @@
       --  print debugging information for a reduce operation
       procedure reduce_debug (rule_id : Rule; state_id : yy.parse_state) is
       begin
-         Text_IO.Put_Line ("  -- Ayacc.YYParse: Reduce by rule "
+         Ada.Text_IO.Put_Line ("  -- Ayacc.YYParse: Reduce by rule "
                            & Rule'Image (rule_id) & " goto state "
                            & yy.parse_state'Image (state_id));
 %if error
@@ -510,7 +510,7 @@ package body yyparser_input is
          input_stream ((index + buffered) mod input_stream_size) := t;
          buffered := buffered + 1;
          if buffered > input_stream_size then
-            Text_IO.Put_Line ("Warning : input stream size exceed."
+            Ada.Text_IO.Put_Line ("Warning : input stream size exceed."
                               & " So token is lost in the input stream." );
          end if;
 
@@ -536,7 +536,7 @@ package body yyparser_input is
       input_stream (index) := tok;
       buffered := buffered + 1;
       if buffered > input_stream_size then
-        Text_IO.Put_Line ("Warning : input stream size exceed."
+        Ada.Text_IO.Put_Line ("Warning : input stream size exceed."
                           & " So token is lost in the input stream." );
       end if;
 
@@ -1157,7 +1157,7 @@ package body yyparser_input is
 
             --  Enter new state
             if yy.tos = yy.stack_size then
-               Text_IO.Put_Line (" Stack size exceeded on state_stack");
+               Ada.Text_IO.Put_Line (" Stack size exceeded on state_stack");
                raise yy_tokens.Syntax_Error;
             end if;
             yy.tos                  := yy.tos + 1;
@@ -1198,7 +1198,7 @@ package body yyparser_input is
 
          elsif yy.action = yy.accept_code then
             if yy.debug then
-               Text_IO.Put_Line ("  --  Ayacc.YYParse: Accepting Grammar...");
+               Ada.Text_IO.Put_Line ("  --  Ayacc.YYParse: Accepting Grammar...");
 %if error
 -- UMASS CODES :
                yy_error_report.Put_Line ("Ayacc.YYParse: Accepting Grammar...");
@@ -1256,7 +1256,7 @@ package body yyparser_input is
             --  Pop RHS states and goto next state
             yy.tos := yy.tos - Rule_Length (yy.rule_id) + 1;
             if yy.tos > yy.stack_size then
-               Text_IO.Put_Line (" Stack size exceeded on state_stack");
+               Ada.Text_IO.Put_Line (" Stack size exceeded on state_stack");
 %if error
 -- UMASS CODES :
                yy_error_report.Put_Line (" Stack size exceeded on state_stack");

@@ -283,24 +283,24 @@ private
    L_193 : aliased constant String := "";
    L_194 : aliased constant String := "      procedure Put_State_Stack is";
    L_195 : aliased constant String := "         begin";
-   L_196 : aliased constant String := "            Text_IO.Put (""State stack:"""
-       & ");";
+   L_196 : aliased constant String := "            Ada.Text_IO.Put (""State stac"
+       & "k:"");";
    L_197 : aliased constant String := "            for index in 0 .. yy.tos loop";
-   L_198 : aliased constant String := "               Text_IO.Put (yy.state_stac"
-       & "k (index)'Image);";
+   L_198 : aliased constant String := "               Ada.Text_IO.Put (yy.state_"
+       & "stack (index)'Image);";
    L_199 : aliased constant String := "            end loop;";
-   L_200 : aliased constant String := "            Text_IO.New_Line;";
+   L_200 : aliased constant String := "            Ada.Text_IO.New_Line;";
    L_201 : aliased constant String := "         end;";
    L_202 : aliased constant String := "";
    L_203 : aliased constant String := "      procedure Put_Input_Stack is";
    L_204 : aliased constant String := "         begin";
-   L_205 : aliased constant String := "            Text_IO.Put (""Input stack:"""
-       & ");";
+   L_205 : aliased constant String := "            Ada.Text_IO.Put (""Input stac"
+       & "k:"");";
    L_206 : aliased constant String := "            for index in 1 .. yy.tos loop";
-   L_207 : aliased constant String := "               Text_IO.Put (' ' & To_Stri"
-       & "ng (yy.input_stack (index)));";
+   L_207 : aliased constant String := "               Ada.Text_IO.Put (' ' & To_"
+       & "String (yy.input_stack (index)));";
    L_208 : aliased constant String := "            end loop;";
-   L_209 : aliased constant String := "            Text_IO.New_Line;";
+   L_209 : aliased constant String := "            Ada.Text_IO.New_Line;";
    L_210 : aliased constant String := "         end;";
    L_211 : aliased constant String := "";
    L_212 : aliased constant String := "      procedure shift_debug (state_id : y"
@@ -370,8 +370,8 @@ private
    L_259 : aliased constant String := "         if yy.error_flag = 3 then --  no"
        & " shift yet, clobber input.";
    L_260 : aliased constant String := "            if yy.debug then";
-   L_261 : aliased constant String := "               Text_IO.Put_Line (""  -- A"
-       & "yacc.YYParse: Error Recovery Clobbers """;
+   L_261 : aliased constant String := "               Ada.Text_IO.Put_Line (""  "
+       & "-- Ayacc.YYParse: Error Recovery Clobbers """;
    L_262 : aliased constant String := "                                 & yy_tok"
        & "ens.Token'Image (yy.input_symbol));";
    L_263 : aliased constant String := "%if error";
@@ -386,8 +386,8 @@ private
    L_270 : aliased constant String := "            if yy.input_symbol = yy_token"
        & "s.END_OF_INPUT then  -- don't discard,";
    L_271 : aliased constant String := "               if yy.debug then";
-   L_272 : aliased constant String := "                  Text_IO.Put_Line (""  -"
-       & "- Ayacc.YYParse: Can't discard END_OF_INPUT, quiting..."");";
+   L_272 : aliased constant String := "                  Ada.Text_IO.Put_Line ("
+       & """  -- Ayacc.YYParse: Can't discard END_OF_INPUT, quiting..."");";
    L_273 : aliased constant String := "%if error";
    L_274 : aliased constant String := "-- UMASS CODES :";
    L_275 : aliased constant String := "                  yy_error_report.Put_Lin"
@@ -429,8 +429,8 @@ private
        & "ror is a valid shift --";
    L_304 : aliased constant String := "";
    L_305 : aliased constant String := "         if yy.debug then";
-   L_306 : aliased constant String := "            Text_IO.Put_Line (""  -- Ayac"
-       & "c.YYParse: Looking for state with error as valid shift"");";
+   L_306 : aliased constant String := "            Ada.Text_IO.Put_Line (""  -- "
+       & "Ayacc.YYParse: Looking for state with error as valid shift"");";
    L_307 : aliased constant String := "%if error";
    L_308 : aliased constant String := "-- UMASS CODES :";
    L_309 : aliased constant String := "            yy_error_report.Put_Line(""Ay"
@@ -441,8 +441,8 @@ private
    L_313 : aliased constant String := "";
    L_314 : aliased constant String := "         loop";
    L_315 : aliased constant String := "            if yy.debug then";
-   L_316 : aliased constant String := "               Text_IO.Put_Line (""  -- A"
-       & "yacc.YYParse: Examining State """;
+   L_316 : aliased constant String := "               Ada.Text_IO.Put_Line (""  "
+       & "-- Ayacc.YYParse: Examining State """;
    L_317 : aliased constant String := "                                 & yy.par"
        & "se_state'Image (yy.state_stack (yy.tos)));";
    L_318 : aliased constant String := "%if error";
@@ -461,8 +461,8 @@ private
        & "ift_entry then";
    L_328 : aliased constant String := "               if yy.tos = yy.stack_size "
        & "then";
-   L_329 : aliased constant String := "                  Text_IO.Put_Line (""  -"
-       & "- Ayacc.YYParse: Stack size exceeded on state_stack"");";
+   L_329 : aliased constant String := "                  Ada.Text_IO.Put_Line ("
+       & """  -- Ayacc.YYParse: Stack size exceeded on state_stack"");";
    L_330 : aliased constant String := "%if error";
    L_331 : aliased constant String := "-- UMASS CODES :";
    L_332 : aliased constant String := "                  yy_error_report.Put_Lin"
@@ -487,7 +487,7 @@ private
    L_346 : aliased constant String := "";
    L_347 : aliased constant String := "            if yy.tos = 0 then";
    L_348 : aliased constant String := "               if yy.debug then";
-   L_349 : aliased constant String := "                  Text_IO.Put_Line";
+   L_349 : aliased constant String := "                  Ada.Text_IO.Put_Line";
    L_350 : aliased constant String := "                     (""  -- Ayacc.YYPars"
        & "e: Error recovery popped entire stack, aborting..."");";
    L_351 : aliased constant String := "%if error";
@@ -510,8 +510,8 @@ private
    L_365 : aliased constant String := "         end loop;";
    L_366 : aliased constant String := "";
    L_367 : aliased constant String := "         if yy.debug then";
-   L_368 : aliased constant String := "            Text_IO.Put_Line (""  -- Ayac"
-       & "c.YYParse: Shifted error token in state """;
+   L_368 : aliased constant String := "            Ada.Text_IO.Put_Line (""  -- "
+       & "Ayacc.YYParse: Shifted error token in state """;
    L_369 : aliased constant String := "                              & yy.parse_"
        & "state'Image (yy.state_stack (yy.tos)));";
    L_370 : aliased constant String := "%if error";
@@ -531,8 +531,8 @@ private
    L_381 : aliased constant String := "      procedure shift_debug (state_id : y"
        & "y.parse_state; lexeme : yy_tokens.Token) is";
    L_382 : aliased constant String := "      begin";
-   L_383 : aliased constant String := "         Text_IO.Put_Line (""  -- Ayacc.Y"
-       & "YParse: Shift """;
+   L_383 : aliased constant String := "         Ada.Text_IO.Put_Line (""  -- Aya"
+       & "cc.YYParse: Shift """;
    L_384 : aliased constant String := "                           & yy.parse_sta"
        & "te'Image (state_id) & "" on input symbol """;
    L_385 : aliased constant String := "                           & yy_tokens.To"
@@ -553,8 +553,8 @@ private
    L_395 : aliased constant String := "      procedure reduce_debug (rule_id : R"
        & "ule; state_id : yy.parse_state) is";
    L_396 : aliased constant String := "      begin";
-   L_397 : aliased constant String := "         Text_IO.Put_Line (""  -- Ayacc.Y"
-       & "YParse: Reduce by rule """;
+   L_397 : aliased constant String := "         Ada.Text_IO.Put_Line (""  -- Aya"
+       & "cc.YYParse: Reduce by rule """;
    L_398 : aliased constant String := "                           & Rule'Image ("
        & "rule_id) & "" goto state """;
    L_399 : aliased constant String := "                           & yy.parse_sta"
@@ -712,8 +712,8 @@ private
    L_511 : aliased constant String := "         buffered := buffered + 1;";
    L_512 : aliased constant String := "         if buffered > input_stream_size "
        & "then";
-   L_513 : aliased constant String := "            Text_IO.Put_Line (""Warning :"
-       & " input stream size exceed.""";
+   L_513 : aliased constant String := "            Ada.Text_IO.Put_Line (""Warni"
+       & "ng : input stream size exceed.""";
    L_514 : aliased constant String := "                              & "" So tok"
        & "en is lost in the input stream."" );";
    L_515 : aliased constant String := "         end if;";
@@ -745,8 +745,8 @@ private
    L_537 : aliased constant String := "      buffered := buffered + 1;";
    L_538 : aliased constant String := "      if buffered > input_stream_size the"
        & "n";
-   L_539 : aliased constant String := "        Text_IO.Put_Line (""Warning : inp"
-       & "ut stream size exceed.""";
+   L_539 : aliased constant String := "        Ada.Text_IO.Put_Line (""Warning :"
+       & " input stream size exceed.""";
    L_540 : aliased constant String := "                          & "" So token i"
        & "s lost in the input stream."" );";
    L_541 : aliased constant String := "      end if;";
@@ -1672,8 +1672,8 @@ private
    L_1158: aliased constant String := "            --  Enter new state";
    L_1159: aliased constant String := "            if yy.tos = yy.stack_size the"
        & "n";
-   L_1160: aliased constant String := "               Text_IO.Put_Line ("" Stack"
-       & " size exceeded on state_stack"");";
+   L_1160: aliased constant String := "               Ada.Text_IO.Put_Line ("" S"
+       & "tack size exceeded on state_stack"");";
    L_1161: aliased constant String := "               raise yy_tokens.Syntax_Err"
        & "or;";
    L_1162: aliased constant String := "            end if;";
@@ -1725,8 +1725,8 @@ private
    L_1199: aliased constant String := "         elsif yy.action = yy.accept_code"
        & " then";
    L_1200: aliased constant String := "            if yy.debug then";
-   L_1201: aliased constant String := "               Text_IO.Put_Line (""  --  "
-       & "Ayacc.YYParse: Accepting Grammar..."");";
+   L_1201: aliased constant String := "               Ada.Text_IO.Put_Line (""  "
+       & "--  Ayacc.YYParse: Accepting Grammar..."");";
    L_1202: aliased constant String := "%if error";
    L_1203: aliased constant String := "-- UMASS CODES :";
    L_1204: aliased constant String := "               yy_error_report.Put_Line ("
@@ -1803,8 +1803,8 @@ private
        & "h (yy.rule_id) + 1;";
    L_1258: aliased constant String := "            if yy.tos > yy.stack_size the"
        & "n";
-   L_1259: aliased constant String := "               Text_IO.Put_Line ("" Stack"
-       & " size exceeded on state_stack"");";
+   L_1259: aliased constant String := "               Ada.Text_IO.Put_Line ("" S"
+       & "tack size exceeded on state_stack"");";
    L_1260: aliased constant String := "%if error";
    L_1261: aliased constant String := "-- UMASS CODES :";
    L_1262: aliased constant String := "               yy_error_report.Put_Line ("
