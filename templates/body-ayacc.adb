@@ -8,8 +8,10 @@
 %%2 renames
 
       use yy_tokens, yy_goto_tables, yy_shift_reduce_tables;
-      
+
+%if debug
       use all type Ada.Strings.Unbounded.Unbounded_String;
+%end
 
 %if yyerrok
       procedure yyerrok;
@@ -18,6 +20,10 @@
       procedure yyclearin;
 %end
       procedure handle_error;
+%if debug
+      procedure Put_State_Stack;
+      procedure Put_Input_Stack;
+%end
 
 %if error
       --   One of the extension of ayacc. Used for
@@ -167,7 +173,9 @@
 
          --  stack data used by the parser
          tos                : Natural := 0;
+%if debug
          input_stack        : array (0 .. stack_size) of Ada.Strings.Unbounded.Unbounded_String;
+%end
          value_stack        : array (0 .. stack_size) of yy_tokens.YYSType;
          state_stack        : array (0 .. stack_size) of parse_state;
 
@@ -191,23 +199,25 @@
 %end
       end yy;
 
+%if debug
       procedure Put_State_Stack is
-         begin
-            Ada.Text_IO.Put ("State stack:");
-            for index in 0 .. yy.tos loop
-               Ada.Text_IO.Put (yy.state_stack (index)'Image);
-            end loop;
-            Ada.Text_IO.New_Line;
-         end;
+      begin
+         Ada.Text_IO.Put ("State stack:");
+         for index in 0 .. yy.tos loop
+            Ada.Text_IO.Put (yy.state_stack (index)'Image);
+         end loop;
+         Ada.Text_IO.New_Line;
+      end Put_State_Stack;
 
       procedure Put_Input_Stack is
-         begin
-            Ada.Text_IO.Put ("Input stack:");
-            for index in 1 .. yy.tos loop
-               Ada.Text_IO.Put (' ' & To_String (yy.input_stack (index)));
-            end loop;
-            Ada.Text_IO.New_Line;
-         end;
+      begin
+         Ada.Text_IO.Put ("Input stack:");
+         for index in 1 .. yy.tos loop
+            Ada.Text_IO.Put (' ' & To_String (yy.input_stack (index)));
+         end loop;
+         Ada.Text_IO.New_Line;
+      end Put_Input_Stack;
+%end
 
       procedure shift_debug (state_id : yy.parse_state; lexeme : yy_tokens.Token);
       procedure reduce_debug (rule_id : Rule; state_id : yy.parse_state);
@@ -233,7 +243,6 @@
          return Integer (Goto_Matrix (index).Newstate);
       end goto_state;
 
-
       function parse_action (state : yy.parse_state;
                              t     : yy_tokens.Token) return Integer is
          index   : reduce_row;
@@ -257,22 +266,28 @@
       begin
 
          if yy.error_flag = 3 then --  no shift yet, clobber input.
+%if debug
             if yy.debug then
                Ada.Text_IO.Put_Line ("  -- Ayacc.YYParse: Error Recovery Clobbers "
                                  & yy_tokens.Token'Image (yy.input_symbol));
+%end
 %if error
 -- UMASS CODES :
                yy_error_report.Put_Line ("Ayacc.YYParse: Error Recovery Clobbers "
                                          & yy_tokens.Token'Image (yy.input_symbol));
 -- END OF UMASS CODES.
 %end
+%if debug
             end if;
+%end
             if yy.input_symbol = yy_tokens.END_OF_INPUT then  -- don't discard,
                if yy.debug then
-                  Ada.Text_IO.Put_Line ("  -- Ayacc.YYParse: Can't discard END_OF_INPUT, quiting...");
+                  Ada.Text_IO.Put_Line ("  -- Ayacc.YYParse: Can't discard END_OF_INPUT,"
+                                        & " quiting...");
 %if error
 -- UMASS CODES :
-                  yy_error_report.Put_Line ("Ayacc.YYParse: Can't discard END_OF_INPUT, quiting...");
+                  yy_error_report.Put_Line ("Ayacc.YYParse: Can't discard END_OF_INPUT,"
+                                            & " quiting...");
 -- END OF UMASS CODES.
 %end
                end if;
@@ -303,10 +318,12 @@
          --  find state on stack where error is a valid shift --
 
          if yy.debug then
-            Ada.Text_IO.Put_Line ("  -- Ayacc.YYParse: Looking for state with error as valid shift");
+            Ada.Text_IO.Put_Line ("  -- Ayacc.YYParse: Looking for state with"
+                                  & " error as valid shift");
 %if error
 -- UMASS CODES :
-            yy_error_report.Put_Line("Ayacc.YYParse: Looking for state with error as valid shift");
+            yy_error_report.Put_Line("Ayacc.YYParse: Looking for state with"
+                                     & " error as valid shift");
 -- END OF UMASS CODES.
 %end
          end if;
@@ -1094,10 +1111,12 @@ package body yyparser_input is
    begin
       --  initialize by pushing state 0 and getting the first input symbol
       yy.state_stack (yy.tos) := 0;
+%if debug
       if yy.debug then
          Put_State_Stack;
          Put_Input_Stack;
       end if;
+%end
 %yyinit
 %if error
 -- UMASS CODES :
@@ -1169,16 +1188,18 @@ package body yyparser_input is
 -- END OF UMASS CODES.
 %end
             yy.value_stack (yy.tos) := YYLVal;
-            yy.input_stack (yy.tos) := To_Unbounded_String (yy.input_symbol'image);
 %if error
 -- UMASS CODES :
             end if;
 -- END OF UMASS CODES.
 %end
+%if debug
             if yy.debug then
+               yy.input_stack (yy.tos) := To_Unbounded_String (yy.input_symbol'Image);
                Put_State_Stack;
                Put_Input_Stack;
             end if;
+%end
 
             if yy.error_flag > 0 then  --  indicate a valid shift
                yy.error_flag := yy.error_flag - 1;
@@ -1273,21 +1294,31 @@ package body yyparser_input is
             if yyerror_recovery.valuing then
 -- END OF UMASS CODES.
 %end
-
             yy.value_stack (yy.tos) := YYVal;
-            yy.input_stack (yy.tos) := "R_" & Trim (To_Unbounded_String (yy.rule_id'image),
-                                                    Ada.Strings.Left);
 %if error
 -- UMASS CODES :
             end if;
 -- END OF UMASS CODES.
 %end
             if yy.debug then
+%if error
+               if yyerror_recovery.valuing then
+                  yy.input_stack (yy.tos) := "R_" & Trim (To_Unbounded_String (yy.rule_id'Image),
+                                                          Ada.Strings.Left);
+               end if;
+%else
+%if debug
+               yy.input_stack (yy.tos) := "R_" & Trim (To_Unbounded_String (yy.rule_id'Image),
+                                                       Ada.Strings.Left);
+%end
+%end
                reduce_debug (yy.rule_id,
                   goto_state (yy.state_stack (yy.tos - 1),
                               Get_LHS_Rule (yy.rule_id)));
+%if debug
                Put_State_Stack;
                Put_Input_Stack;
+%end
             end if;
 
          end if;

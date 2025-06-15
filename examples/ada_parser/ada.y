@@ -1383,6 +1383,7 @@ end parser;
 
 with ada_tokens, ada_lex_io, ada_goto, ada_shift_reduce, ada_lex, text_io;
 use  ada_tokens, ada_lex_io, ada_goto, ada_shift_reduce, ada_lex, text_io;
+with Ada.Text_IO;
 package body parser is
 
     procedure yyerror(s: in string := "syntax error") is

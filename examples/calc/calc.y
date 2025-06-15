@@ -69,6 +69,7 @@ package calc_parser is
     procedure yyparse;
 end calc_parser;
 
+with Ada.Text_IO;
 with calc_lexer, calc_lex_dfa, calc_lex_io, text_io, calc_tokens, calc_goto, calc_shift_reduce; 
 use  text_io, calc_tokens, calc_goto, calc_lex_io, calc_shift_reduce; 
 

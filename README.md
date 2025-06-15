@@ -26,6 +26,19 @@ This version brings a number of improvements:
   give some context arguments when calling the lexer.
 - Ayacc can now generate reentrant parsers.
 
+## Version 1.5.0 - Under development
+- Pascal Pignard added output states and input stack printing in debug mode;
+  these debugging information is only available and printed when the parser
+  is running in debug mode (option `-d` and `yy.debug` is set to `True`);
+- If you use `-d` option, you may have to fix your grammar and need to add
+  the following with clauses in it:
+  ```
+    with Ada.Strings;
+    with Ada.Strings.Unbounded;
+  ```
+- Legacy `Text_IO` is no longer available from the parser: you must fix your
+  grammar and use `Ada.Text_IO` instead.
+
 ## Version 1.4.1 - Feb 2024
 - Fix #7: Update ayacc.gpr: create missing dirs
 - Fix #8: Update clean target in calc example and rename example package
