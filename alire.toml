@@ -1,7 +1,8 @@
 description = "An Ada LARL(1) parser generator"
 name = "ayacc"
 version = "1.5.0"
-licenses = "BSD-4.3TAHOE"
+# licenses = "BSD-4.3TAHOE"
+licenses = "Unlicense"
 authors = ["David Taback", "Deepak Tolani"]
 maintainers = ["Stephane.Carrez@gmail.com"]
 maintainers-logins = ["stcarrez"]
